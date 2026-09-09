@@ -24,17 +24,15 @@ jobs:
           flutter-version: '3.x'
           channel: 'stable'
 
-      - name: Locate Project Root & Install Dependencies
+      - name: Install Dependencies
         run: |
-          TARGET_DIR=$(find . -name "pubspec.yaml" -exec dirname {} \; | head -n 1)
-          echo "Project directory found at: $TARGET_DIR"
-          cd "$TARGET_DIR"
+          # لو ملف pubspec.yaml جوه مجلد رئيسي، استبدل النقطة دي باسم المجلد لو معروف، أو هنستخدم بحث أدق:
+          cd $(dirname $(find . -name "pubspec.yaml" -print -quit))
           flutter pub get
 
       - name: Build APK
         run: |
-          TARGET_DIR=$(find . -name "pubspec.yaml" -exec dirname {} \; | head -n 1)
-          cd "$TARGET_DIR"
+          cd $(dirname $(find . -name "pubspec.yaml" -print -quit))
           flutter build apk --release
 
       - name: Upload APK
