@@ -24,15 +24,12 @@ jobs:
           flutter-version: '3.x'
           channel: 'stable'
 
-      - name: Install Dependencies
+      - name: Locate and Build
         run: |
-          # لو ملف pubspec.yaml جوه مجلد رئيسي، استبدل النقطة دي باسم المجلد لو معروف، أو هنستخدم بحث أدق:
-          cd $(dirname $(find . -name "pubspec.yaml" -print -quit))
+          APP_DIR=$(dirname $(find . -name "pubspec.yaml" -print -quit))
+          echo "Found project at: $APP_DIR"
+          cd "$APP_DIR"
           flutter pub get
-
-      - name: Build APK
-        run: |
-          cd $(dirname $(find . -name "pubspec.yaml" -print -quit))
           flutter build apk --release
 
       - name: Upload APK
