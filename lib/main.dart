@@ -24,7 +24,7 @@ class DodiLiveApp extends StatelessWidget {
   }
 }
 
-// 1. شاشة افتتاحية احترافية بصورة خلفية لفتاة تلعب على الموبايل
+// 1. شاشة افتتاحية احترافية
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -111,7 +111,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
 class UserProfileModel {
   final String name;
-  final String birthDate;
+  final String age;
   final String country;
   final String gender;
   final String email;
@@ -121,7 +121,7 @@ class UserProfileModel {
 
   UserProfileModel({
     required this.name,
-    required this.birthDate,
+    required this.age,
     required this.country,
     required this.gender,
     required this.email,
@@ -131,7 +131,7 @@ class UserProfileModel {
   });
 }
 
-// 2. شاشة تسجيل الحساب (مع الصورة والدول كاملة أبجدياً)
+// 2. شاشة تسجيل الحساب (العمر كتابة يدوية)
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
 
@@ -142,6 +142,7 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _ageController = TextEditingController();
 
   final List<Map<String, String>> _countries = [
     {'name': 'Afghanistan', 'flag': '🇦🇫'},
@@ -175,7 +176,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   ];
 
   String? _selectedCountry;
-  DateTime? _selectedDate;
   String _selectedGender = 'ذكر';
   
   final List<String> _avatarOptions = [
@@ -192,36 +192,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     _selectedAvatar = _avatarOptions[0];
   }
 
-  Future<void> _pickDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ?? DateTime(2000, 1, 1),
-      firstDate: DateTime(1920),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null) {
-      setState(() {
-        _selectedDate = picked;
-      });
-    }
-  }
-
   void _submitData() {
     if (_nameController.text.isEmpty ||
         _selectedCountry == null ||
-        _selectedDate == null ||
+        _ageController.text.isEmpty ||
         _emailController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('الرجاء إكمال كافة البيانات واختيار الدولة وتاريخ الميلاد')),
+        const SnackBar(content: Text('الرجاء إكمال كافة البيانات (الاسم، العمر، الدولة، البريد)')),
       );
       return;
     }
 
-    String formattedDate = "${_selectedDate!.year}/${_selectedDate!.month}/${_selectedDate!.day}";
-
     UserProfileModel user = UserProfileModel(
       name: _nameController.text.trim(),
-      birthDate: formattedDate,
+      age: _ageController.text.trim(),
       country: _selectedCountry!,
       gender: _selectedGender,
       email: _emailController.text.trim(),
@@ -290,25 +274,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ),
               ),
               const SizedBox(height: 15),
-              InkWell(
-                onTap: () => _pickDate(context),
-                child: InputDecorator(
-                  decoration: InputDecoration(
-                    labelText: 'تاريخ الميلاد',
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.05),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        _selectedDate == null ? 'اختر تاريخ الميلاد' : '${_selectedDate!.year}/${_selectedDate!.month}/${_selectedDate!.day}',
-                        style: TextStyle(color: _selectedDate == null ? Colors.white54 : Colors.white),
-                      ),
-                      const Icon(Icons.calendar_today, color: Colors.purpleAccent),
-                    ],
-                  ),
+              TextField(
+                controller: _ageController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'العمر (مثال: 25)',
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.05),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
                 ),
               ),
               const SizedBox(height: 15),
@@ -502,7 +475,7 @@ class HomeFeedScreen extends StatelessWidget {
   }
 }
 
-// ب. غرفة اللايف المتكاملة (6 جيستات، شريط الهدايا الكبرى >50k)
+// ب. غرفة اللايف المتكاملة
 class ActiveLiveRoom extends StatefulWidget {
   final UserProfileModel user;
   final String roomTitle;
@@ -855,7 +828,7 @@ class GamesHubScreen extends StatelessWidget {
   }
 }
 
-// هـ. المحفظة (تم تصحيح خطأ ScanBar إلى SnackBar هنا)
+// هـ. المحفظة
 class WalletScreen extends StatefulWidget {
   final UserProfileModel user;
   const WalletScreen({Key? key, required this.user}) : super(key: key);
@@ -873,7 +846,7 @@ class _WalletScreenState extends State<WalletScreen> {
       });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تم تحويل $amount ماسة إلى ${amount * 3} كوينز بنجاح!')));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('رصيد الماس لا يكفي'))); // تم التصحيح هنا
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('رصيد الماس لا يكفي')));
     }
   }
 
@@ -958,7 +931,7 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(height: 5),
               Text('الدولة: ${user.country}', style: const TextStyle(color: Colors.white70)),
               const SizedBox(height: 5),
-              Text('تاريخ الميلاد: ${user.birthDate}', style: const TextStyle(color: Colors.white70)),
+              Text('العمر: ${user.age} سنة', style: const TextStyle(color: Colors.white70)),
               const SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
