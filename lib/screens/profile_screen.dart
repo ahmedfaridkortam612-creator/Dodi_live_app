@@ -41,8 +41,8 @@ class ProfileScreen extends StatelessWidget {
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: const [
-                  Column(
+                children: [
+                  const Column(
                     children: [
                       Text('الماس', style: TextStyle(color: Colors.grey, fontSize: 12)),
                       SizedBox(height: 5),
@@ -50,7 +50,7 @@ class ProfileScreen extends StatelessWidget {
                     ],
                   ),
                   Container(height: 30, width: 1, color: Colors.grey),
-                  Column(
+                  const Column(
                     children: [
                       Text('العملات', style: TextStyle(color: Colors.grey, fontSize: 12)),
                       SizedBox(height: 5),
