@@ -26,7 +26,7 @@ jobs:
     - name: Fix Android Project Structure
       run: |
         rm -rf android
-        flutter create . --platforms=android
+        flutter create . --project-name=dodi_live_app --platforms=android
 
     - name: Install Dependencies
       run: flutter pub get
