@@ -98,8 +98,8 @@ class UserProfileModel {
   final String country;
   final String gender;
   final String email;
-  int diamonds; // الماس (للكسب أو الاستبدال)
-  int coins;    // الكوينزات (للعب وإرسال الهدايا)
+  int diamonds; // الماس
+  int coins;    // الكوينزات
 
   UserProfileModel({
     required this.name,
@@ -107,8 +107,8 @@ class UserProfileModel {
     required this.country,
     required this.gender,
     required this.email,
-    this.diamonds = 500,  // رصيد ماس افتراضي
-    this.coins = 200,     // رصيد كوينز افتراضي للعب
+    this.diamonds = 500,
+    this.coins = 200,
   });
 }
 
@@ -406,7 +406,6 @@ class ActiveLiveRoom extends StatefulWidget {
 }
 
 class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
-  // دالة إظهار صندوق الهدايا التفاعلي
   void _openGiftBox() {
     showModalBottomSheet(
       context: context,
@@ -424,7 +423,7 @@ class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.between,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text('🎁 صندوق هدايا Dodi Live', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.amber)),
                       Text('رصيدك: ${widget.user.coins} كوينز 🪙', style: const TextStyle(color: Colors.white70, fontSize: 13)),
@@ -525,7 +524,6 @@ class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      // زر فتح صندوق الهدايا داخل اللايف
                       FloatingActionButton(
                         heroTag: "giftBtn",
                         mini: true,
@@ -555,7 +553,6 @@ class WalletScreen extends StatefulWidget {
 }
 
 class _WalletScreenState extends State<WalletScreen> {
-  // دالة تحويل الماس إلى كوينز (كل 1 ماسة = 2 كوينز مثلاً)
   void _exchangeDiamondsToCoins(int diamondsToExchange) {
     if (widget.user.diamonds >= diamondsToExchange) {
       setState(() {
@@ -592,7 +589,6 @@ class _WalletScreenState extends State<WalletScreen> {
         padding: const EdgeInsets.all(20.0),
         child: ListView(
           children: [
-            // بطاقة الأرصدة (الكوينز والماس)
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -621,8 +617,6 @@ class _WalletScreenState extends State<WalletScreen> {
               ),
             ),
             const SizedBox(height: 25),
-
-            // قسم فك الماسات إلى كوينزات
             const Text('فك الماسات إلى كوينزات للعب والهدايا:', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.amber)),
             const SizedBox(height: 10),
             Row(
@@ -641,7 +635,6 @@ class _WalletScreenState extends State<WalletScreen> {
               ],
             ),
             const SizedBox(height: 25),
-
             const Text('شحن الماسات الفوري:', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.amber)),
             const SizedBox(height: 10),
             _buildRechargeCard(500, '5.00 \$', Colors.purple),
@@ -675,7 +668,7 @@ class _WalletScreenState extends State<WalletScreen> {
   }
 }
 
-// 6. شاشة الملف الشخصي تعرض رصيد الكوينزات بوضوح
+// 6. شاشة الملف الشخصي
 class ProfileScreen extends StatelessWidget {
   final UserProfileModel user;
   const ProfileScreen({Key? key, required this.user}) : super(key: key);
@@ -704,7 +697,6 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(height: 5),
               Text('الجنس: ${user.gender}', style: const TextStyle(color: Colors.white70)),
               const SizedBox(height: 12),
-              // رصيد الكوينزات والماس ظاهر بوضوح في الصفحة الشخصية
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 decoration: BoxDecoration(
