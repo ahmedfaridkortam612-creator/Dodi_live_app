@@ -1,59 +1,84 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const DodiLiveApp());
+  runApp(const MicoBigoLiveApp());
 }
 
-class DodiLiveApp extends StatelessWidget {
-  const DodiLiveApp({Key? key}) : super(key: key);
+class MicoBigoLiveApp extends StatelessWidget {
+  const MicoBigoLiveApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Dodi Live',
+      title: 'Live Stream Pro',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
         scaffoldBackgroundColor: const Color(0xFF0F0817),
         primaryColor: const Color(0xFF8A2BE2),
-        colorScheme: const ColorScheme.dark(
-          primary: Color(0xFF9C27B0),
-          secondary: Color(0xFFFFD700),
-          surface: Color(0xFF1A102F),
-        ),
         fontFamily: 'Cairo',
       ),
-      home: const AuthWrapper(),
+      home: const UserRegistrationScreen(),
     );
   }
 }
 
-class AuthWrapper extends StatefulWidget {
-  const AuthWrapper({Key? key}) : super(key: key);
+// نموذج بيانات المستخدم الحقيقي
+class UserProfileData {
+  final String name;
+  final String age;
+  final String country;
+  final String email;
 
-  @override
-  State<AuthWrapper> createState() => _AuthWrapperState();
+  UserProfileData({
+    required this.name,
+    required this.age,
+    required this.country,
+    required this.email,
+  });
 }
 
-class _AuthWrapperState extends State<AuthWrapper> {
-  bool isLoggedIn = false;
+// 1. شاشة التسجيل الحقيقية (تطلب البيانات من أي مستخدم جديد)
+class UserRegistrationScreen extends StatefulWidget {
+  const UserRegistrationScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    if (!isLoggedIn) {
-      return LoginScreen(onLoginSuccess: () {
-        setState(() {
-          isLoggedIn = true;
-        });
-      });
+  State<UserRegistrationScreen> createState() => _UserRegistrationScreenState();
+}
+
+class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
+  final _nameController = TextEditingController();
+  final _ageController = TextEditingController();
+  final _countryController = TextEditingController();
+  final _emailController = TextEditingController();
+
+  void _completeRegistration() {
+    if (_nameController.text.trim().isEmpty || 
+        _ageController.text.trim().isEmpty || 
+        _countryController.text.trim().isEmpty || 
+        _emailController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('الرجاء إدخال جميع البيانات الشخصية المطلوبة بدقة')),
+      );
+      return;
     }
-    return const MainNavigationScreen();
-  }
-}
+    
+    // حفظ البيانات المدخلة وتمريرها للتطبيق
+    UserProfileData newUser = UserProfileData(
+      name: _nameController.text.trim(),
+      age: _ageController.text.trim(),
+      country: _countryController.text.trim(),
+      email: _emailController.text.trim(),
+    );
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key? key, required this.onLoginSuccess});
-  final VoidCallback onLoginSuccess;
+    // الانتقال للوحة الرئيسية مع بيانات المستخدم الجديد الحقيقية
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MainDashboardScreen(userData: newUser),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,76 +95,84 @@ class LoginScreen extends StatelessWidget {
         child: Center(
           child: SingleChildScrollView(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: const LinearGradient(colors: [Colors.purpleAccent, Colors.deepPurple]),
-                    boxShadow: [
-                      BoxShadow(color: Colors.purple.withOpacity(0.5), blurRadius: 20, spreadRadius: 5)
-                    ],
-                  ),
-                  child: const Icon(Icons.live_tv, size: 60, color: Colors.white),
+                Stack(
+                  children: [
+                    const CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Colors.purpleAccent,
+                      child: Icon(Icons.camera_alt, size: 40, color: Colors.white),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.amber),
+                        child: const Icon(Icons.add, size: 18, color: Colors.black),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 20),
-                const Text(
-                  "DODI LIVE",
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.white),
-                ),
-                const Text(
-                  "عالم البثوث والألعاب والهدايا الفاخرة",
-                  style: TextStyle(fontSize: 14, color: Colors.purpleAccent),
-                ),
-                const SizedBox(height: 40),
+                const Text("إنشاء حسابك الشخصي الجديد", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
+                const SizedBox(height: 30),
                 TextField(
+                  controller: _nameController,
                   decoration: InputDecoration(
-                    hintText: 'البريد الإلكتروني أو رقم الهاتف',
-                    hintStyle: const TextStyle(color: Colors.white54),
+                    labelText: 'الاسم بالكامل',
+                    labelStyle: const TextStyle(color: Colors.white70),
                     filled: true,
                     fillColor: Colors.white.withOpacity(0.05),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
-                    prefixIcon: const Icon(Icons.person, color: Colors.purpleAccent),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 15),
                 TextField(
-                  obscureText: true,
+                  controller: _ageController,
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    hintText: 'كلمة المرور',
-                    hintStyle: const TextStyle(color: Colors.white54),
+                    labelText: 'العمر',
+                    labelStyle: const TextStyle(color: Colors.white70),
                     filled: true,
                     fillColor: Colors.white.withOpacity(0.05),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
-                    prefixIcon: const Icon(Icons.lock, color: Colors.purpleAccent),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 15),
+                TextField(
+                  controller: _countryController,
+                  decoration: InputDecoration(
+                    labelText: 'الدولة',
+                    labelStyle: const TextStyle(color: Colors.white70),
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.05),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+                  ),
+                ),
+                const SizedBox(height: 15),
+                TextField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: 'البريد الإلكتروني أو الهاتف',
+                    labelStyle: const TextStyle(color: Colors.white70),
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.05),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+                  ),
+                ),
+                const SizedBox(height: 30),
                 SizedBox(
                   width: double.infinity,
                   height: 50,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF8A2BE2),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                      elevation: 8,
-                      shadowColor: Colors.purpleAccent,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                     ),
-                    onPressed: onLoginSuccess,
-                    child: const Text('تسجيل الدخول / إنشاء حساب', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                    onPressed: _completeRegistration,
+                    child: const Text('دخول التطبيق', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
                   ),
-                ),
-                const SizedBox(height: 20),
-                const Text("أو الدخول السريع عبر", style: TextStyle(color: Colors.white38, fontSize: 12)),
-                const SizedBox(height: 15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _socialButton(Icons.facebook, Colors.blue, "فيسبوك", onLoginSuccess),
-                    const SizedBox(width: 20),
-                    _socialButton(Icons.g_mobiledata, Colors.red, "جوجل", onLoginSuccess),
-                  ],
                 ),
               ],
             ),
@@ -148,83 +181,66 @@ class LoginScreen extends StatelessWidget {
       ),
     );
   }
-
-  Widget _socialButton(IconData icon, Color color, String title, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.08),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withOpacity(0.5)),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: color),
-            const SizedBox(width: 8),
-            Text(title, style: const TextStyle(color: Colors.white, fontSize: 13)),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
-class MainNavigationScreen extends StatefulWidget {
-  const MainNavigationScreen({Key? key}) : super(key: key);
+// 2. الشاشة الرئيسية مع تمرير بيانات المستخدم الحقيقي لكل الأقسام
+class MainDashboardScreen extends StatefulWidget {
+  final UserProfileData userData;
+  const MainDashboardScreen({Key? key, required this.userData}) : super(key: key);
 
   @override
-  State<MainNavigationScreen> createState() => _MainNavigationScreenState();
+  State<MainDashboardScreen> createState() => _MainDashboardScreenState();
 }
 
-class _MainNavigationScreenState extends State<MainNavigationScreen> {
+class _MainDashboardScreenState extends State<MainDashboardScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = [
-    const LiveStreamsFeedScreen(),
-    const AudioRoomsScreen(),
-    const MessagesScreen(),
-    const WalletStoreScreen(),
-    const ProfileScreen(),
-  ];
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      LiveRoomsGridScreen(userData: widget.userData),
+      const AudioChatRoomsScreen(),
+      const WalletAndDailyWithdrawScreen(),
+      UserProfileScreen(userData: widget.userData),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_currentIndex],
+      body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         backgroundColor: const Color(0xFF140B22),
-        selectedItemColor: const Color(0xFFDA70D6),
+        selectedItemColor: Colors.amber,
         unselectedItemColor: Colors.white54,
         type: BottomNavigationBarType.fixed,
         onTap: (index) => setState(() => _currentIndex = index),
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.live_tv), label: 'لايفات'),
-          BottomNavigationBarItem(icon: Icon(Icons.mic), label: 'رومات صوتية'),
-          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble), label: 'الرسائل'),
-          BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet), label: 'المحفظة'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'حسابي'),
+          BottomNavigationBarItem(icon: Icon(Icons.live_tv), label: 'لايف'),
+          BottomNavigationBarItem(icon: Icon(Icons.mic), label: 'رومات الصوت'),
+          BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet), label: 'المحفظة والشحن'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'الملف الشخصي'),
         ],
       ),
     );
   }
 }
 
-class LiveStreamsFeedScreen extends StatelessWidget {
-  const LiveStreamsFeedScreen({Key? key}) : super(key: key);
+// 3. شاشة البث المباشر
+class LiveRoomsGridScreen extends StatelessWidget {
+  final UserProfileData userData;
+  const LiveRoomsGridScreen({Key? key, required this.userData}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("البثوث المباشرة المميزة", style: TextStyle(color: Colors.white)),
+        title: Text("مرحباً، ${userData.name}", style: const TextStyle(color: Colors.white, fontSize: 16)),
         backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          IconButton(icon: const Icon(Icons.search, color: Colors.white), onPressed: () {}),
-        ],
       ),
       body: GridView.builder(
         padding: const EdgeInsets.all(12),
@@ -234,59 +250,30 @@ class LiveStreamsFeedScreen extends StatelessWidget {
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
         ),
-        itemCount: 6,
+        itemCount: 4,
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const ActiveLiveRoomScreen()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ActiveLiveStreamRoom(userData: userData)));
             },
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF3B185F), Color(0xFF1F0D35)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                gradient: const LinearGradient(colors: [Color(0xFF3B185F), Color(0xFF1F0D35)]),
                 border: Border.all(color: Colors.purpleAccent.withOpacity(0.3)),
               ),
-              child: Stack(
+              child: const Stack(
                 children: [
-                  Positioned.fill(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Container(color: Colors.purple.withOpacity(0.2)),
-                    ),
-                  ),
                   Positioned(
-                    top: 10,
-                    right: 10,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.black54,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.amber, width: 1.5),
-                      ),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.star, size: 12, color: Colors.amber),
-                          SizedBox(width: 4),
-                          Text("VIP 8", style: TextStyle(fontSize: 10, color: Colors.amber, fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const Positioned(
                     bottom: 12,
                     right: 12,
                     left: 12,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("مشتعلة مع ملكة البثوث 🔥", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                        Text("غرفة البث الاحترافي 🔥", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
                         SizedBox(height: 4),
-                        Text("اسم المضيف • 14.5k مشاهد", style: TextStyle(color: Colors.white70, fontSize: 10)),
+                        Text("مضيف مميز • 24.5k مشاهد", style: TextStyle(color: Colors.white70, fontSize: 10)),
                       ],
                     ),
                   )
@@ -300,51 +287,51 @@ class LiveStreamsFeedScreen extends StatelessWidget {
   }
 }
 
-class ActiveLiveRoomScreen extends StatelessWidget {
-  const ActiveLiveRoomScreen({Key? key}) : super(key: key);
+class ActiveLiveStreamRoom extends StatefulWidget {
+  final UserProfileData userData;
+  const ActiveLiveStreamRoom({Key? key, required this.userData}) : super(key: key);
 
-  void _showGiftPanel(BuildContext context) {
+  @override
+  State<ActiveLiveStreamRoom> createState() => _ActiveLiveStreamRoomState();
+}
+
+class _ActiveLiveStreamRoomState extends State<ActiveLiveStreamRoom> {
+  String? activeGiftAnimation;
+
+  void _sendGift(String giftName) {
+    setState(() {
+      activeGiftAnimation = "${widget.userData.name} أرسل: $giftName";
+    });
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        setState(() {
+          activeGiftAnimation = null;
+        });
+      }
+    });
+  }
+
+  void _showGiftsPanel() {
     showModalBottomSheet(
       context: context,
       backgroundColor: const Color(0xFF1B0F2E),
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) {
         return Container(
-          padding: const EdgeInsets.all(20),
-          height: 350,
+          padding: const EdgeInsets.all(16),
+          height: 250,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("قسم الهدايا المتحركة (حسب الكوينزات)", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold, fontSize: 16)),
+              const Text("الهدايا المتحركة الفورية", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
               const SizedBox(height: 15),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [1, 3, 5, 10, 30, 55].map((count) {
-                    return Container(
-                      margin: const EdgeInsets.only(right: 8),
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: count == 1 ? Colors.purpleAccent : Colors.white10,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Text("إرسال $count", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                    );
-                  }).toList(),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  children: [
-                    _giftItem("💎 ماسة سريعة", "10 كوينز", "X5"),
-                    _giftItem("🏎️ سيارة فخمة", "500 كوينز", "X15"),
-                    _giftItem("🚀 صاروخ الانفجار", "1000 كوينز", "X100 💥"),
-                  ],
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _giftButton("💎 ماسة (x5)", () => _sendGift("💎 ماسة متطايرة!")),
+                  _giftButton("🏎️ سيارة (x50)", () => _sendGift("🏎️ سيارة سباق فخمة!")),
+                  _giftButton("🚀 صاروخ (x100)", () => _sendGift("🚀 صاروخ عملاق!")),
+                ],
               ),
             ],
           ),
@@ -353,22 +340,14 @@ class ActiveLiveRoomScreen extends StatelessWidget {
     );
   }
 
-  Widget _giftItem(String name, String price, String multiplier) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.purple.withOpacity(0.3)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(multiplier, style: const TextStyle(color: Colors.amber, fontSize: 12, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 4),
-          Text(name, style: const TextStyle(color: Colors.white, fontSize: 12)),
-          Text(price, style: const TextStyle(color: Colors.white54, fontSize: 10)),
-        ],
-      ),
+  Widget _giftButton(String label, VoidCallback onTap) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(backgroundColor: Colors.purple),
+      onPressed: () {
+        Navigator.pop(context);
+        onTap();
+      },
+      child: Text(label, style: const TextStyle(fontSize: 12, color: Colors.white)),
     );
   }
 
@@ -379,43 +358,28 @@ class ActiveLiveRoomScreen extends StatelessWidget {
         children: [
           Container(
             decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF240D42), Color(0xFF0F0817)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
+              gradient: LinearGradient(colors: [Color(0xFF240D42), Color(0xFF0F0817)], begin: Alignment.topCenter, end: Alignment.bottomCenter),
             ),
           ),
+          if (activeGiftAnimation != null)
+            Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                decoration: BoxDecoration(color: Colors.black87, borderRadius: BorderRadius.circular(20), border: Border.all(color: Colors.amber, width: 2)),
+                child: Text(activeGiftAnimation!, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.amber), textAlign: TextAlign.center),
+              ),
+            ),
           SafeArea(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(2),
-                            decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.purpleAccent, width: 2)),
-                            child: const CircleAvatar(radius: 20, backgroundColor: Colors.purple),
-                          ),
-                          const SizedBox(width: 8),
-                          const Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("أحمد كورتام", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                              Text("3.2k معجب", style: TextStyle(color: Colors.white60, fontSize: 10)),
-                            ],
-                          ),
-                        ],
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close, color: Colors.white),
-                        onPressed: () => Navigator.pop(context),
-                      ),
+                      Text("غرفة: ${widget.userData.name}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      IconButton(icon: const Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)),
                     ],
                   ),
                 ),
@@ -427,7 +391,6 @@ class ActiveLiveRoomScreen extends StatelessWidget {
                         child: TextField(
                           decoration: InputDecoration(
                             hintText: 'اكتب تعليقاً...',
-                            hintStyle: const TextStyle(color: Colors.white54),
                             filled: true,
                             fillColor: Colors.black38,
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
@@ -437,9 +400,9 @@ class ActiveLiveRoomScreen extends StatelessWidget {
                       const SizedBox(width: 10),
                       FloatingActionButton(
                         mini: true,
-                        backgroundColor: const Color(0xFFFFD700),
+                        backgroundColor: Colors.amber,
                         child: const Icon(Icons.card_giftcard, color: Colors.black),
-                        onPressed: () => _showGiftPanel(context),
+                        onPressed: _showGiftsPanel,
                       ),
                     ],
                   ),
@@ -453,46 +416,28 @@ class ActiveLiveRoomScreen extends StatelessWidget {
   }
 }
 
-class AudioRoomsScreen extends StatelessWidget {
-  const AudioRoomsScreen({Key? key}) : super(key: key);
+// 4. رومات الصوت الجماعية
+class AudioChatRoomsScreen extends StatelessWidget {
+  const AudioChatRoomsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("رومات الصوت المباشرة", style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFF190C29),
-      ),
-      body: GridView.builder(
+      appBar: AppBar(title: const Text("رومات الصوت الجماعية", style: TextStyle(color: Colors.white)), backgroundColor: const Color(0xFF190C29)),
+      body: ListView.builder(
         padding: const EdgeInsets.all(16),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: 1.1,
-        ),
-        itemCount: 4,
+        itemCount: 3,
         itemBuilder: (context, index) {
           return Container(
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [Color(0xFF38155E), Color(0xFF1B0B2E)]),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.purpleAccent.withOpacity(0.4)),
-            ),
-            padding: const EdgeInsets.all(12),
-            child: Column(
+            margin: const EdgeInsets.only(bottom: 15),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(color: const Color(0xFF22113B), borderRadius: BorderRadius.circular(16)),
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("روم سهرتنا البنفسجية ✨", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                const Text("المضيف: أحمد كورتام", style: TextStyle(color: Colors.purpleAccent, fontSize: 11)),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.purpleAccent),
-                  onPressed: () {
-                    _showRoomControlModal(context);
-                  },
-                  child: const Text("دخول الروم", style: TextStyle(color: Colors.white, fontSize: 12)),
-                ),
+                Text("روم سهرتنا وسوالف شبابية ✨", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                SizedBox(height: 8),
+                Text("صلاحيات المضيف كاملة (قفل المايك، طرد، كتم)", style: TextStyle(color: Colors.purpleAccent, fontSize: 12)),
               ],
             ),
           );
@@ -500,94 +445,29 @@ class AudioRoomsScreen extends StatelessWidget {
       ),
     );
   }
-
-  void _showRoomControlModal(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF22113B),
-        title: const Text("صلاحيات إدارة الروم", style: TextStyle(color: Colors.white)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.lock, color: Colors.amber),
-              title: const Text("قفل / فتح المقاعد", style: TextStyle(color: Colors.white)),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.person_remove, color: Colors.redAccent),
-              title: const Text("طرد مستخدم مزعج", style: TextStyle(color: Colors.white)),
-              onTap: () {},
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
-class MessagesScreen extends StatelessWidget {
-  const MessagesScreen({Key? key}) : super(key: key);
+// 5. المحفظة والشحن والسحب اليومي
+class WalletAndDailyWithdrawScreen extends StatelessWidget {
+  const WalletAndDailyWithdrawScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("الرسائل الخاصة", style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFF190C29),
-      ),
-      body: ListView.builder(
-        itemCount: 5,
-        itemBuilder: (context, index) {
-          return ListTile(
-            leading: const CircleAvatar(backgroundColor: Colors.purpleAccent, child: Icon(Icons.person, color: Colors.white)),
-            title: const Text("مستخدم مميز", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            subtitle: const Text("أهلاً بك، هل يمكننا التحدث؟", style: TextStyle(color: Colors.white54)),
-            trailing: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(color: Colors.amber, borderRadius: BorderRadius.circular(10)),
-              child: const Text("VIP 2", style: TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold)),
-            ),
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("ملاحظة: خاصية الرد والمراسلة الحرة تتطلب اشتراك VIP 1 كحد أدنى!")),
-              );
-            },
-          );
-        },
-      ),
-    );
-  }
-}
-
-class WalletStoreScreen extends StatelessWidget {
-  const WalletStoreScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("المحفظة والشحن والأرباح", style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFF190C29),
-      ),
+      appBar: AppBar(title: const Text("المحفظة (شحن وسحب يومي)", style: TextStyle(color: Colors.white)), backgroundColor: const Color(0xFF190C29)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             Container(
-              width: double.infinity,
               padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [Color(0xFF6A0DAD), Color(0xFF3B185F)]),
-                borderRadius: BorderRadius.circular(20),
-              ),
+              decoration: BoxDecoration(gradient: const LinearGradient(colors: [Color(0xFF6A0DAD), Color(0xFF3B185F)]), borderRadius: BorderRadius.circular(20)),
               child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("رصيدك الحالي من الكوينز", style: TextStyle(color: Colors.white70)),
+                  Text("رصيد الأرباح المتاح للسحب اليومي", style: TextStyle(color: Colors.white70)),
                   SizedBox(height: 8),
-                  Text("💎 142,500 كوينز (1,425\$)", style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white)),
+                  Text("💎 50,000 كوينز (\$500)", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.amber)),
                 ],
               ),
             ),
@@ -596,118 +476,56 @@ class WalletStoreScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF8A2BE2)),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.purple),
                     onPressed: () {},
-                    child: const Text("شحن كوينز", style: TextStyle(color: Colors.white)),
+                    child: const Text("شحن رصيد كوينز", style: TextStyle(color: Colors.white)),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
-                    onPressed: () {
-                      _showWithdrawDialog(context);
-                    },
-                    child: const Text("سحب الأرباح", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                    onPressed: () {},
+                    child: const Text("طلب سحب يومي", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  void _showWithdrawDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF22113B),
-        title: const Text("سحب الأرباح (كاش / بنك)", style: TextStyle(color: Colors.white)),
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("اختر طريقة السحب المناسبة لأرباح الوكالة أو المضيف:", style: TextStyle(color: Colors.white70, fontSize: 13)),
-            SizedBox(height: 15),
-            ListTile(
-              leading: Icon(Icons.phone_android, color: Colors.amber),
-              title: Text("محفظة إلكترونية (فودافون كاش / إنستا باي)", style: TextStyle(color: Colors.white, fontSize: 12)),
-            ),
-            ListTile(
-              leading: Icon(Icons.account_balance, color: Colors.amber),
-              title: Text("حساب بنكي / CIB Prime", style: TextStyle(color: Colors.white, fontSize: 12)),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("إغلاق", style: TextStyle(color: Colors.purpleAccent))),
-        ],
       ),
     );
   }
 }
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+// 6. الملف الشخصي الحقيقي للمستخدم المسجل
+class UserProfileScreen extends StatelessWidget {
+  final UserProfileData userData;
+  const UserProfileScreen({Key? key, required this.userData}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("الملف الشخصي والوكالات والـ VIP", style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFF190C29),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Center(
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.amber, width: 3),
-                  ),
-                  child: const CircleAvatar(radius: 40, backgroundColor: Colors.purple),
-                ),
-                const SizedBox(height: 10),
-                const Text("أحمد فارد كورتام", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 4),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(color: Colors.amber, borderRadius: BorderRadius.circular(20)),
-                  child: const Text("👑 VIP 10 الملكي", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12)),
-                ),
-              ],
+      appBar: AppBar(title: const Text("الملف الشخصي", style: TextStyle(color: Colors.white)), backgroundColor: const Color(0xFF190C29)),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const CircleAvatar(radius: 45, backgroundColor: Colors.purpleAccent, child: Icon(Icons.person, size: 55, color: Colors.white)),
+            const SizedBox(height: 15),
+            Text(userData.name, style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text("العمر: ${userData.age} | الدولة: ${userData.country}", style: const TextStyle(color: Colors.white70, fontSize: 14)),
+            const SizedBox(height: 5),
+            Text(userData.email, style: const TextStyle(color: Colors.white54, fontSize: 12)),
+            const SizedBox(height: 15),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              decoration: BoxDecoration(color: Colors.amber, borderRadius: BorderRadius.circular(20)),
+              child: const Text("👑 VIP المستوى 10", style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold)),
             ),
-          ),
-          const SizedBox(height: 30),
-          Card(
-            color: const Color(0xFF1E0E35),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            child: ListTile(
-              leading: const Icon(Icons.business_center, color: Colors.purpleAccent),
-              title: const Text("الوكالات وإدارة المضيفين", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              subtitle: const Text("قبول أو رفض الانضمام للوكالة واحتساب نسب التارجت", style: TextStyle(color: Colors.white60, fontSize: 11)),
-              trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16),
-              onTap: () {},
-            ),
-          ),
-          const SizedBox(height: 10),
-          Card(
-            color: const Color(0xFF1E0E35),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            child: ListTile(
-              leading: const Icon(Icons.workspace_premium, color: Colors.amber),
-              title: const Text("متجر مستويات الـ VIP (1 إلى 10)", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              subtitle: const Text("ترقية حسابك للحصول على إطارات أفخم وتمييز كامل", style: TextStyle(color: Colors.white60, fontSize: 11)),
-              trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16),
-              onTap: () {},
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
