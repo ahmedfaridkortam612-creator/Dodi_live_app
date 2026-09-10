@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 void main() {
-  runApp(const LiveAppStep4());
+  runApp(const LiveAppStep6());
 }
 
-class LiveAppStep4 extends StatelessWidget {
-  const LiveAppStep4({Key? key}) : super(key: key);
+class LiveAppStep6 extends StatelessWidget {
+  const LiveAppStep6({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class LiveAppStep4 extends StatelessWidget {
   }
 }
 
-// 1. شاشة الترحيب (Splash Screen) باسم Dodi Live
+// 1. شاشة الترحيب
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -36,7 +36,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // الانتظار لمدة 3 ثوانٍ ثم الانتقال تلقائياً لشاشة التسجيل
     Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
@@ -60,14 +59,12 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // أيقونة ترحيبية أو شعار التطبيق
               CircleAvatar(
                 radius: 50,
                 backgroundColor: Color(0xFF8A2BE2),
                 child: Icon(Icons.live_tv, size: 50, color: Colors.white),
               ),
               SizedBox(height: 20),
-              // اسم التطبيق الاحترافي
               Text(
                 'Dodi Live',
                 style: TextStyle(
@@ -94,13 +91,15 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 }
 
-// نموذج بيانات المستخدم
+// نموذج بيانات المستخدم مع الكوينز والماس
 class UserProfileModel {
   final String name;
   final String birthDate;
   final String country;
   final String gender;
   final String email;
+  int diamonds; // الماس (للكسب أو الاستبدال)
+  int coins;    // الكوينزات (للعب وإرسال الهدايا)
 
   UserProfileModel({
     required this.name,
@@ -108,6 +107,8 @@ class UserProfileModel {
     required this.country,
     required this.gender,
     required this.email,
+    this.diamonds = 500,  // رصيد ماس افتراضي
+    this.coins = 200,     // رصيد كوينز افتراضي للعب
   });
 }
 
@@ -302,7 +303,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 }
 
-// لوحة التحكم الرئيسية والرومات الحية
+// 3. لوحة التحكم الرئيسية
 class MainDashboard extends StatefulWidget {
   final UserProfileModel user;
   const MainDashboard({Key? key, required this.user}) : super(key: key);
@@ -318,6 +319,7 @@ class _MainDashboardState extends State<MainDashboard> {
   Widget build(BuildContext context) {
     final List<Widget> pages = [
       LiveStreamsFeedScreen(user: widget.user),
+      WalletScreen(user: widget.user),
       ProfileScreen(user: widget.user),
     ];
 
@@ -331,6 +333,7 @@ class _MainDashboardState extends State<MainDashboard> {
         onTap: (index) => setState(() => _currentIndex = index),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.live_tv), label: 'الرومات الحية'),
+          BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet), label: 'المحفظة'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'حسابي'),
         ],
       ),
@@ -338,6 +341,7 @@ class _MainDashboardState extends State<MainDashboard> {
   }
 }
 
+// شاشة الرومات الحية
 class LiveStreamsFeedScreen extends StatelessWidget {
   final UserProfileModel user;
   const LiveStreamsFeedScreen({Key? key, required this.user}) : super(key: key);
@@ -392,9 +396,101 @@ class LiveStreamsFeedScreen extends StatelessWidget {
   }
 }
 
-class ActiveLiveRoom extends StatelessWidget {
+// 4. غرفة البث مع صندوق الهدايا المتكامل
+class ActiveLiveRoom extends StatefulWidget {
   final UserProfileModel user;
   const ActiveLiveRoom({Key? key, required this.user}) : super(key: key);
+
+  @override
+  State<ActiveLiveRoom> createState() => _ActiveLiveRoomState();
+}
+
+class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
+  // دالة إظهار صندوق الهدايا التفاعلي
+  void _openGiftBox() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF1B0F2E),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Container(
+              padding: const EdgeInsets.all(20),
+              height: 320,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.between,
+                    children: [
+                      const Text('🎁 صندوق هدايا Dodi Live', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.amber)),
+                      Text('رصيدك: ${widget.user.coins} كوينز 🪙', style: const TextStyle(color: Colors.white70, fontSize: 13)),
+                    ],
+                  ),
+                  const Divider(color: Colors.white24),
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: GridView.count(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      children: [
+                        _buildGiftItem('وردة 🌹', 10, setModalState),
+                        _buildGiftItem('قلب ❤️', 50, setModalState),
+                        _buildGiftItem('سيارة 🚗', 200, setModalState),
+                        _buildGiftItem('قصر 🏰', 500, setModalState),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildGiftItem(String giftName, int cost, StateSetter setModalState) {
+    return GestureDetector(
+      onTap: () {
+        if (widget.user.coins >= cost) {
+          setState(() {
+            widget.user.coins -= cost;
+          });
+          setModalState(() {});
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('تم إرسال ($giftName) بنجاح! تم خصم $cost كوينز 🪙')),
+          );
+        } else {
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('رصيد الكوينزات لا يكفي، قم بفك الماسات أو شحن رصيدك!')),
+          );
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFF2C164D),
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: Colors.amber.withOpacity(0.5)),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.card_giftcard, size: 35, color: Colors.amber),
+            const SizedBox(height: 5),
+            Text(giftName, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+            Text('$cost كوينز', style: const TextStyle(color: Colors.white70, fontSize: 10)),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -429,15 +525,13 @@ class ActiveLiveRoom extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 10),
+                      // زر فتح صندوق الهدايا داخل اللايف
                       FloatingActionButton(
+                        heroTag: "giftBtn",
                         mini: true,
                         backgroundColor: Colors.amber,
                         child: const Icon(Icons.card_giftcard, color: Colors.black),
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('${user.name} أرسل هدية مميزة في الغرفة! 💎')),
-                          );
-                        },
+                        onPressed: _openGiftBox,
                       ),
                     ],
                   ),
@@ -451,6 +545,137 @@ class ActiveLiveRoom extends StatelessWidget {
   }
 }
 
+// 5. شاشة المحفظة واستبدال الماسات إلى كوينزات
+class WalletScreen extends StatefulWidget {
+  final UserProfileModel user;
+  const WalletScreen({Key? key, required this.user}) : super(key: key);
+
+  @override
+  State<WalletScreen> createState() => _WalletScreenState();
+}
+
+class _WalletScreenState extends State<WalletScreen> {
+  // دالة تحويل الماس إلى كوينز (كل 1 ماسة = 2 كوينز مثلاً)
+  void _exchangeDiamondsToCoins(int diamondsToExchange) {
+    if (widget.user.diamonds >= diamondsToExchange) {
+      setState(() {
+        widget.user.diamonds -= diamondsToExchange;
+        widget.user.coins += (diamondsToExchange * 2);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('تم تحويل $diamondsToExchange ماسة إلى ${diamondsToExchange * 2} كوينز بنجاح! 🪙')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('ليس لديك رصيد كافٍ من الماسات للتحويل!')),
+      );
+    }
+  }
+
+  void _rechargeDiamonds(int amount) {
+    setState(() {
+      widget.user.diamonds += amount;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('تم شحن $amount ماسة بنجاح! 💎')),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('محفظة Dodi Live'),
+        backgroundColor: const Color(0xFF1B0F2E),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: ListView(
+          children: [
+            // بطاقة الأرصدة (الكوينز والماس)
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(colors: [Color(0xFF8A2BE2), Color(0xFF4A0E4E)]),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Column(
+                    children: [
+                      const Text('رصيد الكوينز 🪙', style: TextStyle(color: Colors.white70, fontSize: 13)),
+                      const SizedBox(height: 5),
+                      Text('${widget.user.coins}', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.amber)),
+                    ],
+                  ),
+                  Container(height: 40, width: 1, color: Colors.white24),
+                  Column(
+                    children: [
+                      const Text('رصيد الماس 💎', style: TextStyle(color: Colors.white70, fontSize: 13)),
+                      const SizedBox(height: 5),
+                      Text('${widget.user.diamonds}', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.cyanAccent)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 25),
+
+            // قسم فك الماسات إلى كوينزات
+            const Text('فك الماسات إلى كوينزات للعب والهدايا:', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.amber)),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple),
+                  onPressed: () => _exchangeDiamondsToCoins(50),
+                  child: const Text('فك 50 ماسة ➔ 100 كوينز'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo),
+                  onPressed: () => _exchangeDiamondsToCoins(200),
+                  child: const Text('فك 200 ماسة ➔ 400 كوينز'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 25),
+
+            const Text('شحن الماسات الفوري:', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.amber)),
+            const SizedBox(height: 10),
+            _buildRechargeCard(500, '5.00 \$', Colors.purple),
+            _buildRechargeCard(1200, '10.00 \$', Colors.deepPurple),
+            _buildRechargeCard(3000, '25.00 \$', Colors.blueAccent),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRechargeCard(int diamonds, String price, Color color) {
+    return Card(
+      color: const Color(0xFF1B0F2E),
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: ListTile(
+        leading: const CircleAvatar(
+          backgroundColor: Colors.cyanAccent,
+          child: Icon(Icons.diamond, color: Colors.black),
+        ),
+        title: Text('$diamonds ماسة 💎', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        subtitle: const Text('شحن فوري لحسابك', style: TextStyle(color: Colors.white54, fontSize: 12)),
+        trailing: ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: color),
+          onPressed: () => _rechargeDiamonds(diamonds),
+          child: Text(price, style: const TextStyle(color: Colors.white)),
+        ),
+      ),
+    );
+  }
+}
+
+// 6. شاشة الملف الشخصي تعرض رصيد الكوينزات بوضوح
 class ProfileScreen extends StatelessWidget {
   final UserProfileModel user;
   const ProfileScreen({Key? key, required this.user}) : super(key: key);
@@ -478,8 +703,24 @@ class ProfileScreen extends StatelessWidget {
               Text('الدولة: ${user.country}', style: const TextStyle(color: Colors.white70)),
               const SizedBox(height: 5),
               Text('الجنس: ${user.gender}', style: const TextStyle(color: Colors.white70)),
-              const SizedBox(height: 5),
-              Text(user.email, style: const TextStyle(color: Colors.white54, fontSize: 12)),
+              const SizedBox(height: 12),
+              // رصيد الكوينزات والماس ظاهر بوضوح في الصفحة الشخصية
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1B0F2E),
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(color: Colors.amber.withOpacity(0.5)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('الكوينز: ${user.coins} 🪙', style: const TextStyle(color: Colors.amber, fontWeight: FontWeight.bold, fontSize: 15)),
+                    const SizedBox(width: 20),
+                    Text('الماس: ${user.diamonds} 💎', style: const TextStyle(color: Colors.cyanAccent, fontWeight: FontWeight.bold, fontSize: 15)),
+                  ],
+                ),
+              ),
               const SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
