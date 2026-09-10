@@ -24,7 +24,6 @@ class DodiLiveApp extends StatelessWidget {
   }
 }
 
-// 1. شاشة افتتاحية احترافية
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -47,63 +46,53 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.network(
-              'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000&auto=format&fit=crop',
-              fit: BoxFit.cover,
-            ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF2A0845), Color(0xFF0B0410)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.black.withOpacity(0.7), const Color(0xFF1A0B2E).withOpacity(0.9)],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.amber, width: 3),
+                  boxShadow: [
+                    BoxShadow(color: Colors.purpleAccent.withOpacity(0.8), blurRadius: 25, spreadRadius: 5)
+                  ],
+                ),
+                child: const CircleAvatar(
+                  radius: 65,
+                  backgroundColor: Color(0xFF8A2BE2),
+                  child: Icon(Icons.face_3, size: 75, color: Colors.amberAccent),
                 ),
               ),
-            ),
+              const SizedBox(height: 25),
+              const Text(
+                'Dodi Live',
+                style: TextStyle(
+                  fontSize: 38,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.amber,
+                  letterSpacing: 2,
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'عالمك المفضل للبث المباشر والألعاب والدردشة',
+                style: TextStyle(fontSize: 14, color: Colors.white70),
+              ),
+              const SizedBox(height: 40),
+              const CircularProgressIndicator(color: Colors.amber),
+            ],
           ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.amber, width: 2),
-                    boxShadow: [BoxShadow(color: Colors.purple.withOpacity(0.6), blurRadius: 20)],
-                  ),
-                  child: const CircleAvatar(
-                    radius: 55,
-                    backgroundColor: Color(0xFF8A2BE2),
-                    child: Icon(Icons.live_tv, size: 55, color: Colors.white),
-                  ),
-                ),
-                const SizedBox(height: 25),
-                const Text(
-                  'Dodi Live',
-                  style: TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.amber,
-                    letterSpacing: 2,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  'عالمك المفضل للبث المباشر والألعاب والدردشة',
-                  style: TextStyle(fontSize: 14, color: Colors.white70),
-                ),
-                const SizedBox(height: 40),
-                const CircularProgressIndicator(color: Colors.amber),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -131,7 +120,6 @@ class UserProfileModel {
   });
 }
 
-// 2. شاشة تسجيل الحساب (العمر كتابة يدوية)
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
 
@@ -145,34 +133,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _ageController = TextEditingController();
 
   final List<Map<String, String>> _countries = [
-    {'name': 'Afghanistan', 'flag': '🇦🇫'},
-    {'name': 'Algeria', 'flag': '🇩🇿'},
-    {'name': 'Argentina', 'flag': '🇦🇷'},
-    {'name': 'Australia', 'flag': '🇦🇺'},
-    {'name': 'Bahrain', 'flag': '🇧🇭'},
-    {'name': 'Brazil', 'flag': '🇧🇷'},
-    {'name': 'Canada', 'flag': '🇨🇦'},
     {'name': 'Egypt', 'flag': '🇪🇬'},
-    {'name': 'France', 'flag': '🇫🇷'},
-    {'name': 'Germany', 'flag': '🇩🇪'},
-    {'name': 'India', 'flag': '🇮🇳'},
-    {'name': 'Iraq', 'flag': '🇮🇶'},
-    {'name': 'Italy', 'flag': '🇮🇹'},
-    {'name': 'Jordan', 'flag': '🇯🇴'},
-    {'name': 'Kuwait', 'flag': '🇰🇼'},
-    {'name': 'Lebanon', 'flag': '🇱🇧'},
-    {'name': 'Morocco', 'flag': '🇲🇦'},
-    {'name': 'Oman', 'flag': '🇴🇲'},
-    {'name': 'Palestine', 'flag': '🇵🇸'},
-    {'name': 'Qatar', 'flag': '🇶🇦'},
     {'name': 'Saudi Arabia', 'flag': '🇸🇦'},
-    {'name': 'Sudan', 'flag': '🇸🇩'},
-    {'name': 'Syria', 'flag': '🇸🇾'},
-    {'name': 'Tunisia', 'flag': '🇹🇳'},
     {'name': 'United Arab Emirates', 'flag': '🇦🇪'},
-    {'name': 'United Kingdom', 'flag': '🇬🇧'},
+    {'name': 'Jordan', 'flag': '🇯🇴'},
+    {'name': 'Morocco', 'flag': '🇲🇦'},
+    {'name': 'Algeria', 'flag': '🇩🇿'},
+    {'name': 'Iraq', 'flag': '🇮🇶'},
+    {'name': 'Kuwait', 'flag': '🇰🇼'},
     {'name': 'United States', 'flag': '🇺🇸'},
-    {'name': 'Yemen', 'flag': '🇾🇪'},
   ];
 
   String? _selectedCountry;
@@ -182,7 +151,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
     'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
     'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150',
-    'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150',
   ];
   late String _selectedAvatar;
 
@@ -198,7 +166,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         _ageController.text.isEmpty ||
         _emailController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('الرجاء إكمال كافة البيانات (الاسم، العمر، الدولة، البريد)')),
+        const SnackBar(content: Text('الرجاء إكمال كافة البيانات المطلوبة')),
       );
       return;
     }
@@ -274,11 +242,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ),
               ),
               const SizedBox(height: 15),
+              // حقل العمر كتابة يدوية صافي بدون تقويم
               TextField(
                 controller: _ageController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: 'العمر (مثال: 25)',
+                  labelText: 'العمر (اكتب عمرك رقمياً مثل: 25)',
                   filled: true,
                   fillColor: Colors.white.withOpacity(0.05),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
@@ -352,7 +321,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 }
 
-// 3. لوحة التحكم الرئيسية
 class MainDashboard extends StatefulWidget {
   final UserProfileModel user;
   const MainDashboard({Key? key, required this.user}) : super(key: key);
@@ -395,7 +363,6 @@ class _MainDashboardState extends State<MainDashboard> {
   }
 }
 
-// أ. شاشة رومات اللايف
 class HomeFeedScreen extends StatelessWidget {
   final UserProfileModel user;
   const HomeFeedScreen({Key? key, required this.user}) : super(key: key);
@@ -435,37 +402,25 @@ class HomeFeedScreen extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                image: const DecorationImage(
-                  image: NetworkImage('https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=500'),
-                  fit: BoxFit.cover,
-                ),
+                color: Colors.purple.withOpacity(0.3),
+                border: Border.all(color: Colors.amber.withOpacity(0.3)),
               ),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  gradient: LinearGradient(
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Row(
+                    children: const [
+                      CircleAvatar(radius: 12, backgroundColor: Colors.red, child: Icon(Icons.fiber_manual_record, size: 10, color: Colors.white)),
+                      SizedBox(width: 5),
+                      Text("مباشر حر 🔥", style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+                    ],
                   ),
-                ),
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Row(
-                      children: const [
-                        CircleAvatar(radius: 12, backgroundColor: Colors.red, child: Icon(Icons.fiber_manual_record, size: 10, color: Colors.white)),
-                        SizedBox(width: 5),
-                        Text("مباشر حر 🔥", style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Text("مضيف رقم ${index + 1}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
-                    const Text("👁️ 2.4k مشاهد", style: TextStyle(color: Colors.white70, fontSize: 10)),
-                  ],
-                ),
+                  const SizedBox(height: 10),
+                  Text("مضيف رقم ${index + 1}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+                  const Text("👁️ 2.4k مشاهد", style: TextStyle(color: Colors.white70, fontSize: 11)),
+                ],
               ),
             ),
           );
@@ -475,7 +430,6 @@ class HomeFeedScreen extends StatelessWidget {
   }
 }
 
-// ب. غرفة اللايف المتكاملة
 class ActiveLiveRoom extends StatefulWidget {
   final UserProfileModel user;
   final String roomTitle;
@@ -490,18 +444,15 @@ class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
   final List<String?> _seatUsers = ['أحمد', null, 'سارة', null, 'محمد', 'ريم'];
 
   String? _broadcastMessage;
-  String? _broadcastGiftImage;
 
-  void _triggerBigGiftAnnouncement(String sender, String giftImg) {
+  void _triggerBigGiftAnnouncement(String sender) {
     setState(() {
       _broadcastMessage = "$sender أرسل هدية فاخرة كبرى!";
-      _broadcastGiftImage = giftImg;
     });
     Timer(const Duration(seconds: 4), () {
       if (mounted) {
         setState(() {
           _broadcastMessage = null;
-          _broadcastGiftImage = null;
         });
       }
     });
@@ -515,7 +466,7 @@ class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
       builder: (context) {
         return Container(
           padding: const EdgeInsets.all(20),
-          height: 300,
+          height: 280,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -533,9 +484,9 @@ class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                   children: [
-                    _giftCard('وردة فاخرة 🌹', 1000, 'https://cdn-icons-png.flaticon.com/512/2965/2965567.png', false),
-                    _giftCard('سيارة رياضية 🏎️', 25000, 'https://cdn-icons-png.flaticon.com/512/741/741407.png', false),
-                    _giftCard('قصر الأساطير 🏰', 75000, 'https://cdn-icons-png.flaticon.com/512/3067/3067407.png', true),
+                    _giftCard('وردة فاخرة 🌹', 1000, false),
+                    _giftCard('سيارة رياضية 🏎️', 25000, false),
+                    _giftCard('قصر الأساطير 🏰', 75000, true),
                   ],
                 ),
               ),
@@ -546,14 +497,14 @@ class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
     );
   }
 
-  Widget _giftCard(String name, int price, String imgUrl, bool isMega) {
+  Widget _giftCard(String name, int price, bool isMega) {
     return GestureDetector(
       onTap: () {
         Navigator.pop(context);
         if (widget.user.coins >= price) {
           setState(() => widget.user.coins -= price);
           if (price > 50000) {
-            _triggerBigGiftAnnouncement(widget.user.name, imgUrl);
+            _triggerBigGiftAnnouncement(widget.user.name);
           }
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تم إرسال ($name) بنجاح!')));
         } else {
@@ -569,7 +520,7 @@ class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.network(imgUrl, width: 35, height: 35),
+            const Icon(Icons.card_giftcard, size: 35, color: Colors.amber),
             const SizedBox(height: 5),
             Text(name, style: const TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.bold)),
             Text('$price كوينز', style: const TextStyle(fontSize: 9, color: Colors.amber)),
@@ -582,148 +533,130 @@ class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.network('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000&auto=format&fit=crop', fit: BoxFit.cover),
-          ),
-          Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.4)),
-          ),
-          SafeArea(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      backgroundColor: const Color(0xFF0F051D),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
                     children: [
-                      Row(
+                      CircleAvatar(backgroundImage: NetworkImage(widget.user.avatarUrl)),
+                      const SizedBox(width: 8),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          CircleAvatar(backgroundImage: NetworkImage(widget.user.avatarUrl)),
-                          const SizedBox(width: 8),
+                          Text(widget.roomTitle, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                          const Text('ID: 889234 • 3.2k', style: TextStyle(color: Colors.white70, fontSize: 10)),
+                        ],
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ),
+            if (_broadcastMessage != null)
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(colors: [Colors.amber, Colors.deepOrange]),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Text(_broadcastMessage!, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13)),
+              ),
+            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  childAspectRatio: 2.2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                ),
+                itemCount: 6,
+                itemBuilder: (context, index) {
+                  bool hasUser = _seatUsers[index] != null;
+                  bool isMuted = _seatMuted[index];
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _seatMuted[index] = !_seatMuted[index];
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: hasUser ? Colors.purpleAccent : Colors.white24),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            radius: 14,
+                            backgroundColor: Colors.purple,
+                            child: Text('${index + 1}', style: const TextStyle(fontSize: 11, color: Colors.white)),
+                          ),
+                          const SizedBox(width: 6),
                           Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(widget.roomTitle, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                              const Text('ID: 889234 • 3.2k', style: TextStyle(color: Colors.white70, fontSize: 10)),
+                              Text(hasUser ? _seatUsers[index]! : 'مقعد فارغ', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                              Icon(isMuted ? Icons.mic_off : Icons.mic, size: 12, color: isMuted ? Colors.red : Colors.greenAccent),
                             ],
                           ),
                         ],
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.close, color: Colors.white),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ],
-                  ),
-                ),
-                if (_broadcastMessage != null)
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(colors: [Colors.amber, Colors.deepOrange]),
-                      borderRadius: BorderRadius.circular(30),
-                      boxShadow: [BoxShadow(color: Colors.amber.withOpacity(0.8), blurRadius: 10)],
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (_broadcastGiftImage != null) Image.network(_broadcastGiftImage!, width: 30, height: 30),
-                        const SizedBox(width: 10),
-                        Text(_broadcastMessage!, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13)),
-                      ],
-                    ),
-                  ),
-                const Spacer(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      childAspectRatio: 2.2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                    ),
-                    itemCount: 6,
-                    itemBuilder: (context, index) {
-                      bool hasUser = _seatUsers[index] != null;
-                      bool isMuted = _seatMuted[index];
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _seatMuted[index] = !_seatMuted[index];
-                          });
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: hasUser ? Colors.purpleAccent : Colors.white24),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              CircleAvatar(
-                                radius: 14,
-                                backgroundColor: Colors.purple,
-                                child: Text('${index + 1}', style: const TextStyle(fontSize: 11, color: Colors.white)),
-                              ),
-                              const SizedBox(width: 6),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(hasUser ? _seatUsers[index]! : 'مقعد فارغ', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
-                                  Icon(isMuted ? Icons.mic_off : Icons.mic, size: 12, color: isMuted ? Colors.red : Colors.greenAccent),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            hintText: 'اكتب تعليقاً...',
-                            filled: true,
-                            fillColor: Colors.black45,
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      FloatingActionButton(
-                        heroTag: 'giftBtn',
-                        mini: true,
-                        backgroundColor: Colors.amber,
-                        child: const Icon(Icons.card_giftcard, color: Colors.black),
-                        onPressed: _openGiftBox,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'اكتب تعليقاً...',
+                        filled: true,
+                        fillColor: Colors.black45,
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  FloatingActionButton(
+                    heroTag: 'giftBtn',
+                    mini: true,
+                    backgroundColor: Colors.amber,
+                    child: const Icon(Icons.card_giftcard, color: Colors.black),
+                    onPressed: _openGiftBox,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-// ج. الغرف الصوتية
 class VoiceRoomsScreen extends StatelessWidget {
   final UserProfileModel user;
   const VoiceRoomsScreen({Key? key, required this.user}) : super(key: key);
@@ -774,7 +707,6 @@ class VoiceRoomsScreen extends StatelessWidget {
   }
 }
 
-// د. الألعاب
 class GamesHubScreen extends StatelessWidget {
   final UserProfileModel user;
   const GamesHubScreen({Key? key, required this.user}) : super(key: key);
@@ -828,7 +760,6 @@ class GamesHubScreen extends StatelessWidget {
   }
 }
 
-// هـ. المحفظة
 class WalletScreen extends StatefulWidget {
   final UserProfileModel user;
   const WalletScreen({Key? key, required this.user}) : super(key: key);
@@ -910,7 +841,6 @@ class _WalletScreenState extends State<WalletScreen> {
   }
 }
 
-// و. الملف الشخصي
 class ProfileScreen extends StatelessWidget {
   final UserProfileModel user;
   const ProfileScreen({Key? key, required this.user}) : super(key: key);
