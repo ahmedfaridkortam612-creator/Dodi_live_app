@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 void main() {
-  runApp(const LiveAppStep6());
+  runApp(const LiveAppStep7());
 }
 
-class LiveAppStep6 extends StatelessWidget {
-  const LiveAppStep6({Key? key}) : super(key: key);
+class LiveAppStep7 extends StatelessWidget {
+  const LiveAppStep7({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -98,8 +98,8 @@ class UserProfileModel {
   final String country;
   final String gender;
   final String email;
-  int diamonds; // الماس
-  int coins;    // الكوينزات
+  int diamonds;
+  int coins;
 
   UserProfileModel({
     required this.name,
@@ -124,6 +124,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
 
+  // قائمة الدول مرتبة ترتيباً أبجدياً باللغة الإنجليزية بدقة
   final List<Map<String, String>> _countries = [
     {'name': 'Algeria', 'flag': '🇩🇿'},
     {'name': 'Bahrain', 'flag': '🇧🇭'},
@@ -144,6 +145,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     {'name': 'Syria', 'flag': '🇸🇾'},
     {'name': 'Tunisia', 'flag': '🇹🇳'},
     {'name': 'United Arab Emirates', 'flag': '🇦🇪'},
+    {'name': 'United Kingdom', 'flag': '🇬🇧'},
     {'name': 'United States', 'flag': '🇺🇸'},
     {'name': 'Yemen', 'flag': '🇾🇪'},
   ];
@@ -152,13 +154,26 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   DateTime? _selectedDate;
   String _selectedGender = 'ذكر';
 
+  // إصلاح مشكلة فتح التقويم واختيار التاريخ
   Future<void> _pickDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime(2000, 1, 1),
-      firstDate: DateTime(1950),
+      firstDate: DateTime(1920),
       lastDate: DateTime.now(),
-      locale: const Locale('ar'),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: Color(0xFF8A2BE2),
+              onPrimary: Colors.white,
+              surface: Color(0xFF1B0F2E),
+              onSurface: Colors.white,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null) {
       setState(() {
