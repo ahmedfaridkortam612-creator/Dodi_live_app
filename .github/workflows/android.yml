@@ -24,8 +24,9 @@ jobs:
           flutter-version: '3.x'
           channel: 'stable'
 
-      - name: Build APK
+      - name: Get Dependencies & Create Android Structure
         run: |
+          flutter create . --platforms=android --org com.dodi.live
           flutter pub get
           flutter build apk --release
 
