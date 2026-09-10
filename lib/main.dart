@@ -12,24 +12,22 @@ class DodiLiveApp extends StatelessWidget {
     return MaterialApp(
       title: 'Dodi Live',
       debugShowCheckedModeBanner: false,
-      // ثيم بنفسجي فخم واحترافي يغني عن اللون الأسود السطحي
       theme: ThemeData(
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF0F0817), // بنفسجي داكن جداً وفخم
-        primaryColor: const Color(0xFF8A2BE2), // بنفسجي بلوتوثي ساطع
-        colorScheme: ColorScheme.dark(
-          primary: const Color(0xFF9C27B0),
-          secondary: const Color(0xFFFFD700), // ذهبي للهدايا والـ VIP
-          surface: const Color(0xFF1A102F),
+        scaffoldBackgroundColor: const Color(0xFF0F0817),
+        primaryColor: const Color(0xFF8A2BE2),
+        colorScheme: const ColorScheme.dark(
+          primary: Color(0xFF9C27B0),
+          secondary: Color(0xFFFFD700),
+          surface: Color(0xFF1A102F),
         ),
-        fontFamily: 'Cairo', // خط عربي أنيق (تأكد من إضافته لاحقاً في pubspec.yaml إن أردت)
+        fontFamily: 'Cairo',
       ),
       home: const AuthWrapper(),
     );
   }
 }
 
-// نظام التحقق من تسجيل الدخول (إذا لم يسجل الدخول، يتم نقله لصفحة التسجيل)
 class AuthWrapper extends StatefulWidget {
   const AuthWrapper({Key? key}) : super(key: key);
 
@@ -38,7 +36,7 @@ class AuthWrapper extends StatefulWidget {
 }
 
 class _AuthWrapperState extends State<AuthWrapper> {
-  bool isLoggedIn = false; // افتراضياً غير مسجل لتبدأ بشاشة التسجيل الاحترافية
+  bool isLoggedIn = false;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +51,6 @@ class _AuthWrapperState extends State<AuthWrapper> {
   }
 }
 
-// ================= 1. شاشة تسجيل الدخول المبتكرة (إيميل / هاتف / فيسبوك) =================
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key, required this.onLoginSuccess});
   final VoidCallback onLoginSuccess;
@@ -75,7 +72,6 @@ class LoginScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // شعار التطبيق المتألق
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
@@ -94,15 +90,13 @@ class LoginScreen extends StatelessWidget {
                 ),
                 const Text(
                   "عالم البثوث والألعاب والهدايا الفاخرة",
-                  style: TextStyle(fontSize: 14, color: Colors.purple300),
+                  style: TextStyle(fontSize: 14, color: Colors.purpleAccent),
                 ),
                 const SizedBox(height: 40),
-                
-                // حقل الإيميل أو الهاتف
                 TextField(
                   decoration: InputDecoration(
                     hintText: 'البريد الإلكتروني أو رقم الهاتف',
-                    hintStyle: TextStyle(color: Colors.white54),
+                    hintStyle: const TextStyle(color: Colors.white54),
                     filled: true,
                     fillColor: Colors.white.withOpacity(0.05),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
@@ -110,13 +104,11 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                
-                // حقل كلمة المرور
                 TextField(
                   obscureText: true,
                   decoration: InputDecoration(
                     hintText: 'كلمة المرور',
-                    hintStyle: TextStyle(color: Colors.white54),
+                    hintStyle: const TextStyle(color: Colors.white54),
                     filled: true,
                     fillColor: Colors.white.withOpacity(0.05),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
@@ -124,8 +116,6 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                
-                // زر الدخول
                 SizedBox(
                   width: double.infinity,
                   height: 50,
@@ -143,8 +133,6 @@ class LoginScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 const Text("أو الدخول السريع عبر", style: TextStyle(color: Colors.white38, fontSize: 12)),
                 const SizedBox(height: 15),
-                
-                // أزرار التواصل الاجتماعي
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -183,7 +171,6 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-// ================= 2. الشاشة الرئيسية والتنقل بين الأقسام =================
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({Key? key}) : super(key: key);
 
@@ -196,10 +183,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   final List<Widget> _screens = [
     const LiveStreamsFeedScreen(),
-    const AudioRoomsScreen(), // رومات صوتية مع سيطرة المضيف
-    const MessagesScreen(),   // نظام الرسائل وشروط الـ VIP 1 للرد
-    const WalletStoreScreen(),// المحفظة، الشحن، السحب، والكوينز (مع معالجة خطأ الـ $)
-    const ProfileScreen(),    // البروفाइल، الوكالات، الإطارات والـ VIP (حتى VIP 10)
+    const AudioRoomsScreen(),
+    const MessagesScreen(),
+    const WalletStoreScreen(),
+    const ProfileScreen(),
   ];
 
   @override
@@ -225,7 +212,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   }
 }
 
-// ================= 3. شاشة البثوث الحية مع الهدايا المضاعفة والالعاب =================
 class LiveStreamsFeedScreen extends StatelessWidget {
   const LiveStreamsFeedScreen({Key? key}) : super(key: key);
 
@@ -272,7 +258,6 @@ class LiveStreamsFeedScreen extends StatelessWidget {
                       child: Container(color: Colors.purple.withOpacity(0.2)),
                     ),
                   ),
-                  // إطار شخصية فخم للمذيع (VIP 8 مثلاً)
                   Positioned(
                     top: 10,
                     right: 10,
@@ -315,7 +300,6 @@ class LiveStreamsFeedScreen extends StatelessWidget {
   }
 }
 
-// ================= 4. غرفة اللايف الفعالة (مع نظام الهدايا المتعددة والضربات X5 و X100) =================
 class ActiveLiveRoomScreen extends StatelessWidget {
   const ActiveLiveRoomScreen({Key? key}) : super(key: key);
 
@@ -333,7 +317,6 @@ class ActiveLiveRoomScreen extends StatelessWidget {
             children: [
               const Text("قسم الهدايا المتحركة (حسب الكوينزات)", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold, fontSize: 16)),
               const SizedBox(height: 15),
-              // خيارات تحديد كمية الهدايا (1, 3, 5, 10, 30, 55)
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -351,7 +334,6 @@ class ActiveLiveRoomScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              // شبكة الهدايا والألعاب (مع تفجير الـ X5 و X100 وأصوات الرنين الوهمية)
               Expanded(
                 child: GridView.count(
                   crossAxisCount: 3,
@@ -395,7 +377,6 @@ class ActiveLiveRoomScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // خلفية البث
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -409,7 +390,6 @@ class ActiveLiveRoomScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // رأس اللايف (معلومات المضيف والإطار الفخم)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                   child: Row(
@@ -439,7 +419,6 @@ class ActiveLiveRoomScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                // شريط التفاعل السفلي وإرسال الهدايا
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
@@ -474,7 +453,6 @@ class ActiveLiveRoomScreen extends StatelessWidget {
   }
 }
 
-// ================= 5. شاشة الرومات الصوتية (سلطات صاحب الروم والمقاعد) =================
 class AudioRoomsScreen extends StatelessWidget {
   const AudioRoomsScreen({Key? key}) : super(key: key);
 
@@ -507,11 +485,10 @@ class AudioRoomsScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text("روم سهرتنا البنفسجية ✨", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                const Text("المضيف: أحمد كورتام", style: TextStyle(color: Colors.purple300, fontSize: 11)),
+                const Text("المضيف: أحمد كورتام", style: TextStyle(color: Colors.purpleAccent, fontSize: 11)),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.purpleAccent),
                   onPressed: () {
-                    // فتح تحكم الروم الصوتي (فتح/قفل الأماكن، طرد الأعضاء، سحب المقاعد)
                     _showRoomControlModal(context);
                   },
                   child: const Text("دخول الروم", style: TextStyle(color: Colors.white, fontSize: 12)),
@@ -550,7 +527,6 @@ class AudioRoomsScreen extends StatelessWidget {
   }
 }
 
-// ================= 6. شاشة الرسائل والدردشة (تقييد الرد والارسال لـ VIP 1 فما فوق) =================
 class MessagesScreen extends StatelessWidget {
   const MessagesScreen({Key? key}) : super(key: key);
 
@@ -574,7 +550,6 @@ class MessagesScreen extends StatelessWidget {
               child: const Text("VIP 2", style: TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold)),
             ),
             onTap: () {
-              // نافذة الشات والتأكد من شرط الـ VIP للإرسال والرد
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text("ملاحظة: خاصية الرد والمراسلة الحرة تتطلب اشتراك VIP 1 كحد أدنى!")),
               );
@@ -586,7 +561,6 @@ class MessagesScreen extends StatelessWidget {
   }
 }
 
-// ================= 7. شاشة المحفظة (شحن الكوينز، وسحب الأرباح كاش أو بنك) =================
 class WalletStoreScreen extends StatelessWidget {
   const WalletStoreScreen({Key? key}) : super(key: key);
 
@@ -601,7 +575,6 @@ class WalletStoreScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // بطاقة رصيد الكوينز (مع التصحيح البرمجي لعلامة الـ $ لتجنب أي أخطاء بناء)
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
@@ -619,16 +592,13 @@ class WalletStoreScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            // أزرار السحب والشحن
             Row(
               children: [
                 Expanded(
-                  child: ElevatedButton.styleFrom(backgroundColor: Colors.purpleAccent).wrap(
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF8A2BE2)),
-                      onPressed: () {},
-                      child: const Text("شحن كوينز", style: TextStyle(color: Colors.white)),
-                    ),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF8A2BE2)),
+                    onPressed: () {},
+                    child: const Text("شحن كوينز", style: TextStyle(color: Colors.white)),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -636,7 +606,6 @@ class WalletStoreScreen extends StatelessWidget {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
                     onPressed: () {
-                      // نافذة السحب (محفظة كاش أو تحويل بنكي للمضيفين والوكلاء)
                       _showWithdrawDialog(context);
                     },
                     child: const Text("سحب الأرباح", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
@@ -679,7 +648,6 @@ class WalletStoreScreen extends StatelessWidget {
   }
 }
 
-// ================= 8. شاشة حسابي والوكالات ونظام الـ VIP (حتى VIP 10) =================
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
@@ -693,7 +661,6 @@ class ProfileScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // معلومات المستخدم مع الإطار الفخم
           Center(
             child: Column(
               children: [
@@ -701,7 +668,7 @@ class ProfileScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.amber, width: 3), // إطار ذهبي متحرك/فخم
+                    border: Border.all(color: Colors.amber, width: 3),
                   ),
                   child: const CircleAvatar(radius: 40, backgroundColor: Colors.purple),
                 ),
@@ -717,8 +684,6 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 30),
-          
-          // قسم تفعيل الوكالة للمضيفين
           Card(
             color: const Color(0xFF1E0E35),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -727,14 +692,10 @@ class ProfileScreen extends StatelessWidget {
               title: const Text("الوكالات وإدارة المضيفين", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               subtitle: const Text("قبول أو رفض الانضمام للوكالة واحتساب نسب التارجت", style: TextStyle(color: Colors.white60, fontSize: 11)),
               trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16),
-              onTap: () {
-                // إعدادات الوكالة للمضيف والمشرف
-              },
+              onTap: () {},
             ),
           ),
           const SizedBox(height: 10),
-
-          // قسم ترقية الـ VIP (من 1 إلى 10 مع إطارات متحركة)
           Card(
             color: const Color(0xFF1E0E35),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
