@@ -23,10 +23,8 @@ jobs:
         flutter-version: '3.19.0'
         cache: true
 
-    - name: Get Dependencies & Create Android Structure
-      run: |
-        flutter create . --org com.dodi.liveapp --platforms=android
-        flutter pub get
+    - name: Install Dependencies
+      run: flutter pub get
 
     - name: Build APK
       run: flutter build apk --release
