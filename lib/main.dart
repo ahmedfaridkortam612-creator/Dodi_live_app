@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 void main() {
-  runApp(const LiveAppStep7());
+  runApp(const DodiLiveApp());
 }
 
-class LiveAppStep7 extends StatelessWidget {
-  const LiveAppStep7({Key? key}) : super(key: key);
+class DodiLiveApp extends StatelessWidget {
+  const DodiLiveApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class LiveAppStep7 extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF0F0817),
+        scaffoldBackgroundColor: const Color(0xFF0B0410),
         primaryColor: const Color(0xFF8A2BE2),
         fontFamily: 'Cairo',
       ),
@@ -24,7 +24,7 @@ class LiveAppStep7 extends StatelessWidget {
   }
 }
 
-// 1. شاشة الترحيب
+// 1. شاشة افتتاحية احترافية بصورة خلفية وتصميم تطبيقات البث الكبرى
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -36,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 3), () {
+    Timer(const Duration(seconds: 4), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const RegistrationScreen()),
@@ -47,57 +47,77 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF240D42), Color(0xFF0F0817)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+      body: Stack(
+        children: [
+          // خلفية احترافية بصورة معتمة قليلاً
+          Positioned.fill(
+            child: Image.network(
+              'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000&auto=format&fit=crop',
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        child: const Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                radius: 50,
-                backgroundColor: Color(0xFF8A2BE2),
-                child: Icon(Icons.live_tv, size: 50, color: Colors.white),
-              ),
-              SizedBox(height: 20),
-              Text(
-                'Dodi Live',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.amber,
-                  letterSpacing: 1.5,
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.black.withOpacity(0.8), const Color(0xFF1A0B2E).withOpacity(0.9)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
               ),
-              SizedBox(height: 10),
-              Text(
-                'عالمك المفضل للبث المباشر والدردشة',
-                style: TextStyle(fontSize: 14, color: Colors.white70),
-              ),
-              SizedBox(height: 30),
-              CircularProgressIndicator(
-                color: Colors.amber,
-              ),
-            ],
+            ),
           ),
-        ),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.amber, width: 2),
+                    boxShadow: [BoxShadow(color: Colors.purple.withOpacity(0.6), blurRadius: 20)],
+                  ),
+                  child: const CircleAvatar(
+                    radius: 55,
+                    backgroundColor: Color(0xFF8A2BE2),
+                    child: Icon(Icons.live_tv, size: 55, color: Colors.white),
+                  ),
+                ),
+                const SizedBox(height: 25),
+                const Text(
+                  'Dodi Live',
+                  style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.amber,
+                    letterSpacing: 2,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'عالمك المفضل للبث المباشر والألعاب والدردشة',
+                  style: TextStyle(fontSize: 14, color: Colors.white70),
+                ),
+                const SizedBox(height: 40),
+                const CircularProgressIndicator(color: Colors.amber),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-// نموذج بيانات المستخدم مع الكوينز والماس
+// نموذج بيانات المستخدم
 class UserProfileModel {
   final String name;
   final String birthDate;
   final String country;
   final String gender;
   final String email;
+  final String avatarUrl;
   int diamonds;
   int coins;
 
@@ -107,12 +127,13 @@ class UserProfileModel {
     required this.country,
     required this.gender,
     required this.email,
-    this.diamonds = 500,
-    this.coins = 200,
+    required this.avatarUrl,
+    this.diamonds = 1200,
+    this.coins = 50000,
   });
 }
 
-// 2. شاشة التسجيل
+// 2. شاشة تسجيل حساب جديد مع اختيار الصورة والدول كاملة أبجدياً
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
 
@@ -124,15 +145,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
 
-  // قائمة الدول مرتبة ترتيباً أبجدياً باللغة الإنجليزية بدقة
+  // قائمة دول العالم كاملة مرتبة أبجدياً باللغة الإنجليزية بدقة مع الأعلام
   final List<Map<String, String>> _countries = [
+    {'name': 'Afghanistan', 'flag': '🇦🇫'},
     {'name': 'Algeria', 'flag': '🇩🇿'},
+    {'name': 'Argentina', 'flag': '🇦🇷'},
+    {'name': 'Australia', 'flag': '🇦🇺'},
     {'name': 'Bahrain', 'flag': '🇧🇭'},
+    {'name': 'Brazil', 'flag': '🇧🇷'},
     {'name': 'Canada', 'flag': '🇨🇦'},
     {'name': 'Egypt', 'flag': '🇪🇬'},
     {'name': 'France', 'flag': '🇫🇷'},
     {'name': 'Germany', 'flag': '🇩🇪'},
+    {'name': 'India', 'flag': '🇮🇳'},
     {'name': 'Iraq', 'flag': '🇮🇶'},
+    {'name': 'Italy', 'flag': '🇮🇹'},
     {'name': 'Jordan', 'flag': '🇯🇴'},
     {'name': 'Kuwait', 'flag': '🇰🇼'},
     {'name': 'Lebanon', 'flag': '🇱🇧'},
@@ -153,15 +180,29 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   String? _selectedCountry;
   DateTime? _selectedDate;
   String _selectedGender = 'ذكر';
+  
+  // صور افتراضية للاختيار منها للحساب
+  final List<String> _avatarOptions = [
+    'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
+    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
+    'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150',
+    'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150',
+  ];
+  late String _selectedAvatar;
 
-  // إصلاح مشكلة فتح التقويم واختيار التاريخ
+  @override
+  void initState() {
+    super.initState();
+    _selectedAvatar = _avatarOptions[0];
+  }
+
   Future<void> _pickDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime(2000, 1, 1),
+      initialDate: _selectedDate ?? DateTime(2000, 1, 1),
       firstDate: DateTime(1920),
       lastDate: DateTime.now(),
-      builder: (context, child) {
+      builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: const ColorScheme.dark(
@@ -170,8 +211,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               surface: Color(0xFF1B0F2E),
               onSurface: Colors.white,
             ),
+            dialogBackgroundColor: const Color(0xFF1B0F2E),
           ),
-          child: child!,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 340, maxHeight: 500),
+              child: child!,
+            ),
+          ),
         );
       },
     );
@@ -188,7 +235,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         _selectedDate == null ||
         _emailController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('الرجاء تعبئة جميع الحقول واختيار الدولة وتاريخ الميلاد')),
+        const SnackBar(content: Text('الرجاء إكمال كافة البيانات واختيار الدولة وتاريخ الميلاد')),
       );
       return;
     }
@@ -201,13 +248,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       country: _selectedCountry!,
       gender: _selectedGender,
       email: _emailController.text.trim(),
+      avatarUrl: _selectedAvatar,
     );
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-        builder: (context) => MainDashboard(user: user),
-      ),
+      MaterialPageRoute(builder: (context) => MainDashboard(user: user)),
     );
   }
 
@@ -215,110 +261,149 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('تسجيل حساب جديد - Dodi Live'),
-        backgroundColor: const Color(0xFF1B0F2E),
+        title: const Text('تسجيل حساب جديد - Dodi Live', style: TextStyle(fontSize: 18)),
+        backgroundColor: const Color(0xFF150824),
+        elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: ListView(
-          children: [
-            const Text(
-              'أدخل بياناتك الشخصية:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.amber),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(labelText: 'الاسم بالكامل', border: OutlineInputBorder()),
-            ),
-            const SizedBox(height: 15),
-            InkWell(
-              onTap: () => _pickDate(context),
-              child: InputDecorator(
-                decoration: const InputDecoration(labelText: 'تاريخ الميلاد', border: OutlineInputBorder()),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _selectedDate == null
-                          ? 'اختر تاريخ الميلاد (السنة / الشهر / اليوم)'
-                          : '${_selectedDate!.year}/${_selectedDate!.month}/${_selectedDate!.day}',
-                      style: TextStyle(color: _selectedDate == null ? Colors.white54 : Colors.white),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF150824), Color(0xFF0B0410)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: ListView(
+            children: [
+              const Text('اختر صورتك الشخصية:', style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: 70,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _avatarOptions.length,
+                  itemBuilder: (context, index) {
+                    bool isSelected = _selectedAvatar == _avatarOptions[index];
+                    return GestureDetector(
+                      onTap: () => setState(() => _selectedAvatar = _avatarOptions[index]),
+                      child: Container(
+                        margin: const EdgeInsets.only(right: 12),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: isSelected ? Colors.amber : Colors.transparent, width: 3),
+                        ),
+                        child: CircleAvatar(
+                          radius: 30,
+                          backgroundImage: NetworkImage(_avatarOptions[index]),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _nameController,
+                decoration: InputDecoration(
+                  labelText: 'الاسم بالكامل',
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.05),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                ),
+              ),
+              const SizedBox(height: 15),
+              InkWell(
+                onTap: () => _pickDate(context),
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: 'تاريخ الميلاد',
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.05),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _selectedDate == null ? 'اختر تاريخ الميلاد' : '${_selectedDate!.year}/${_selectedDate!.month}/${_selectedDate!.day}',
+                        style: TextStyle(color: _selectedDate == null ? Colors.white54 : Colors.white),
+                      ),
+                      const Icon(Icons.calendar_today, color: Colors.purpleAccent),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 15),
+              DropdownButtonFormField<String>(
+                dropdownColor: const Color(0xFF1B0F2E),
+                decoration: InputDecoration(
+                  labelText: 'اختر الدولة',
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.05),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                ),
+                value: _selectedCountry,
+                items: _countries.map((country) {
+                  return DropdownMenuItem<String>(
+                    value: country['name'],
+                    child: Text('${country['flag']}  ${country['name']}'),
+                  );
+                }).toList(),
+                onChanged: (val) => setState(() => _selectedCountry = val),
+              ),
+              const SizedBox(height: 15),
+              const Text('الجنس:', style: TextStyle(color: Colors.white70)),
+              Row(
+                children: [
+                  Expanded(
+                    child: RadioListTile<String>(
+                      title: const Text('ذكر 👨'),
+                      value: 'ذكر',
+                      groupValue: _selectedGender,
+                      onChanged: (val) => setState(() => _selectedGender = val!),
                     ),
-                    const Icon(Icons.calendar_today, color: Colors.purpleAccent),
-                  ],
+                  ),
+                  Expanded(
+                    child: RadioListTile<String>(
+                      title: const Text('أنثى 👩'),
+                      value: 'أنثى',
+                      groupValue: _selectedGender,
+                      onChanged: (val) => setState(() => _selectedGender = val!),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  labelText: 'البريد الإلكتروني',
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.05),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
                 ),
               ),
-            ),
-            const SizedBox(height: 15),
-            DropdownButtonFormField<String>(
-              dropdownColor: const Color(0xFF1B0F2E),
-              decoration: const InputDecoration(labelText: 'اختر الدولة', border: OutlineInputBorder()),
-              value: _selectedCountry,
-              items: _countries.map((country) {
-                return DropdownMenuItem<String>(
-                  value: country['name'],
-                  child: Text('${country['flag']}  ${country['name']}'),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedCountry = value;
-                });
-              },
-            ),
-            const SizedBox(height: 15),
-            const Text('الجنس:', style: TextStyle(color: Colors.white70, fontSize: 14)),
-            Row(
-              children: [
-                Expanded(
-                  child: RadioListTile<String>(
-                    title: const Text('ذكر 👨'),
-                    value: 'ذكر',
-                    groupValue: _selectedGender,
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedGender = value!;
-                      });
-                    },
-                  ),
+              const SizedBox(height: 25),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF8A2BE2),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                 ),
-                Expanded(
-                  child: RadioListTile<String>(
-                    title: const Text('أنثى 👩'),
-                    value: 'أنثى',
-                    groupValue: _selectedGender,
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedGender = value!;
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: 'البريد الإلكتروني', border: OutlineInputBorder()),
-            ),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF8A2BE2),
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                onPressed: _submitData,
+                child: const Text('دخول عالم Dodi Live 🚀', style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold)),
               ),
-              onPressed: _submitData,
-              child: const Text('حفظ والدخول للتطبيق', style: TextStyle(fontSize: 16, color: Colors.white)),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-// 3. لوحة التحكم الرئيسية
+// 3. لوحة التحكم الرئيسية (رومات مرئية، غرف صوتية، ألعاب، محفظة، بروفايل)
 class MainDashboard extends StatefulWidget {
   final UserProfileModel user;
   const MainDashboard({Key? key, required this.user}) : super(key: key);
@@ -333,7 +418,9 @@ class _MainDashboardState extends State<MainDashboard> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = [
-      LiveStreamsFeedScreen(user: widget.user),
+      HomeFeedScreen(user: widget.user),
+      VoiceRoomsScreen(user: widget.user),
+      GamesHubScreen(user: widget.user),
       WalletScreen(user: widget.user),
       ProfileScreen(user: widget.user),
     ];
@@ -342,12 +429,15 @@ class _MainDashboardState extends State<MainDashboard> {
       body: pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        backgroundColor: const Color(0xFF140B22),
+        backgroundColor: const Color(0xFF10061B),
         selectedItemColor: Colors.amber,
         unselectedItemColor: Colors.white54,
-        onTap: (index) => setState(() => _currentIndex = index),
+        type: BottomNavigationBarType.fixed,
+        onTap: (idx) => setState(() => _currentIndex = idx),
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.live_tv), label: 'الرومات الحية'),
+          BottomNavigationBarItem(icon: Icon(Icons.live_tv), label: 'اللايف'),
+          BottomNavigationBarItem(icon: Icon(Icons.mic), label: 'الصوتي'),
+          BottomNavigationBarItem(icon: Icon(Icons.games), label: 'الألعاب'),
           BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet), label: 'المحفظة'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'حسابي'),
         ],
@@ -356,50 +446,75 @@ class _MainDashboardState extends State<MainDashboard> {
   }
 }
 
-// شاشة الرومات الحية
-class LiveStreamsFeedScreen extends StatelessWidget {
+// أ. شاشة رومات اللايف المرئي مع 6 مقاعد جيستات ومايكات وتنبيه الهدية الكبرى
+class HomeFeedScreen extends StatelessWidget {
   final UserProfileModel user;
-  const LiveStreamsFeedScreen({Key? key, required this.user}) : super(key: key);
+  const HomeFeedScreen({Key? key, required this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('مرحباً في Dodi Live، ${user.name} 👋'),
-        backgroundColor: const Color(0xFF1B0F2E),
+        title: Text('مرحباً، ${user.name} 🔥'),
+        backgroundColor: const Color(0xFF150824),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add_box, color: Colors.amber),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ActiveLiveRoom(user: user, roomTitle: 'بثي المباشر المميز')));
+            },
+          )
+        ],
       ),
       body: GridView.builder(
         padding: const EdgeInsets.all(12),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: 0.75,
+          childAspectRatio: 0.78,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
         ),
-        itemCount: 4,
+        itemCount: 6,
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ActiveLiveRoom(user: user)),
+                MaterialPageRoute(builder: (context) => ActiveLiveRoom(user: user, roomTitle: 'غرفة بث مباشر رقم ${index + 1}')),
               );
             },
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                gradient: const LinearGradient(colors: [Color(0xFF3B185F), Color(0xFF1F0D35)]),
-                border: Border.all(color: Colors.purpleAccent.withOpacity(0.4)),
+                image: DecorationImage(
+                  image: NetworkImage('https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=500'),
+                  fit: BoxFit.cover,
+                ),
               ),
-              child: const Padding(
-                padding: EdgeInsets.all(12.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  gradient: LinearGradient(
+                    colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                ),
+                padding: const EdgeInsets.all(10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text("غرفة بث مباشر 🔥", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
-                    SizedBox(height: 4),
-                    Text("مضيف مميز • 1.2k مشاهد", style: TextStyle(color: Colors.white70, fontSize: 10)),
+                    Row(
+                      children: const [
+                        CircleAvatar(radius: 12, backgroundColor: Colors.red, child: Icon(Icons.fiber_manual_record, size: 10, color: Colors.white)),
+                        SizedBox(width: 5),
+                        Text("مباشر حر 🔥", style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Text("مضيف رقم ${index + 1}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                    const Text("👁️ 2.4k مشاهد", style: TextStyle(color: Colors.white70, fontSize: 10)),
                   ],
                 ),
               ),
@@ -411,121 +526,240 @@ class LiveStreamsFeedScreen extends StatelessWidget {
   }
 }
 
-// 4. غرفة البث مع صندوق الهدايا المتكامل
+// ب. غرفة اللايف المتكاملة (6 جيستات، مايكات، ألعاب، وشريط الهدايا الكبرى >50 ألف)
 class ActiveLiveRoom extends StatefulWidget {
   final UserProfileModel user;
-  const ActiveLiveRoom({Key? key, required this.user}) : super(key: key);
+  final String roomTitle;
+  const ActiveLiveRoom({Key? key, required this.user, required this.roomTitle}) : super(key: key);
 
   @override
   State<ActiveLiveRoom> createState() => _ActiveLiveRoomState();
 }
 
 class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
+  // حالة المايكات للـ 6 مقاعد في اللايف
+  final List<bool> _seatMuted = [false, true, false, true, false, false];
+  final List<String?> _seatUsers = ['أحمد', null, 'سارة', null, 'محمد', 'ريم'];
+
+  // شريط الهدية الكبرى المميز (> 50k)
+  String? _broadcastMessage;
+  String? _broadcastGiftImage;
+
+  void _triggerBigGiftAnnouncement(String sender, String giftImg) {
+    setState(() {
+      _broadcastMessage = "$sender أرسل هدية فاخرة كبرى!";
+      _broadcastGiftImage = giftImg;
+    });
+    // يختفي الشريط بعد 4 ثواني
+    Timer(const Duration(seconds: 4), () {
+      if (mounted) {
+        setState(() {
+          _broadcastMessage = null;
+          _broadcastGiftImage = null;
+        });
+      }
+    });
+  }
+
   void _openGiftBox() {
     showModalBottomSheet(
       context: context,
       backgroundColor: const Color(0xFF1B0F2E),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setModalState) {
-            return Container(
-              padding: const EdgeInsets.all(20),
-              height: 320,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        return Container(
+          padding: const EdgeInsets.all(20),
+          height: 300,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('🎁 صندوق هدايا Dodi Live', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.amber)),
-                      Text('رصيدك: ${widget.user.coins} كوينز 🪙', style: const TextStyle(color: Colors.white70, fontSize: 13)),
-                    ],
-                  ),
-                  const Divider(color: Colors.white24),
-                  const SizedBox(height: 10),
-                  Expanded(
-                    child: GridView.count(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      children: [
-                        _buildGiftItem('وردة 🌹', 10, setModalState),
-                        _buildGiftItem('قلب ❤️', 50, setModalState),
-                        _buildGiftItem('سيارة 🚗', 200, setModalState),
-                        _buildGiftItem('قصر 🏰', 500, setModalState),
-                      ],
-                    ),
-                  ),
+                  const Text('🎁 صندوق الهدايا الملكية', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.amber)),
+                  Text('رصيدك: ${widget.user.coins} 🪙', style: const TextStyle(color: Colors.white70)),
                 ],
               ),
-            );
-          },
+              const Divider(color: Colors.white24),
+              Expanded(
+                child: GridView.count(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  children: [
+                    _giftCard('وردة فاخرة 🌹', 1000, 'https://cdn-icons-png.flaticon.com/512/2965/2965567.png', false),
+                    _giftCard('سيارة رياضية 🏎️', 25000, 'https://cdn-icons-png.flaticon.com/512/741/741407.png', false),
+                    _giftCard('قصر الأساطير 🏰', 75000, 'https://cdn-icons-png.flaticon.com/512/3067/3067407.png', true), // أكبر من 50 ألف
+                  ],
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
   }
 
-  Widget _buildGiftItem(String giftName, int cost, StateSetter setModalState) {
+  Widget _giftCard(String name, int price, String imgUrl, bool isMega) {
     return GestureDetector(
       onTap: () {
-        if (widget.user.coins >= cost) {
-          setState(() {
-            widget.user.coins -= cost;
-          });
-          setModalState(() {});
-          Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('تم إرسال ($giftName) بنجاح! تم خصم $cost كوينز 🪙')),
-          );
+        Navigator.pop(context);
+        if (widget.user.coins >= price) {
+          setState(() => widget.user.coins -= price);
+          if (isEligibleMegaGift(price)) {
+            _triggerBigGiftAnnouncement(widget.user.name, imgUrl);
+          }
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تم إرسال ($name) بنجاح!')));
         } else {
-          Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('رصيد الكوينزات لا يكفي، قم بفك الماسات أو شحن رصيدك!')),
-          );
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('رصيدك لا يكفي، شحن الكوينز مطلوب!')));
         }
       },
       child: Container(
         decoration: BoxDecoration(
           color: const Color(0xFF2C164D),
           borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: Colors.amber.withOpacity(0.5)),
+          border: Border.all(color: isMega ? Colors.amber : Colors.purpleAccent),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.card_giftcard, size: 35, color: Colors.amber),
+            Image.network(imgUrl, width: 35, height: 35),
             const SizedBox(height: 5),
-            Text(giftName, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
-            Text('$cost كوينز', style: const TextStyle(color: Colors.white70, fontSize: 10)),
+            Text(name, style: const TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.bold)),
+            Text('$price كوينز', style: const TextStyle(fontSize: 9, color: Colors.amber)),
           ],
         ),
       ),
     );
   }
 
+  bool isEligibleMegaGift(int price) {
+    return price > 50000; // الشرط الأساسي لأكبر من 50 ألف كوينز
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('غرفة البث التفاعلية'),
-        backgroundColor: Colors.transparent,
-      ),
       body: Stack(
         children: [
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(colors: [Color(0xFF240D42), Color(0xFF0F0817)], begin: Alignment.topCenter, end: Alignment.bottomCenter),
-            ),
+          // خلفية الفيديو
+          Positioned.fill(
+            child: Image.network('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000&auto=format&fit=crop', fit: BoxFit.cover),
+          ),
+          Positioned.fill(
+            child: Container(color: Colors.black.withOpacity(0.4)),
           ),
           SafeArea(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                // شريط معلومات المضيف والأعلى
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          CircleAvatar(backgroundImage: NetworkImage(widget.user.avatarUrl)),
+                          const SizedBox(width: 8),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(widget.roomTitle, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                              const Text('ID: 889234 • 3.2k', style: TextStyle(color: Colors.white70, fontSize: 10)),
+                            ],
+                          ),
+                        ],
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close, color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // شريط إعلان الهدية الكبرى المتحرك أعلى الشاشة (> 50k)
+                if (_broadcastMessage != null)
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(colors: [Colors.amber, Colors.deepOrange]),
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: [BoxShadow(color: Colors.amber.withOpacity(0.8), blurRadius: 10)],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (_broadcastGiftImage != null) Image.network(_broadcastGiftImage!, width: 30, height: 30),
+                        const SizedBox(width: 10),
+                        Text(_broadcastMessage!, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13)),
+                      ],
+                    ),
+                  ),
+
+                const Spacer(),
+
+                // الـ 6 مقاعد (جيستات) الخاصة باللايف للحديث والتفاعل مع غلق وفتح المايك
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      childAspectRatio: 2.2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                    ),
+                    itemCount: 6,
+                    itemBuilder: (context, index) {
+                      bool hasUser = _seatUsers[index] != null;
+                      bool isMuted = _seatMuted[index];
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            // تبديل حالة المايك عند الضغط على المقعد
+                            _seatMuted[index] = !_seatMuted[index];
+                          });
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: hasUser ? Colors.purpleAccent : Colors.white24),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircleAvatar(
+                                radius: 14,
+                                backgroundColor: Colors.purple,
+                                child: Text('${index + 1}', style: const TextStyle(fontSize: 11, color: Colors.white)),
+                              ),
+                              const SizedBox(width: 6),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(hasUser ? _seatUsers[index]! : 'مقعد فارغ', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                                  Icon(isMuted ? Icons.mic_off : Icons.mic, size: 12, color: isMuted ? Colors.red : Colors.greenAccent),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                // شريط المحادثة وأزرار التفاعل والهدايا
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
                   child: Row(
                     children: [
                       Expanded(
@@ -533,14 +767,14 @@ class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
                           decoration: InputDecoration(
                             hintText: 'اكتب تعليقاً...',
                             filled: true,
-                            fillColor: Colors.black38,
+                            fillColor: Colors.black45,
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
                           ),
                         ),
                       ),
                       const SizedBox(width: 10),
                       FloatingActionButton(
-                        heroTag: "giftBtn",
+                        heroTag: 'giftBtn',
                         mini: true,
                         backgroundColor: Colors.amber,
                         child: const Icon(Icons.card_giftcard, color: Colors.black),
@@ -558,7 +792,112 @@ class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
   }
 }
 
-// 5. شاشة المحفظة واستبدال الماسات إلى كوينزات
+// ج. الغرف الصوتية (Voice Rooms)
+class VoiceRoomsScreen extends StatelessWidget {
+  final UserProfileModel user;
+  const VoiceRoomsScreen({Key? key, required this.user}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('غرف الصوت التفاعلية 🎙️'), backgroundColor: const Color(0xFF150824)),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(15),
+        itemCount: 5,
+        itemBuilder: (context, index) {
+          return Container(
+            margin: const EdgeInsets.only(bottom: 15),
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(colors: [Color(0xFF2E124F), Color(0xFF150824)]),
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: Colors.purple.withOpacity(0.4)),
+            ),
+            child: Row(
+              children: [
+                const CircleAvatar(radius: 30, backgroundColor: Colors.amber, child: Icon(Icons.mic, color: Colors.black, size: 30)),
+                const SizedBox(width: 15),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('سهرة طرب وغناء رقم ${index + 1}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
+                      const SizedBox(height: 5),
+                      const Text('🎤 8 متحدثين • 120 مستمع', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    ],
+                  ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF8A2BE2)),
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم الانضمام للغرفة الصوتية بنجاح')));
+                  },
+                  child: const Text('دخول'),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// د. قسم الألعاب التفاعلية بالكوينزات (Games Hub)
+class GamesHubScreen extends StatelessWidget {
+  final UserProfileModel user;
+  const GamesHubScreen({Key? key, required this.user}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('مركز الألعاب التفاعلية 🎮'), backgroundColor: const Color(0xFF150824)),
+      body: GridView.count(
+        padding: const EdgeInsets.all(15),
+        crossAxisCount: 2,
+        crossAxisSpacing: 15,
+        mainAxisSpacing: 15,
+        children: [
+          _gameCard(context, 'لعبة الحظ السعيد 🎰', 'العب واربح أضعاف الكوينزات', Colors.deepPurple),
+          _gameCard(context, 'تحدي المعارك ⚔️', 'نافس الأصدقاء بالبث المباشر', Colors.indigo),
+          _gameCard(context, 'عجلة الحظ الملكية 🎡', 'لف العجلة واكسب جوائز ضخمة', Colors.purple),
+          _gameCard(context, 'لعبة التخمين 🔮', 'اختبر ذكائك واكسب الماسات', Colors.deepOrange),
+        ],
+      ),
+    );
+  }
+
+  Widget _gameCard(BuildContext context, String title, String desc, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.amber.withOpacity(0.5)),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.sports_esports, size: 45, color: Colors.amber),
+          const SizedBox(height: 10),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white), textAlign: TextAlign.center),
+          const SizedBox(height: 5),
+          Text(desc, style: const TextStyle(fontSize: 10, color: Colors.white70), textAlign: TextAlign.center),
+          const Spacer(),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, foregroundColor: Colors.black, minimumSize: const Size(double.infinity, 30)),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('جاري بدء تشغيل $title...')));
+            },
+            child: const Text('العب الآن', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// هـ. المحفظة (الشحن والسحب)
 class WalletScreen extends StatefulWidget {
   final UserProfileModel user;
   const WalletScreen({Key? key, required this.user}) : super(key: key);
@@ -568,122 +907,79 @@ class WalletScreen extends StatefulWidget {
 }
 
 class _WalletScreenState extends State<WalletScreen> {
-  void _exchangeDiamondsToCoins(int diamondsToExchange) {
-    if (widget.user.diamonds >= diamondsToExchange) {
+  void _exchangeDiamonds(int amount) {
+    if (widget.user.diamonds >= amount) {
       setState(() {
-        widget.user.diamonds -= diamondsToExchange;
-        widget.user.coins += (diamondsToExchange * 2);
+        widget.user.diamonds -= amount;
+        widget.user.coins += (amount * 3);
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('تم تحويل $diamondsToExchange ماسة إلى ${diamondsToExchange * 2} كوينز بنجاح! 🪙')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تم تحويل $amount ماسة إلى ${amount * 3} كوينز بنجاح!')));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('ليس لديك رصيد كافٍ من الماسات للتحويل!')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const ScanBar(content: Text('رصيد الماس لا يكفي')));
     }
-  }
-
-  void _rechargeDiamonds(int amount) {
-    setState(() {
-      widget.user.diamonds += amount;
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('تم شحن $amount ماسة بنجاح! 💎')),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('محفظة Dodi Live'),
-        backgroundColor: const Color(0xFF1B0F2E),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: ListView(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [Color(0xFF8A2BE2), Color(0xFF4A0E4E)]),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Column(
-                    children: [
-                      const Text('رصيد الكوينز 🪙', style: TextStyle(color: Colors.white70, fontSize: 13)),
-                      const SizedBox(height: 5),
-                      Text('${widget.user.coins}', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.amber)),
-                    ],
-                  ),
-                  Container(height: 40, width: 1, color: Colors.white24),
-                  Column(
-                    children: [
-                      const Text('رصيد الماس 💎', style: TextStyle(color: Colors.white70, fontSize: 13)),
-                      const SizedBox(height: 5),
-                      Text('${widget.user.diamonds}', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.cyanAccent)),
-                    ],
-                  ),
-                ],
-              ),
+      appBar: AppBar(title: const Text('محفظة الأرباح والشحن 💰'), backgroundColor: const Color(0xFF150824)),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(colors: [Color(0xFF8A2BE2), Color(0xFF4A0E4E)]),
+              borderRadius: BorderRadius.circular(20),
             ),
-            const SizedBox(height: 25),
-            const Text('فك الماسات إلى كوينزات للعب والهدايا:', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.amber)),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple),
-                  onPressed: () => _exchangeDiamondsToCoins(50),
-                  child: const Text('فك 50 ماسة ➔ 100 كوينز'),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo),
-                  onPressed: () => _exchangeDiamondsToCoins(200),
-                  child: const Text('فك 200 ماسة ➔ 400 كوينز'),
-                ),
+                Column(children: [
+                  const Text('الكوينز 🪙', style: TextStyle(color: Colors.white70)),
+                  Text('${widget.user.coins}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.amber)),
+                ]),
+                Container(height: 30, width: 1, color: Colors.white24),
+                Column(children: [
+                  const Text('الماس 💎', style: TextStyle(color: Colors.white70)),
+                  Text('${widget.user.diamonds}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.cyanAccent)),
+                ]),
               ],
             ),
-            const SizedBox(height: 25),
-            const Text('شحن الماسات الفوري:', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.amber)),
-            const SizedBox(height: 10),
-            _buildRechargeCard(500, '5.00 \$', Colors.purple),
-            _buildRechargeCard(1200, '10.00 \$', Colors.deepPurple),
-            _buildRechargeCard(3000, '25.00 \$', Colors.blueAccent),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRechargeCard(int diamonds, String price, Color color) {
-    return Card(
-      color: const Color(0xFF1B0F2E),
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: ListTile(
-        leading: const CircleAvatar(
-          backgroundColor: Colors.cyanAccent,
-          child: Icon(Icons.diamond, color: Colors.black),
-        ),
-        title: Text('$diamonds ماسة 💎', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-        subtitle: const Text('شحن فوري لحسابك', style: TextStyle(color: Colors.white54, fontSize: 12)),
-        trailing: ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: color),
-          onPressed: () => _rechargeDiamonds(diamonds),
-          child: Text(price, style: const TextStyle(color: Colors.white)),
-        ),
+          ),
+          const SizedBox(height: 25),
+          const Text('استبدال الماسات إلى كوينز:', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber)),
+          const SizedBox(height: 10),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple),
+            onPressed: () => _exchangeDiamonds(200),
+            child: const Text('تحويل 200 ماسة ➔ 600 كوينز'),
+          ),
+          const SizedBox(height: 25),
+          const Text('شحن فوري:', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber)),
+          const SizedBox(height: 10),
+          ListTile(
+            tileColor: const Color(0xFF1B0F2E),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            leading: const Icon(Icons.diamond, color: Colors.cyanAccent),
+            title: const Text('1000 ماسة 💎'),
+            subtitle: const Text('باقات الشحن السريع الآمن'),
+            trailing: ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.purple),
+              onPressed: () {
+                setState(() => widget.user.diamonds += 1000);
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم الشحن بنجاح!')));
+              },
+              child: const Text('\$10.00'),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-// 6. شاشة الملف الشخصي
+// و. شاشة الملف الشخصي
 class ProfileScreen extends StatelessWidget {
   final UserProfileModel user;
   const ProfileScreen({Key? key, required this.user}) : super(key: key);
@@ -691,51 +987,25 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('الملف الشخصي'), backgroundColor: const Color(0xFF1B0F2E)),
+      appBar: AppBar(title: const Text('الملف الشخصي'), backgroundColor: const Color(0xFF150824)),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const CircleAvatar(
-                radius: 45,
-                backgroundColor: Colors.purple,
-                child: Icon(Icons.person, size: 50, color: Colors.white),
-              ),
+              CircleAvatar(radius: 50, backgroundImage: NetworkImage(user.avatarUrl)),
               const SizedBox(height: 15),
-              Text(user.name, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              Text('تاريخ الميلاد: ${user.birthDate}', style: const TextStyle(color: Colors.white70)),
+              Text(user.name, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.amber)),
               const SizedBox(height: 5),
               Text('الدولة: ${user.country}', style: const TextStyle(color: Colors.white70)),
               const SizedBox(height: 5),
-              Text('الجنس: ${user.gender}', style: const TextStyle(color: Colors.white70)),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1B0F2E),
-                  borderRadius: BorderRadius.circular(15),
-                  border: Border.all(color: Colors.amber.withOpacity(0.5)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('الكوينز: ${user.coins} 🪙', style: const TextStyle(color: Colors.amber, fontWeight: FontWeight.bold, fontSize: 15)),
-                    const SizedBox(width: 20),
-                    Text('الماس: ${user.diamonds} 💎', style: const TextStyle(color: Colors.cyanAccent, fontWeight: FontWeight.bold, fontSize: 15)),
-                  ],
-                ),
-              ),
+              Text('تاريخ الميلاد: ${user.birthDate}', style: const TextStyle(color: Colors.white70)),
               const SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const RegistrationScreen()),
-                  );
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const RegistrationScreen()));
                 },
                 child: const Text('تسجيل الخروج'),
               ),
