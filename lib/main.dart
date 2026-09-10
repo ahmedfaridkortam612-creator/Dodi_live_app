@@ -24,7 +24,7 @@ class DodiLiveApp extends StatelessWidget {
   }
 }
 
-// 1. شاشة افتتاحية احترافية بصورة خلفية وتصميم تطبيقات البث الكبرى
+// 1. شاشة افتتاحية احترافية بصورة خلفية لفتاة تلعب على الموبايل
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -49,7 +49,6 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // خلفية احترافية بصورة معتمة قليلاً
           Positioned.fill(
             child: Image.network(
               'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000&auto=format&fit=crop',
@@ -60,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen> {
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.black.withOpacity(0.8), const Color(0xFF1A0B2E).withOpacity(0.9)],
+                  colors: [Colors.black.withOpacity(0.7), const Color(0xFF1A0B2E).withOpacity(0.9)],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),
@@ -110,7 +109,6 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 }
 
-// نموذج بيانات المستخدم
 class UserProfileModel {
   final String name;
   final String birthDate;
@@ -133,7 +131,7 @@ class UserProfileModel {
   });
 }
 
-// 2. شاشة تسجيل حساب جديد مع اختيار الصورة والدول كاملة أبجدياً
+// 2. شاشة تسجيل الحساب (مع الصورة والدول كاملة أبجدياً)
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
 
@@ -145,7 +143,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
 
-  // قائمة دول العالم كاملة مرتبة أبجدياً باللغة الإنجليزية بدقة مع الأعلام
   final List<Map<String, String>> _countries = [
     {'name': 'Afghanistan', 'flag': '🇦🇫'},
     {'name': 'Algeria', 'flag': '🇩🇿'},
@@ -181,7 +178,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   DateTime? _selectedDate;
   String _selectedGender = 'ذكر';
   
-  // صور افتراضية للاختيار منها للحساب
   final List<String> _avatarOptions = [
     'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
     'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
@@ -202,25 +198,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       initialDate: _selectedDate ?? DateTime(2000, 1, 1),
       firstDate: DateTime(1920),
       lastDate: DateTime.now(),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.dark().copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: Color(0xFF8A2BE2),
-              onPrimary: Colors.white,
-              surface: Color(0xFF1B0F2E),
-              onSurface: Colors.white,
-            ),
-            dialogBackgroundColor: const Color(0xFF1B0F2E),
-          ),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 340, maxHeight: 500),
-              child: child!,
-            ),
-          ),
-        );
-      },
     );
     if (picked != null) {
       setState(() {
@@ -263,7 +240,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       appBar: AppBar(
         title: const Text('تسجيل حساب جديد - Dodi Live', style: TextStyle(fontSize: 18)),
         backgroundColor: const Color(0xFF150824),
-        elevation: 0,
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -403,7 +379,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 }
 
-// 3. لوحة التحكم الرئيسية (رومات مرئية، غرف صوتية، ألعاب، محفظة، بروفايل)
+// 3. لوحة التحكم الرئيسية
 class MainDashboard extends StatefulWidget {
   final UserProfileModel user;
   const MainDashboard({Key? key, required this.user}) : super(key: key);
@@ -446,7 +422,7 @@ class _MainDashboardState extends State<MainDashboard> {
   }
 }
 
-// أ. شاشة رومات اللايف المرئي مع 6 مقاعد جيستات ومايكات وتنبيه الهدية الكبرى
+// أ. شاشة رومات اللايف
 class HomeFeedScreen extends StatelessWidget {
   final UserProfileModel user;
   const HomeFeedScreen({Key? key, required this.user}) : super(key: key);
@@ -486,7 +462,7 @@ class HomeFeedScreen extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                image: DecorationImage(
+                image: const DecorationImage(
                   image: NetworkImage('https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=500'),
                   fit: BoxFit.cover,
                 ),
@@ -526,7 +502,7 @@ class HomeFeedScreen extends StatelessWidget {
   }
 }
 
-// ب. غرفة اللايف المتكاملة (6 جيستات، مايكات، ألعاب، وشريط الهدايا الكبرى >50 ألف)
+// ب. غرفة اللايف المتكاملة (6 جيستات، شريط الهدايا الكبرى >50k)
 class ActiveLiveRoom extends StatefulWidget {
   final UserProfileModel user;
   final String roomTitle;
@@ -537,11 +513,9 @@ class ActiveLiveRoom extends StatefulWidget {
 }
 
 class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
-  // حالة المايكات للـ 6 مقاعد في اللايف
   final List<bool> _seatMuted = [false, true, false, true, false, false];
   final List<String?> _seatUsers = ['أحمد', null, 'سارة', null, 'محمد', 'ريم'];
 
-  // شريط الهدية الكبرى المميز (> 50k)
   String? _broadcastMessage;
   String? _broadcastGiftImage;
 
@@ -550,7 +524,6 @@ class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
       _broadcastMessage = "$sender أرسل هدية فاخرة كبرى!";
       _broadcastGiftImage = giftImg;
     });
-    // يختفي الشريط بعد 4 ثواني
     Timer(const Duration(seconds: 4), () {
       if (mounted) {
         setState(() {
@@ -589,7 +562,7 @@ class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
                   children: [
                     _giftCard('وردة فاخرة 🌹', 1000, 'https://cdn-icons-png.flaticon.com/512/2965/2965567.png', false),
                     _giftCard('سيارة رياضية 🏎️', 25000, 'https://cdn-icons-png.flaticon.com/512/741/741407.png', false),
-                    _giftCard('قصر الأساطير 🏰', 75000, 'https://cdn-icons-png.flaticon.com/512/3067/3067407.png', true), // أكبر من 50 ألف
+                    _giftCard('قصر الأساطير 🏰', 75000, 'https://cdn-icons-png.flaticon.com/512/3067/3067407.png', true),
                   ],
                 ),
               ),
@@ -606,7 +579,7 @@ class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
         Navigator.pop(context);
         if (widget.user.coins >= price) {
           setState(() => widget.user.coins -= price);
-          if (isEligibleMegaGift(price)) {
+          if (price > 50000) {
             _triggerBigGiftAnnouncement(widget.user.name, imgUrl);
           }
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تم إرسال ($name) بنجاح!')));
@@ -633,16 +606,11 @@ class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
     );
   }
 
-  bool isEligibleMegaGift(int price) {
-    return price > 50000; // الشرط الأساسي لأكبر من 50 ألف كوينز
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          // خلفية الفيديو
           Positioned.fill(
             child: Image.network('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000&auto=format&fit=crop', fit: BoxFit.cover),
           ),
@@ -652,7 +620,6 @@ class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
           SafeArea(
             child: Column(
               children: [
-                // شريط معلومات المضيف والأعلى
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                   child: Row(
@@ -678,8 +645,6 @@ class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
                     ],
                   ),
                 ),
-
-                // شريط إعلان الهدية الكبرى المتحرك أعلى الشاشة (> 50k)
                 if (_broadcastMessage != null)
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -698,10 +663,7 @@ class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
                       ],
                     ),
                   ),
-
                 const Spacer(),
-
-                // الـ 6 مقاعد (جيستات) الخاصة باللايف للحديث والتفاعل مع غلق وفتح المايك
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: GridView.builder(
@@ -720,7 +682,6 @@ class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
                       return GestureDetector(
                         onTap: () {
                           setState(() {
-                            // تبديل حالة المايك عند الضغط على المقعد
                             _seatMuted[index] = !_seatMuted[index];
                           });
                         },
@@ -754,10 +715,7 @@ class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
                     },
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
-                // شريط المحادثة وأزرار التفاعل والهدايا
                 Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Row(
@@ -792,7 +750,7 @@ class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
   }
 }
 
-// ج. الغرف الصوتية (Voice Rooms)
+// ج. الغرف الصوتية
 class VoiceRoomsScreen extends StatelessWidget {
   final UserProfileModel user;
   const VoiceRoomsScreen({Key? key, required this.user}) : super(key: key);
@@ -843,7 +801,7 @@ class VoiceRoomsScreen extends StatelessWidget {
   }
 }
 
-// د. قسم الألعاب التفاعلية بالكوينزات (Games Hub)
+// د. الألعاب
 class GamesHubScreen extends StatelessWidget {
   final UserProfileModel user;
   const GamesHubScreen({Key? key, required this.user}) : super(key: key);
@@ -897,7 +855,7 @@ class GamesHubScreen extends StatelessWidget {
   }
 }
 
-// هـ. المحفظة (الشحن والسحب)
+// هـ. المحفظة (تم تصحيح خطأ ScanBar إلى SnackBar هنا)
 class WalletScreen extends StatefulWidget {
   final UserProfileModel user;
   const WalletScreen({Key? key, required this.user}) : super(key: key);
@@ -915,7 +873,7 @@ class _WalletScreenState extends State<WalletScreen> {
       });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تم تحويل $amount ماسة إلى ${amount * 3} كوينز بنجاح!')));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(const ScanBar(content: Text('رصيد الماس لا يكفي')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('رصيد الماس لا يكفي'))); // تم التصحيح هنا
     }
   }
 
@@ -979,7 +937,7 @@ class _WalletScreenState extends State<WalletScreen> {
   }
 }
 
-// و. شاشة الملف الشخصي
+// و. الملف الشخصي
 class ProfileScreen extends StatelessWidget {
   final UserProfileModel user;
   const ProfileScreen({Key? key, required this.user}) : super(key: key);
