@@ -1,879 +1,331 @@
-import 'package:flutter/material.dart';
-import 'dart:async';
+import React, { useState } from 'react';
 
-void main() {
-  runApp(const DodiLiveApp());
-}
+// تطبيق غرف الدردشة الصوتية والمرئية المتكامل (Voice & Video Live Rooms)
+export default function App() {
+  const [lang, setLang] = useState('ar'); // 'ar' أو 'en'
+  const [currentTab, setCurrentTab] = useState('home'); // 'home' (Rooms), 'live' (Video Live), 'games', 'wallet', 'profile', 'room_active', 'live_room'
+  const [coins, setCoins] = useState(4);
+  const [diamonds, setDiamonds] = useState(324);
+  const [selectedMultiplier, setSelectedMultiplier] = useState(1);
 
-class DodiLiveApp extends StatelessWidget {
-  const DodiLiveApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Dodi Live',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF0B0410),
-        primaryColor: const Color(0xFF8A2BE2),
-        fontFamily: 'Cairo',
-      ),
-      home: const SplashScreen(),
-    );
-  }
-}
-
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
-
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    Timer(const Duration(seconds: 4), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const RegistrationScreen()),
-      );
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF2A0845), Color(0xFF0B0410)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.amber, width: 3),
-                  boxShadow: [
-                    BoxShadow(color: Colors.purpleAccent.withOpacity(0.8), blurRadius: 25, spreadRadius: 5)
-                  ],
-                ),
-                child: const CircleAvatar(
-                  radius: 65,
-                  backgroundColor: Color(0xFF8A2BE2),
-                  child: Icon(Icons.face_3, size: 75, color: Colors.amberAccent),
-                ),
-              ),
-              const SizedBox(height: 25),
-              const Text(
-                'Dodi Live',
-                style: TextStyle(
-                  fontSize: 38,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.amber,
-                  letterSpacing: 2,
-                ),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'عالمك المفضل للبث المباشر والألعاب والدردشة',
-                style: TextStyle(fontSize: 14, color: Colors.white70),
-              ),
-              const SizedBox(height: 40),
-              const CircularProgressIndicator(color: Colors.amber),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class UserProfileModel {
-  final String name;
-  final String age;
-  final String country;
-  final String gender;
-  final String email;
-  final String avatarUrl;
-  int diamonds;
-  int coins;
-
-  UserProfileModel({
-    required this.name,
-    required this.age,
-    required this.country,
-    required this.gender,
-    required this.email,
-    required this.avatarUrl,
-    this.diamonds = 1200,
-    this.coins = 50000,
-  });
-}
-
-class RegistrationScreen extends StatefulWidget {
-  const RegistrationScreen({Key? key}) : super(key: key);
-
-  @override
-  State<RegistrationScreen> createState() => _RegistrationScreenState();
-}
-
-class _RegistrationScreenState extends State<RegistrationScreen> {
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _ageController = TextEditingController();
-
-  final List<Map<String, String>> _countries = [
-    {'name': 'Egypt', 'flag': '🇪🇬'},
-    {'name': 'Saudi Arabia', 'flag': '🇸🇦'},
-    {'name': 'United Arab Emirates', 'flag': '🇦🇪'},
-    {'name': 'Jordan', 'flag': '🇯🇴'},
-    {'name': 'Morocco', 'flag': '🇲🇦'},
-    {'name': 'Algeria', 'flag': '🇩🇿'},
-    {'name': 'Iraq', 'flag': '🇮🇶'},
-    {'name': 'Kuwait', 'flag': '🇰🇼'},
-    {'name': 'United States', 'flag': '🇺🇸'},
-  ];
-
-  String? _selectedCountry;
-  String _selectedGender = 'ذكر';
-  
-  final List<String> _avatarOptions = [
-    'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
-    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
-    'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150',
-  ];
-  late String _selectedAvatar;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedAvatar = _avatarOptions[0];
-  }
-
-  void _submitData() {
-    if (_nameController.text.isEmpty ||
-        _selectedCountry == null ||
-        _ageController.text.isEmpty ||
-        _emailController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('الرجاء إكمال كافة البيانات المطلوبة')),
-      );
-      return;
+  // القواميس الترجمية للغتين العربية والإنجليزية
+  const t = {
+    ar: {
+      rooms: 'الغرف الصوتية',
+      liveStreams: 'البث المباشر 🎥',
+      games: 'الألعاب والجوائز',
+      wallet: 'المحفظة والشحن',
+      profile: 'الملف الشخصي',
+      recharge: 'شحن',
+      exchange: 'استبدال',
+      pkBattle: 'تحدي PK ساخن 🔥',
+      send: 'إرسال',
+      sayHi: 'قول مرحبا...',
+      headwear: 'الإطارات المتحركة',
+      vehicle: 'مركبات الدخول',
+      viewers: 'مشاهد',
+      balance: 'رصيد العملات',
+      diamondBalance: 'رصيد الجواهر',
+      close: 'إغلاق ❌',
+      gifts: '🎁 هدايا'
+    },
+    en: {
+      rooms: 'Voice Rooms',
+      liveStreams: 'Live Video 🎥',
+      games: 'Games Center',
+      wallet: 'Wallet & Recharge',
+      profile: 'Profile',
+      recharge: 'Recharge',
+      exchange: 'Exchange',
+      pkBattle: 'Hot PK Battle 🔥',
+      send: 'Send',
+      sayHi: 'Say hi...',
+      headwear: 'Headwear',
+      vehicle: 'Vehicle',
+      viewers: 'viewers',
+      balance: 'My coin balance',
+      diamondBalance: 'My diamond balance',
+      close: 'Close ❌',
+      gifts: '🎁 Gifts'
     }
+  };
 
-    UserProfileModel user = UserProfileModel(
-      name: _nameController.text.trim(),
-      age: _ageController.text.trim(),
-      country: _selectedCountry!,
-      gender: _selectedGender,
-      email: _emailController.text.trim(),
-      avatarUrl: _selectedAvatar,
-    );
+  return (
+    <div className={`min-h-screen bg-gradient-to-b from-[#1a0b36] via-[#2a0e4f] to-[#0f051d] text-white font-sans ${lang === 'ar' ? 'rtl' : 'ltr'}`}>
+      
+      {/* شريط التحكم العلوي */}
+      <header className="flex justify-between items-center p-4 bg-black/40 backdrop-blur-md border-b border-purple-900/50 sticky top-0 z-50">
+        <div className="flex items-center space-x-2 space-x-reverse">
+          <span className="text-xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-200 bg-clip-text text-transparent">👑 Magic Live & Voice</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')}
+            className="px-3 py-1 bg-purple-700/60 hover:bg-purple-600 rounded-full text-xs font-semibold border border-purple-500/40 transition">
+            {lang === 'ar' ? 'English 🇺🇸' : 'العربية 🇸🇦'}
+          </button>
+        </div>
+      </header>
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => MainDashboard(user: user)),
-    );
-  }
+      {/* المحتوى الرئيسي */}
+      <main className="p-4 pb-28">
+        
+        {/* 1. قائمة الغرف الصوتية الرئيسية (Home / Rooms) */}
+        {currentTab === 'home' && (
+          <div className="space-y-6">
+            {/* إعلان الفوز المتحرك العلوي */}
+            <div className="bg-gradient-to-r from-yellow-600/80 via-yellow-500/90 to-yellow-600/80 p-2 rounded-xl flex items-center justify-between shadow-lg border border-yellow-300/40 animate-pulse">
+              <div className="flex items-center gap-2 text-xs font-bold text-black">
+                <span className="bg-black text-yellow-400 px-2 py-0.5 rounded">WIN</span>
+                <span>عبدو الفيومي win 330,000 coins</span>
+              </div>
+              <button className="bg-black text-yellow-300 px-3 py-1 rounded-full text-xs font-black shadow">GO</button>
+            </div>
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('تسجيل حساب جديد - Dodi Live', style: TextStyle(fontSize: 18)),
-        backgroundColor: const Color(0xFF150824),
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF150824), Color(0xFF0B0410)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: ListView(
-            children: [
-              const Text('اختر صورتك الشخصية:', style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-              SizedBox(
-                height: 70,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _avatarOptions.length,
-                  itemBuilder: (context, index) {
-                    bool isSelected = _selectedAvatar == _avatarOptions[index];
-                    return GestureDetector(
-                      onTap: () => setState(() => _selectedAvatar = _avatarOptions[index]),
-                      child: Container(
-                        margin: const EdgeInsets.only(right: 12),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: isSelected ? Colors.amber : Colors.transparent, width: 3),
-                        ),
-                        child: CircleAvatar(
-                          radius: 30,
-                          backgroundImage: NetworkImage(_avatarOptions[index]),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: 'الاسم بالكامل',
-                  filled: true,
-                  fillColor: Colors.white.withOpacity(0.05),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-                ),
-              ),
-              const SizedBox(height: 15),
-              // حقل العمر كتابة يدوية صافي بدون تقويم
-              TextField(
-                controller: _ageController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: 'العمر (اكتب عمرك رقمياً مثل: 25)',
-                  filled: true,
-                  fillColor: Colors.white.withOpacity(0.05),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-                ),
-              ),
-              const SizedBox(height: 15),
-              DropdownButtonFormField<String>(
-                dropdownColor: const Color(0xFF1B0F2E),
-                decoration: InputDecoration(
-                  labelText: 'اختر الدولة',
-                  filled: true,
-                  fillColor: Colors.white.withOpacity(0.05),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-                ),
-                value: _selectedCountry,
-                items: _countries.map((country) {
-                  return DropdownMenuItem<String>(
-                    value: country['name'],
-                    child: Text('${country['flag']}  ${country['name']}'),
-                  );
-                }).toList(),
-                onChanged: (val) => setState(() => _selectedCountry = val),
-              ),
-              const SizedBox(height: 15),
-              const Text('الجنس:', style: TextStyle(color: Colors.white70)),
-              Row(
-                children: [
-                  Expanded(
-                    child: RadioListTile<String>(
-                      title: const Text('ذكر 👨'),
-                      value: 'ذكر',
-                      groupValue: _selectedGender,
-                      onChanged: (val) => setState(() => _selectedGender = val!),
-                    ),
-                  ),
-                  Expanded(
-                    child: RadioListTile<String>(
-                      title: const Text('أنثى 👩'),
-                      value: 'أنثى',
-                      groupValue: _selectedGender,
-                      onChanged: (val) => setState(() => _selectedGender = val!),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'البريد الإلكتروني',
-                  filled: true,
-                  fillColor: Colors.white.withOpacity(0.05),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-                ),
-              ),
-              const SizedBox(height: 25),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF8A2BE2),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                ),
-                onPressed: _submitData,
-                child: const Text('دخول عالم Dodi Live 🚀', style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold)),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+            {/* تصنيفات الدول */}
+            <div className="flex gap-2 overflow-x-auto pb-2">
+              <button className="bg-purple-600 text-white text-xs px-4 py-1.5 rounded-full font-bold">الكل</button>
+              <button className="bg-purple-950/60 text-purple-300 text-xs px-4 py-1.5 rounded-full border border-purple-800">مصر 🇪🇬</button>
+              <button className="bg-purple-950/60 text-purple-300 text-xs px-4 py-1.5 rounded-full border border-purple-800">السعودية 🇸🇦</button>
+              <button className="bg-purple-950/60 text-purple-300 text-xs px-4 py-1.5 rounded-full border border-purple-800">ترفيه 🎙️</button>
+            </div>
 
-class MainDashboard extends StatefulWidget {
-  final UserProfileModel user;
-  const MainDashboard({Key? key, required this.user}) : super(key: key);
+            {/* شبكة الرومات الصوتية */}
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { title: 'سهرة العندليب الطربية 🎵', host: 'كابتن أحمد', members: 7, bg: 'from-purple-900 to-indigo-950' },
+                { title: 'قعدة شباب القاهرة والاسكندرية 🔥', host: 'ملك الإحساس', members: 5, bg: 'from-pink-950 to-purple-950' },
+                { title: 'تحدي الدويتو والضحكة الصافية 😂', host: 'سمية المصرية', members: 8, bg: 'from-blue-950 to-purple-950' },
+                { title: 'سوالف خليجية وعِزف عود 🎸', host: 'سلطان الدوسري', members: 6, bg: 'from-amber-950 to-purple-950' },
+              ].map((room, idx) => (
+                <div key={idx} onClick={() => setCurrentTab('room_active')} className={`bg-gradient-to-br ${room.bg} p-3 rounded-2xl border border-purple-700/40 cursor-pointer hover:scale-105 transition shadow-lg`}>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-[10px] bg-black/40 px-2 py-0.5 rounded-full text-yellow-300">🎙️ صوتي</span>
+                    <span className="text-[10px] text-gray-300">👤 {room.members}/8</span>
+                  </div>
+                  <h4 className="font-bold text-xs truncate mb-1">{room.title}</h4>
+                  <p className="text-[10px] text-purple-300">المضيف: {room.host}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
-  @override
-  State<MainDashboard> createState() => _MainDashboardState();
-}
+        {/* 2. تفاصيل الغرفة الصوتية المباشرة (Voice Room Active) */}
+        {currentTab === 'room_active' && (
+          <div className="space-y-4">
+            <div className="flex justify-between items-center bg-black/40 p-3 rounded-2xl border border-purple-900">
+              <div>
+                <h3 className="text-xs font-bold text-yellow-300">سهرة العندليب الطربية 🎵</h3>
+                <span className="text-[10px] text-gray-400">ID: 994821</span>
+              </div>
+              <button onClick={() => setCurrentTab('home')} className="bg-purple-800 px-3 py-1 rounded-full text-xs font-bold">{t[lang].close}</button>
+            </div>
 
-class _MainDashboardState extends State<MainDashboard> {
-  int _currentIndex = 0;
+            {/* منصة الكراسي الصوتية (مضيف + 8 كراسي) */}
+            <div className="grid grid-cols-4 gap-4 justify-items-center my-6">
+              <div className="col-span-4 flex flex-col items-center">
+                <div className="w-16 h-16 rounded-full border-2 border-yellow-400 p-0.5 bg-purple-900/80 relative shadow-lg shadow-purple-500/30">
+                  <div className="w-full h-full rounded-full bg-black/60 flex items-center justify-center text-xl">👑</div>
+                </div>
+                <span className="text-xs mt-1 text-yellow-200">Host (Ahmed)</span>
+              </div>
 
-  @override
-  Widget build(BuildContext context) {
-    final List<Widget> pages = [
-      HomeFeedScreen(user: widget.user),
-      VoiceRoomsScreen(user: widget.user),
-      GamesHubScreen(user: widget.user),
-      WalletScreen(user: widget.user),
-      ProfileScreen(user: widget.user),
-    ];
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((seatNum) => (
+                <div key={seatNum} className="flex flex-col items-center">
+                  <div className="w-14 h-14 rounded-full border border-purple-400/50 bg-purple-950/70 flex items-center justify-center relative shadow-inner">
+                    <span className="text-purple-300 text-sm">🪑</span>
+                    <span className="absolute -bottom-1 bg-purple-900 text-purple-200 text-[10px] px-1.5 rounded-full border border-purple-600">{seatNum}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
 
-    return Scaffold(
-      body: pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        backgroundColor: const Color(0xFF10061B),
-        selectedItemColor: Colors.amber,
-        unselectedItemColor: Colors.white54,
-        type: BottomNavigationBarType.fixed,
-        onTap: (idx) => setState(() => _currentIndex = idx),
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.live_tv), label: 'اللايف'),
-          BottomNavigationBarItem(icon: Icon(Icons.mic), label: 'الصوتي'),
-          BottomNavigationBarItem(icon: Icon(Icons.games), label: 'الألعاب'),
-          BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet), label: 'المحفظة'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'حسابي'),
-        ],
-      ),
-    );
-  }
-}
+            {/* شات الروم الصوتي */}
+            <div className="bg-black/30 backdrop-blur-sm rounded-2xl p-3 h-36 overflow-y-auto space-y-2 border border-purple-900/30 text-xs">
+              <div className="text-gray-400 bg-purple-950/40 p-2 rounded-lg">Respect others and keep conversations polite.</div>
+              <div className="text-green-300 bg-purple-900/20 p-2 rounded-lg">🎉 أحمد أرسل Lucky Pan*3، مع جائزة مضاعفة!</div>
+            </div>
 
-class HomeFeedScreen extends StatelessWidget {
-  final UserProfileModel user;
-  const HomeFeedScreen({Key? key, required this.user}) : super(key: key);
+            {/* شريط الإرسال السفلي للروم الصوتي */}
+            <div className="bg-purple-950/80 border border-purple-800/50 p-3 rounded-2xl flex items-center justify-between">
+              <input type="text" placeholder={t[lang].sayHi} className="bg-black/40 border border-purple-700/50 rounded-full px-4 py-2 text-xs text-white focus:outline-none w-36" />
+              <div className="flex items-center gap-2">
+                <select value={selectedMultiplier} onChange={(e) => setSelectedMultiplier(Number(e.target.value))} className="bg-purple-900 text-white text-xs px-2 py-1.5 rounded-lg border border-purple-600">
+                  <option value={1}>1x</option>
+                  <option value={5}>5x</option>
+                  <option value={10}>10x</option>
+                  <option value={77}>77x</option>
+                </select>
+                <button className="bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">{t[lang].send}</button>
+              </div>
+            </div>
+          </div>
+        )}
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('مرحباً، ${user.name} 🔥'),
-        backgroundColor: const Color(0xFF150824),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add_box, color: Colors.amber),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ActiveLiveRoom(user: user, roomTitle: 'بثي المباشر المميز')));
-            },
-          )
-        ],
-      ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(12),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.78,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-        ),
-        itemCount: 6,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ActiveLiveRoom(user: user, roomTitle: 'غرفة بث مباشر رقم ${index + 1}')),
-              );
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: Colors.purple.withOpacity(0.3),
-                border: Border.all(color: Colors.amber.withOpacity(0.3)),
-              ),
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Row(
-                    children: const [
-                      CircleAvatar(radius: 12, backgroundColor: Colors.red, child: Icon(Icons.fiber_manual_record, size: 10, color: Colors.white)),
-                      SizedBox(width: 5),
-                      Text("مباشر حر 🔥", style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Text("مضيف رقم ${index + 1}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
-                  const Text("👁️ 2.4k مشاهد", style: TextStyle(color: Colors.white70, fontSize: 11)),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
+        {/* 3. قائمة البث المرئي المباشر (Live Streams Video) */}
+        {currentTab === 'live' && (
+          <div className="space-y-4">
+            <h2 className="text-lg font-bold text-yellow-300 flex items-center gap-2">🎥 {t[lang].liveStreams}</h2>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { name: 'نور الشام ✨', viewers: '4.2k', game: 'تحدي PK ساخن 🔥', avatar: '👩‍🰰' },
+                { name: 'كابتن رامي 🏋️‍♂️', viewers: '1.8k', game: 'دردشة حرة', avatar: '🧔' },
+                { name: 'حور الجنان 🌸', viewers: '9.5k', game: 'غناء طربي وعزف', avatar: '👩‍🎤' },
+                { name: 'إسلام المصري 🇪🇬', viewers: '3.1k', game: 'ألعاب وربح جواهر', avatar: '👨‍💻' },
+              ].map((stream, idx) => (
+                <div key={idx} onClick={() => setCurrentTab('live_room')} className="relative h-48 rounded-2xl overflow-hidden border border-purple-700/50 bg-purple-950/80 cursor-pointer group shadow-xl">
+                  <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black via-transparent to-black/40">
+                    <span className="text-5xl">{stream.avatar}</span>
+                  </div>
+                  <div className="absolute top-2 left-2 right-2 flex justify-between items-center text-[10px]">
+                    <span className="bg-red-600 text-white px-2 py-0.5 rounded-full font-bold animate-pulse">LIVE</span>
+                    <span className="bg-black/60 px-2 py-0.5 rounded-full text-gray-200">👁️ {stream.viewers}</span>
+                  </div>
+                  <div className="absolute bottom-2 left-2 right-2">
+                    <p className="text-xs font-bold truncate">{stream.name}</p>
+                    <p className="text-[10px] text-yellow-300 truncate">{stream.game}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
-class ActiveLiveRoom extends StatefulWidget {
-  final UserProfileModel user;
-  final String roomTitle;
-  const ActiveLiveRoom({Key? key, required this.user, required this.roomTitle}) : super(key: key);
+        {/* 4. غرفة البث المرئي الفردي وتحدي الـ PK (Live Stream View) */}
+        {currentTab === 'live_room' && (
+          <div className="relative h-[72vh] bg-black/60 rounded-3xl overflow-hidden border border-purple-800/60 flex flex-col justify-between p-4">
+            <div className="flex justify-between items-center bg-black/40 backdrop-blur-md p-2 rounded-2xl">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 p-0.5">
+                  <div className="w-full h-full rounded-full bg-black flex items-center justify-center text-lg">👩‍🰰</div>
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold">نور الشام ✨</h4>
+                  <span className="text-[10px] text-yellow-400">ID: 883920</span>
+                </div>
+              </div>
+              <button onClick={() => setCurrentTab('live')} className="bg-red-600 px-3 py-1 rounded-full text-xs font-bold">{t[lang].close}</button>
+            </div>
 
-  @override
-  State<ActiveLiveRoom> createState() => _ActiveLiveRoomState();
-}
+            <div className="bg-red-950/50 border border-red-500/40 p-2 rounded-xl text-center animate-pulse">
+              <span className="text-xs font-extrabold text-red-400">⚔️ {t[lang].pkBattle}</span>
+            </div>
 
-class _ActiveLiveRoomState extends State<ActiveLiveRoom> {
-  final List<bool> _seatMuted = [false, true, false, true, false, false];
-  final List<String?> _seatUsers = ['أحمد', null, 'سارة', null, 'محمد', 'ريم'];
+            <div className="space-y-2">
+              <div className="bg-black/40 backdrop-blur-sm rounded-2xl p-3 h-32 overflow-y-auto space-y-1 text-xs">
+                <div className="text-yellow-300">👑 [VIP] أحمد: منورين أحلى بث!</div>
+                <div className="text-pink-300">🎁 رامي أرسل هدية [Lucky Ring]</div>
+                <div className="text-green-300">🎉 مبروك الفوز بالدعم السريع!</div>
+              </div>
+              <div className="flex items-center gap-2">
+                <input type="text" placeholder={t[lang].sayHi} className="bg-black/50 border border-purple-700 rounded-full px-4 py-2 text-xs w-full focus:outline-none" />
+                <button className="bg-gradient-to-r from-pink-600 to-purple-600 px-4 py-2 rounded-full text-xs font-bold shadow-lg">{t[lang].gifts}</button>
+              </div>
+            </div>
+          </div>
+        )}
 
-  String? _broadcastMessage;
+        {/* 5. مركز الألعاب (Games Center) */}
+        {currentTab === 'games' && (
+          <div className="space-y-4">
+            <h2 className="text-lg font-bold text-yellow-300">🔥 {t[lang].games}</h2>
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { name: 'Egypt Winner', icon: '🏆', price: '10,000' },
+                { name: 'Morocco Winner', icon: '⚽', price: '10,000' },
+                { name: 'Dancing Cat', icon: '🐱', price: '27,777' },
+                { name: 'Lucky Box', icon: '🎁', price: '57,777' },
+                { name: 'Lucky 77', icon: '🎰', price: '77,777' },
+                { name: 'Roulette', icon: '🎡', price: '777' },
+              ].map((game, idx) => (
+                <div key={idx} className="bg-purple-900/30 border border-purple-700/40 p-3 rounded-xl flex flex-col items-center text-center hover:bg-purple-800/40 transition">
+                  <span className="text-3xl mb-1">{game.icon}</span>
+                  <span className="text-[11px] font-semibold truncate w-full">{game.name}</span>
+                  <span className="text-[10px] text-yellow-400 mt-1">🪙 {game.price}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
-  void _triggerBigGiftAnnouncement(String sender) {
-    setState(() {
-      _broadcastMessage = "$sender أرسل هدية فاخرة كبرى!";
-    });
-    Timer(const Duration(seconds: 4), () {
-      if (mounted) {
-        setState(() {
-          _broadcastMessage = null;
-        });
-      }
-    });
-  }
+        {/* 6. المحفظة (Wallet & Recharge) */}
+        {currentTab === 'wallet' && (
+          <div className="space-y-6 text-center">
+            <div className="bg-purple-950/60 p-6 rounded-2xl border border-purple-800/50">
+              <div className="text-4xl mb-2">🪙</div>
+              <p className="text-gray-400 text-xs">{t[lang].balance}</p>
+              <h3 className="text-3xl font-extrabold text-yellow-400 mt-1">{coins}</h3>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-purple-900/40 p-4 rounded-xl border border-purple-700/40">
+                <span className="text-xs text-gray-300">42,500 Coins</span>
+                <p className="text-yellow-400 font-bold mt-1">$0.99</p>
+              </div>
+              <div className="bg-purple-900/40 p-4 rounded-xl border border-purple-700/40">
+                <span className="text-xs text-gray-300">425,000 Coins</span>
+                <p className="text-yellow-400 font-bold mt-1">$9.99</p>
+              </div>
+            </div>
+          </div>
+        )}
 
-  void _openGiftBox() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: const Color(0xFF1B0F2E),
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(20),
-          height: 280,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('🎁 صندوق الهدايا الملكية', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.amber)),
-                  Text('رصيدك: ${widget.user.coins} 🪙', style: const TextStyle(color: Colors.white70)),
-                ],
-              ),
-              const Divider(color: Colors.white24),
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  children: [
-                    _giftCard('وردة فاخرة 🌹', 1000, false),
-                    _giftCard('سيارة رياضية 🏎️', 25000, false),
-                    _giftCard('قصر الأساطير 🏰', 75000, true),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+        {/* 7. الملف الشخصي والإطارات (Profile) */}
+        {currentTab === 'profile' && (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4 bg-purple-950/60 p-4 rounded-2xl border border-purple-800/40">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-yellow-400 to-purple-600 p-0.5">
+                <div className="w-full h-full rounded-full bg-black flex items-center justify-center text-2xl">😎</div>
+              </div>
+              <div>
+                <h3 className="font-bold text-base flex items-center gap-2">Mogrem 🇧🇭 <span className="text-xs bg-purple-800 px-2 py-0.5 rounded-full text-yellow-300">Lv.10</span></h3>
+                <p className="text-xs text-gray-400 mt-0.5">ID: 3419764</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-purple-900/30 p-3 rounded-xl border border-purple-700/30">
+                <h4 className="text-xs font-bold text-yellow-300 mb-2">{t[lang].headwear}</h4>
+                <div className="flex gap-2">
+                  <div className="w-10 h-10 rounded-full border border-yellow-400 bg-purple-950 flex items-center justify-center text-xs">👑</div>
+                  <div className="w-10 h-10 rounded-full border border-purple-400 bg-purple-950 flex items-center justify-center text-xs">🌟</div>
+                </div>
+              </div>
+              <div className="bg-purple-900/30 p-3 rounded-xl border border-purple-700/30">
+                <h4 className="text-xs font-bold text-yellow-300 mb-2">{t[lang].vehicle}</h4>
+                <div className="flex gap-2">
+                  <div className="w-10 h-10 rounded-lg border border-orange-400 bg-purple-950 flex items-center justify-center text-xs">🏎️</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
-  Widget _giftCard(String name, int price, bool isMega) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pop(context);
-        if (widget.user.coins >= price) {
-          setState(() => widget.user.coins -= price);
-          if (price > 50000) {
-            _triggerBigGiftAnnouncement(widget.user.name);
-          }
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تم إرسال ($name) بنجاح!')));
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('رصيدك لا يكفي، شحن الكوينز مطلوب!')));
-        }
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF2C164D),
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: isMega ? Colors.amber : Colors.purpleAccent),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.card_giftcard, size: 35, color: Colors.amber),
-            const SizedBox(height: 5),
-            Text(name, style: const TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.bold)),
-            Text('$price كوينز', style: const TextStyle(fontSize: 9, color: Colors.amber)),
-          ],
-        ),
-      ),
-    );
-  }
+      </main>
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF0F051D),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      CircleAvatar(backgroundImage: NetworkImage(widget.user.avatarUrl)),
-                      const SizedBox(width: 8),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(widget.roomTitle, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                          const Text('ID: 889234 • 3.2k', style: TextStyle(color: Colors.white70, fontSize: 10)),
-                        ],
-                      ),
-                    ],
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-            ),
-            if (_broadcastMessage != null)
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [Colors.amber, Colors.deepOrange]),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Text(_broadcastMessage!, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13)),
-              ),
-            const Spacer(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  childAspectRatio: 2.2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                ),
-                itemCount: 6,
-                itemBuilder: (context, index) {
-                  bool hasUser = _seatUsers[index] != null;
-                  bool isMuted = _seatMuted[index];
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _seatMuted[index] = !_seatMuted[index];
-                      });
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: hasUser ? Colors.purpleAccent : Colors.white24),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircleAvatar(
-                            radius: 14,
-                            backgroundColor: Colors.purple,
-                            child: Text('${index + 1}', style: const TextStyle(fontSize: 11, color: Colors.white)),
-                          ),
-                          const SizedBox(width: 6),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(hasUser ? _seatUsers[index]! : 'مقعد فارغ', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
-                              Icon(isMuted ? Icons.mic_off : Icons.mic, size: 12, color: isMuted ? Colors.red : Colors.greenAccent),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'اكتب تعليقاً...',
-                        filled: true,
-                        fillColor: Colors.black45,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  FloatingActionButton(
-                    heroTag: 'giftBtn',
-                    mini: true,
-                    backgroundColor: Colors.amber,
-                    child: const Icon(Icons.card_giftcard, color: Colors.black),
-                    onPressed: _openGiftBox,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+      {/* شريط التنقل السفلي */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-lg border-t border-purple-900/50 flex justify-around py-3 px-2 z-50">
+        <button onClick={() => setCurrentTab('home')} className={`flex flex-col items-center ${currentTab === 'home' || currentTab === 'room_active' ? 'text-yellow-400' : 'text-gray-400'}`}>
+          <span className="text-xl">🎙️</span>
+          <span className="text-[10px] mt-1">{t[lang].rooms}</span>
+        </button>
+        <button onClick={() => setCurrentTab('live')} className={`flex flex-col items-center ${currentTab === 'live' || currentTab === 'live_room' ? 'text-yellow-400' : 'text-gray-400'}`}>
+          <span className="text-xl">🎥</span>
+          <span className="text-[10px] mt-1">{t[lang].liveStreams}</span>
+        </button>
+        <button onClick={() => setCurrentTab('games')} className={`flex flex-col items-center ${currentTab === 'games' ? 'text-yellow-400' : 'text-gray-400'}`}>
+          <span className="text-xl">🎮</span>
+          <span className="text-[10px] mt-1">{t[lang].games}</span>
+        </button>
+        <button onClick={() => setCurrentTab('wallet')} className={`flex flex-col items-center ${currentTab === 'wallet' ? 'text-yellow-400' : 'text-gray-400'}`}>
+          <span className="text-xl">💰</span>
+          <span className="text-[10px] mt-1">{t[lang].wallet}</span>
+        </button>
+        <button onClick={() => setCurrentTab('profile')} className={`flex flex-col items-center ${currentTab === 'profile' ? 'text-yellow-400' : 'text-gray-400'}`}>
+          <span className="text-xl">👤</span>
+          <span className="text-[10px] mt-1">{t[lang].profile}</span>
+        </button>
+      </nav>
 
-class VoiceRoomsScreen extends StatelessWidget {
-  final UserProfileModel user;
-  const VoiceRoomsScreen({Key? key, required this.user}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('غرف الصوت التفاعلية 🎙️'), backgroundColor: const Color(0xFF150824)),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(15),
-        itemCount: 5,
-        itemBuilder: (context, index) {
-          return Container(
-            margin: const EdgeInsets.only(bottom: 15),
-            padding: const EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [Color(0xFF2E124F), Color(0xFF150824)]),
-              borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: Colors.purple.withOpacity(0.4)),
-            ),
-            child: Row(
-              children: [
-                const CircleAvatar(radius: 30, backgroundColor: Colors.amber, child: Icon(Icons.mic, color: Colors.black, size: 30)),
-                const SizedBox(width: 15),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('سهرة طرب وغناء رقم ${index + 1}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
-                      const SizedBox(height: 5),
-                      const Text('🎤 8 متحدثين • 120 مستمع', style: TextStyle(color: Colors.white70, fontSize: 12)),
-                    ],
-                  ),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF8A2BE2)),
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم الانضمام للغرفة الصوتية بنجاح')));
-                  },
-                  child: const Text('دخول'),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class GamesHubScreen extends StatelessWidget {
-  final UserProfileModel user;
-  const GamesHubScreen({Key? key, required this.user}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('مركز الألعاب التفاعلية 🎮'), backgroundColor: const Color(0xFF150824)),
-      body: GridView.count(
-        padding: const EdgeInsets.all(15),
-        crossAxisCount: 2,
-        crossAxisSpacing: 15,
-        mainAxisSpacing: 15,
-        children: [
-          _gameCard(context, 'لعبة الحظ السعيد 🎰', 'العب واربح أضعاف الكوينزات', Colors.deepPurple),
-          _gameCard(context, 'تحدي المعارك ⚔️', 'نافس الأصدقاء بالبث المباشر', Colors.indigo),
-          _gameCard(context, 'عجلة الحظ الملكية 🎡', 'لف العجلة واكسب جوائز ضخمة', Colors.purple),
-          _gameCard(context, 'لعبة التخمين 🔮', 'اختبر ذكائك واكسب الماسات', Colors.deepOrange),
-        ],
-      ),
-    );
-  }
-
-  Widget _gameCard(BuildContext context, String title, String desc, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.amber.withOpacity(0.5)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.sports_esports, size: 45, color: Colors.amber),
-          const SizedBox(height: 10),
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white), textAlign: TextAlign.center),
-          const SizedBox(height: 5),
-          Text(desc, style: const TextStyle(fontSize: 10, color: Colors.white70), textAlign: TextAlign.center),
-          const Spacer(),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, foregroundColor: Colors.black, minimumSize: const Size(double.infinity, 30)),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('جاري بدء تشغيل $title...')));
-            },
-            child: const Text('العب الآن', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class WalletScreen extends StatefulWidget {
-  final UserProfileModel user;
-  const WalletScreen({Key? key, required this.user}) : super(key: key);
-
-  @override
-  State<WalletScreen> createState() => _WalletScreenState();
-}
-
-class _WalletScreenState extends State<WalletScreen> {
-  void _exchangeDiamonds(int amount) {
-    if (widget.user.diamonds >= amount) {
-      setState(() {
-        widget.user.diamonds -= amount;
-        widget.user.coins += (amount * 3);
-      });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تم تحويل $amount ماسة إلى ${amount * 3} كوينز بنجاح!')));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('رصيد الماس لا يكفي')));
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('محفظة الأرباح والشحن 💰'), backgroundColor: const Color(0xFF150824)),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [Color(0xFF8A2BE2), Color(0xFF4A0E4E)]),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Column(children: [
-                  const Text('الكوينز 🪙', style: TextStyle(color: Colors.white70)),
-                  Text('${widget.user.coins}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.amber)),
-                ]),
-                Container(height: 30, width: 1, color: Colors.white24),
-                Column(children: [
-                  const Text('الماس 💎', style: TextStyle(color: Colors.white70)),
-                  Text('${widget.user.diamonds}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.cyanAccent)),
-                ]),
-              ],
-            ),
-          ),
-          const SizedBox(height: 25),
-          const Text('استبدال الماسات إلى كوينز:', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber)),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple),
-            onPressed: () => _exchangeDiamonds(200),
-            child: const Text('تحويل 200 ماسة ➔ 600 كوينز'),
-          ),
-          const SizedBox(height: 25),
-          const Text('شحن فوري:', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber)),
-          const SizedBox(height: 10),
-          ListTile(
-            tileColor: const Color(0xFF1B0F2E),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            leading: const Icon(Icons.diamond, color: Colors.cyanAccent),
-            title: const Text('1000 ماسة 💎'),
-            subtitle: const Text('باقات الشحن السريع الآمن'),
-            trailing: ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.purple),
-              onPressed: () {
-                setState(() => widget.user.diamonds += 1000);
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم الشحن بنجاح!')));
-              },
-              child: const Text('\$10.00'),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ProfileScreen extends StatelessWidget {
-  final UserProfileModel user;
-  const ProfileScreen({Key? key, required this.user}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('الملف الشخصي'), backgroundColor: const Color(0xFF150824)),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircleAvatar(radius: 50, backgroundImage: NetworkImage(user.avatarUrl)),
-              const SizedBox(height: 15),
-              Text(user.name, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.amber)),
-              const SizedBox(height: 5),
-              Text('الدولة: ${user.country}', style: const TextStyle(color: Colors.white70)),
-              const SizedBox(height: 5),
-              Text('العمر: ${user.age} سنة', style: const TextStyle(color: Colors.white70)),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-                onPressed: () {
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const RegistrationScreen()));
-                },
-                child: const Text('تسجيل الخروج'),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+    </div>
+  );
 }
