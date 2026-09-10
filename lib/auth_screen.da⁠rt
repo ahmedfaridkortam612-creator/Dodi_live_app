@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class AuthScreen extends StatefulWidget {
-  final VoidCallback onLoginSuccess;
+  final VoidCallback? onLoginSuccess;
 
-  const AuthScreen({Key? key, required this.authorized}) : super(key: key); // أو تمرير دالة الانتقال
+  const AuthScreen({Key? key, this.onLoginSuccess}) : super(key: key);
 
   @override
   _AuthScreenState createState() => _AuthScreenState();
@@ -11,7 +11,7 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _authMode = 'login'; // 'login' أو 'signup'
+  String _authMode = 'login'; // 'login' للتسجيل أو 'signup' لإنشاء حساب جديد
   
   // حقول الإدخال
   final TextEditingController _nameController = TextEditingController();
@@ -22,10 +22,18 @@ class _AuthScreenState extends State<AuthScreen> {
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      // هنا يتم إرسال البيانات للباك إند أو الانتقال للشاشة الرئيسية
+      // رسالة نجاح واحترافية تشبه برامج اللايف
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("تم تسجيل الدخول بنجاح! 🚀")),
+        const SnackBar(
+          content: Text("✨ أهلاً بك في عالم البث المباشر، تم الدخول بنجاح!"),
+          backgroundColor: Colors.pinkAccent,
+        ),
       );
+      
+      // إذا تم ربط دالة النجاح، سيتم تنفيذها هنا والانتقال للشاشة التالية
+      if (widget.onLoginSuccess != null) {
+        widget.onLoginSuccess!();
+      }
     }
   }
 
@@ -35,14 +43,18 @@ class _AuthScreenState extends State<AuthScreen> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // خلفية متدرجة فخمة مستوحاة من برامج اللايف
+          // خلفية متدرجة فخمة مستوحاة من أجواء السهرات واللايفات
           Positioned.fill(
             child: Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.purpleAccent, Colors.black, Colors.black],
+                  colors: [
+                    Color(0xFF8A2BE2), // بنفسجي ساطع
+                    Colors.black,
+                    Colors.black,
+                  ],
                 ),
               ),
             ),
@@ -56,54 +68,87 @@ class _AuthScreenState extends State<AuthScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // شعار التطبيق
-                      const Icon(Icons.live_tv, size: 80, color: Colors.pinkAccent),
+                      // شعار التطبيق (لايف تي في مع توهج وردي)
+                      const Icon(
+                        Icons.live_tv_rounded,
+                        size: 90,
+                        color: Colors.pinkAccent,
+                        shadows: [
+                          Shadow(blurRadius: 20, color: Colors.pinkAccent)
+                        ],
+                      ),
                       const SizedBox(height: 10),
                       const Text(
-                        "Dodi Live",
+                        "DODI LIVE",
                         style: TextStyle(
-                          fontSize: 32,
+                          fontSize: 36,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
-                          letterSpacing: 1.5,
+                          letterSpacing: 3.0,
                         ),
+                      ),
+                      const Text(
+                        "تواصل، بث، واربح مع أصدقائك",
+                        style: TextStyle(color: Colors.white60, fontSize: 14),
                       ),
                       const SizedBox(height: 30),
 
-                      // التبديل بين تسجيل الدخول وإنشاء حساب جديد
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          TextButton(
-                            onPressed: () => setState(() => _authMode = 'login'),
-                            child: Text(
-                              "تسجيل الدخول",
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: _authMode == 'login' ? Colors.pinkAccent : Colors.white60,
-                                fontWeight: FontWeight.bold,
+                      // زر التبديل بين (تسجيل الدخول / حساب جديد) بتصميم راقي
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade900,
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(color: Colors.pinkAccent.withOpacity(0.3)),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () => setState(() => _authMode = 'login'),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  decoration: BoxDecoration(
+                                    color: _authMode == 'login' ? Colors.pinkAccent : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "تسجيل الدخول",
+                                    style: TextStyle(
+                                      color: _authMode == 'login' ? Colors.white : Colors.white70,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                          const Text("|", style: TextStyle(color: Colors.white60)),
-                          TextButton(
-                            onPressed: () => setState(() => _authMode = 'signup'),
-                            child: Text(
-                              "حساب جديد",
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: _authMode == 'signup' ? Colors.pinkAccent : Colors.white60,
-                                fontWeight: FontWeight.bold,
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () => setState(() => _authMode = 'signup'),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  decoration: BoxDecoration(
+                                    color: _authMode == 'signup' ? Colors.pinkAccent : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "حساب جديد",
+                                    style: TextStyle(
+                                      color: _authMode == 'signup' ? Colors.white : Colors.white70,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 25),
 
-                      // حقول إضافية في حالة إنشاء حساب جديد (الاسم، السن، البلد)
+                      // تفاصيل الحساب الجديد (تظهر فقط عند اختيار حساب جديد)
                       if (_authMode == 'signup') ...[
-                        // صورة البروفايل (رمزية)
                         Stack(
                           children: [
                             const CircleAvatar(
@@ -115,12 +160,12 @@ class _AuthScreenState extends State<AuthScreen> {
                               bottom: 0,
                               right: 0,
                               child: Container(
-                                padding: const EdgeInsets.all(4),
+                                padding: const EdgeInsets.all(6),
                                 decoration: const BoxDecoration(
                                   color: Colors.pinkAccent,
                                   shape: BoxShape.circle,
                                 ),
-                                child: const Icon(Icons.camera_alt, size: 18, color: Colors.white),
+                                child: const Icon(Icons.camera_alt, size: 16, color: Colors.white),
                               ),
                             ),
                           ],
@@ -129,7 +174,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         TextFormField(
                           controller: _nameController,
                           style: const TextStyle(color: Colors.white),
-                          decoration: _inputDecoration("الاسم الكامل", Icons.person_outline),
+                          decoration: _inputDecoration("اسم المستخدم (المستعار)", Icons.person_outline),
                           validator: (val) => val!.isEmpty ? "يرجى إدخال الاسم" : null,
                         ),
                         const SizedBox(height: 12),
@@ -140,8 +185,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                 controller: _ageController,
                                 keyboardType: TextInputType.number,
                                 style: const TextStyle(color: Colors.white),
-                                decoration: _inputDecoration("السن", Icons.cake_outlined),
-                                validator: (val) => val!.isEmpty ? "أدخل السن" : null,
+                                decoration: _inputDecoration("العمر", Icons.cake_outlined),
+                                validator: (val) => val!.isEmpty ? "أدخل العمر" : null,
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -149,8 +194,8 @@ class _AuthScreenState extends State<AuthScreen> {
                               child: TextFormField(
                                 controller: _countryController,
                                 style: const TextStyle(color: Colors.white),
-                                decoration: _inputDecoration("البلد", Icons.flag_outlined),
-                                validator: (val) => val!.isEmpty ? "أدخل البلد" : null,
+                                decoration: _inputDecoration("الدولة", Icons.flag_outlined),
+                                validator: (val) => val!.isEmpty ? "أدخل الدولة" : null,
                               ),
                             ),
                           ],
@@ -158,11 +203,11 @@ class _AuthScreenState extends State<AuthScreen> {
                         const SizedBox(height: 12),
                       ],
 
-                      // البريد الإلكتروني
+                      // البريد الإلكتروني أو الموبايل
                       TextFormField(
                         controller: _emailController,
                         style: const TextStyle(color: Colors.white),
-                        decoration: _inputDecoration("البريد الإلكتروني أو رقم الموبايل", Icons.email_outlined),
+                        decoration: _inputDecoration("البريد الإلكتروني أو رقم الهاتف", Icons.email_outlined),
                         validator: (val) => val!.isEmpty ? "هذا الحقل مطلوب" : null,
                       ),
                       const SizedBox(height: 12),
@@ -173,40 +218,42 @@ class _AuthScreenState extends State<AuthScreen> {
                         obscureText: true,
                         style: const TextStyle(color: Colors.white),
                         decoration: _inputDecoration("كلمة المرور", Icons.lock_outline),
-                        validator: (val) => val!.length < 6 ? "كلمة المرور قصيرة جداً" : null,
+                        validator: (val) => val!.length < 6 ? "كلمة المرور قصيرة (6 أحرف على الأقل)" : null,
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 25),
 
-                      // زر تنفيذ العملية
+                      // زر الإرسال الرئيسي
                       SizedBox(
                         width: double.infinity,
-                        height: 50,
+                        height: 55,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.pinkAccent,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            elevation: 8,
                           ),
                           onPressed: _submit,
                           child: Text(
-                            _authMode == 'login' ? "دخول" : "إنشاء الحساب والانطلاق",
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                            _authMode == 'login' ? "تسجيل الدخول" : "إنشاء الحساب الانطلاق",
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 25),
 
-                      const Text("أو المتابعة عبر السوشيال ميديا", style: TextStyle(color: Colors.white60, fontSize: 14)),
+                      const Text("أو المتابعة السريعة عبر", style: TextStyle(color: Colors.white60, fontSize: 13)),
                       const SizedBox(height: 15),
 
-                      // أزرار تسجيل الدخول الاجتماعي (فيسبوك / جوجل / موبايل)
+                      // أزرار السوشيال ميديا الاحترافية (فيسبوك، جوجل، رقم هاتف)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _socialButton(Icons.facebook, Colors.blue, () {}),
-                          const SizedBox(width: 20),
-                          _socialButton(Icons.g_mobiledata, Colors.red, () {}),
-                          const SizedBox(width: 20),
-                          _socialButton(Icons.phone, Colors.green, () {}),
+                          _socialButton("Facebook", Icons.facebook, Colors.blue, () {}),
+                          const SizedBox(width: 15),
+                          _socialButton("Google", Icons.g_mobiledata, Colors.red, () {}),
+                          const SizedBox(width: 15),
+                          _socialButton("Phone", Icons.phone_android, Colors.green, () {}),
                         ],
                       ),
                     ],
@@ -226,26 +273,33 @@ class _AuthScreenState extends State<AuthScreen> {
       labelStyle: const TextStyle(color: Colors.white70),
       prefixIcon: Icon(icon, color: Colors.pinkAccent),
       filled: true,
-      fillColor: Colors.grey.shade900,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+      fillColor: Colors.grey.shade900.withOpacity(0.8),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        const BorderSide(color: Colors.pinkAccent, width: 2),
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: Colors.pinkAccent, width: 2),
       ),
     );
   }
 
-  Widget _socialButton(IconData icon, Color color, VoidCallback onTap) {
+  Widget _socialButton(String title, IconData icon, Color color, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(30),
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: Colors.grey.shade900,
-          shape: BoxShape.circle,
-          border: Border.all(color: color, width: 2),
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(color: color.withOpacity(0.5), width: 1.5),
         ),
-        child: Icon(icon, color: color, size: 28),
+        child: Row(
+          children: [
+            Icon(icon, color: color, size: 24),
+            const SizedBox(width: 8),
+            Text(title, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
+          ],
+        ),
       ),
     );
   }
