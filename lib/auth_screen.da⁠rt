@@ -1,0 +1,252 @@
+import 'package:flutter/material.dart';
+
+class AuthScreen extends StatefulWidget {
+  final VoidCallback onLoginSuccess;
+
+  const AuthScreen({Key? key, required this.authorized}) : super(key: key); // أو تمرير دالة الانتقال
+
+  @override
+  _AuthScreenState createState() => _AuthScreenState();
+}
+
+class _AuthScreenState extends State<AuthScreen> {
+  final _formKey = GlobalKey<FormState>();
+  String _authMode = 'login'; // 'login' أو 'signup'
+  
+  // حقول الإدخال
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _countryController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  void _submit() {
+    if (_formKey.currentState!.validate()) {
+      // هنا يتم إرسال البيانات للباك إند أو الانتقال للشاشة الرئيسية
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("تم تسجيل الدخول بنجاح! 🚀")),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          // خلفية متدرجة فخمة مستوحاة من برامج اللايف
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.purpleAccent, Colors.black, Colors.black],
+                ),
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // شعار التطبيق
+                      const Icon(Icons.live_tv, size: 80, color: Colors.pinkAccent),
+                      const SizedBox(height: 10),
+                      const Text(
+                        "Dodi Live",
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+
+                      // التبديل بين تسجيل الدخول وإنشاء حساب جديد
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButton(
+                            onPressed: () => setState(() => _authMode = 'login'),
+                            child: Text(
+                              "تسجيل الدخول",
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: _authMode == 'login' ? Colors.pinkAccent : Colors.white60,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const Text("|", style: TextStyle(color: Colors.white60)),
+                          TextButton(
+                            onPressed: () => setState(() => _authMode = 'signup'),
+                            child: Text(
+                              "حساب جديد",
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: _authMode == 'signup' ? Colors.pinkAccent : Colors.white60,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+
+                      // حقول إضافية في حالة إنشاء حساب جديد (الاسم، السن، البلد)
+                      if (_authMode == 'signup') ...[
+                        // صورة البروفايل (رمزية)
+                        Stack(
+                          children: [
+                            const CircleAvatar(
+                              radius: 45,
+                              backgroundColor: Colors.grey,
+                              child: Icon(Icons.person, size: 50, color: Colors.white),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
+                                  color: Colors.pinkAccent,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.camera_alt, size: 18, color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          controller: _nameController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: _inputDecoration("الاسم الكامل", Icons.person_outline),
+                          validator: (val) => val!.isEmpty ? "يرجى إدخال الاسم" : null,
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                controller: _ageController,
+                                keyboardType: TextInputType.number,
+                                style: const TextStyle(color: Colors.white),
+                                decoration: _inputDecoration("السن", Icons.cake_outlined),
+                                validator: (val) => val!.isEmpty ? "أدخل السن" : null,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: TextFormField(
+                                controller: _countryController,
+                                style: const TextStyle(color: Colors.white),
+                                decoration: _inputDecoration("البلد", Icons.flag_outlined),
+                                validator: (val) => val!.isEmpty ? "أدخل البلد" : null,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                      ],
+
+                      // البريد الإلكتروني
+                      TextFormField(
+                        controller: _emailController,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: _inputDecoration("البريد الإلكتروني أو رقم الموبايل", Icons.email_outlined),
+                        validator: (val) => val!.isEmpty ? "هذا الحقل مطلوب" : null,
+                      ),
+                      const SizedBox(height: 12),
+
+                      // كلمة المرور
+                      TextFormField(
+                        controller: _passwordController,
+                        obscureText: true,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: _inputDecoration("كلمة المرور", Icons.lock_outline),
+                        validator: (val) => val!.length < 6 ? "كلمة المرور قصيرة جداً" : null,
+                      ),
+                      const SizedBox(height: 24),
+
+                      // زر تنفيذ العملية
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.pinkAccent,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                          onPressed: _submit,
+                          child: Text(
+                            _authMode == 'login' ? "دخول" : "إنشاء الحساب والانطلاق",
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      const Text("أو المتابعة عبر السوشيال ميديا", style: TextStyle(color: Colors.white60, fontSize: 14)),
+                      const SizedBox(height: 15),
+
+                      // أزرار تسجيل الدخول الاجتماعي (فيسبوك / جوجل / موبايل)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _socialButton(Icons.facebook, Colors.blue, () {}),
+                          const SizedBox(width: 20),
+                          _socialButton(Icons.g_mobiledata, Colors.red, () {}),
+                          const SizedBox(width: 20),
+                          _socialButton(Icons.phone, Colors.green, () {}),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  InputDecoration _inputDecoration(String label, IconData icon) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(color: Colors.white70),
+      prefixIcon: Icon(icon, color: Colors.pinkAccent),
+      filled: true,
+      fillColor: Colors.grey.shade900,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        const BorderSide(color: Colors.pinkAccent, width: 2),
+      ),
+    );
+  }
+
+  Widget _socialButton(IconData icon, Color color, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade900,
+          shape: BoxShape.circle,
+          border: Border.all(color: color, width: 2),
+        ),
+        child: Icon(icon, color: color, size: 28),
+      ),
+    );
+  }
+}
