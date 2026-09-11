@@ -24,7 +24,7 @@ jobs:
         channel: 'stable'
 
     - name: Generate Android Folder
-      run: flutter create . --platforms=android --org com.dodi.liveapp
+      run: flutter create . --platforms=android --project-name=dodi_live_app
 
     - name: Fix Min SDK Version
       run: |
