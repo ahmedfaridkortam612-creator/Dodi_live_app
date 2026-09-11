@@ -48,7 +48,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 25),
             
-            // إحصائيات المستخدم (متابَعون، متابعون، إعجابات)
+            // إحصائيات المستخدم
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -93,7 +93,6 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  // العودة لشاشة تسجيل الدخول ومسح كل الصفحات السابقة
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => const AuthScreen()),
