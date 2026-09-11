@@ -79,50 +79,42 @@ class _LiveScreenState extends State<LiveScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Dodi Live - بث حقيقي"),
+        title: const Text("Dodi Live"),
         backgroundColor: Colors.deepPurple,
       ),
       body: Stack(
         children: [
-          centerView(),
+          Center(
+            child: _remoteUid != null
+                ? AgoraVideoView(
+                    controller: VideoViewController.remote(
+                      rtcEngine: _engine,
+                      canvas: VideoCanvas(uid: _remoteUid),
+                      connection: const RtcConnection(channelId: channelName),
+                    ),
+                  )
+                : const Text(
+                    'في انتظار انضمام شخص آخر للبث...',
+                    style: TextStyle(color: Colors.black54, fontSize: 16),
+                  ),
+          ),
           Align(
             alignment: Alignment.topLeft,
             child: SizedBox(
               width: 100,
               height: 150,
-              child: Center(
-                child: _localUserJoined
-                    ? AgoraVideoView(
-                        controller: VideoViewController(
-                          rtcEngine: _engine,
-                          canvas: const VideoCanvas(uid: 0),
-                        ),
-                      )
-                    : const CircularProgressIndicator(),
-              ),
+              child: _localUserJoined
+                  ? AgoraVideoView(
+                      controller: VideoViewController(
+                        rtcEngine: _engine,
+                        canvas: const VideoCanvas(uid: 0),
+                      ),
+                    )
+                  : const Center(child: CircularProgressIndicator()),
             ),
           ),
         ],
       ),
     );
-  }
-
-  Widget centerView() {
-    if (_remoteUid != null) {
-      return AgoraVideoView(
-        controller: VideoViewController.remote(
-          rtcEngine: _engine,
-          canvas: VideoCanvas(uid: _remoteUid),
-          connection: const RtcConnection(channelId: channelName),
-        ),
-      );
-    } else {
-      return const Center(
-        child: Text(
-          'في انتظار انضمام شخص آخر للبث...',
-          style: TextStyle(color: Colors.white, fontSize: 16),
-        ),
-      );
-    }
   }
 }
