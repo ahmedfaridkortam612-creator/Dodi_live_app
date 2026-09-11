@@ -1,0 +1,127 @@
+import 'package:flutter/material.dart';
+
+class WalletScreen extends StatefulWidget {
+  const WalletScreen({super.key});
+
+  @override
+  State<WalletScreen> createState() => _WalletScreenState();
+}
+
+class _WalletScreenState extends State<WalletScreen> {
+  int myDiamonds = 520; // رصيد المستخدم الحالي افتراضياً
+
+  final List<Map<String, dynamic>> rechargePackages = [
+    {'coins': '1,000 جوهرة', 'price': '\$4.99', 'bonus': ''},
+    {'coins': '5,200 جوهرة', 'price': '\$19.99', 'bonus': '+200 هدية'},
+    {'coins': '12,000 جوهرة', 'price': '\$44.99', 'bonus': '+1,000 هدية'},
+    {'coins': '30,000 جوهرة', 'price': '\$99.99', 'bonus': '+3,500 هدية'},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("محفظة Dodi Live"),
+        backgroundColor: Colors.deepPurple,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // كارت الرصيد الحالي
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Colors.deepPurple, Colors.purpleAccent],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "رصيدك الحالي",
+                        style: TextStyle(color: Colors.white70, fontSize: 16),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        "جواهر",
+                        style: TextStyle(color: Colors.white, fontSize: 14),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Icon(Icons.diamond, color: Colors.amber, size: 30),
+                      const SizedBox(width: 8),
+                      Text(
+                        "$myDiamonds",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              "اختر باقة الشحن:",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            // قائمة الباقات
+            Expanded(
+              child: ListView.builder(
+                itemCount: rechargePackages.length,
+                itemBuilder: (context, index) {
+                  final pkg = rechargePackages[index];
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListTile(
+                      leading: const Icon(Icons.monetization_on, color: Colors.amber, size: 36),
+                      title: Text(
+                        pkg['coins'],
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      subtitle: pkg['bonus'].isNotEmpty
+                          ? Text(pkg['bonus'], style: const TextStyle(color: Colors.redAccent))
+                          : null,
+                      trailing: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepPurple,
+                          foregroundColor: Colors.white,
+                        ),
+                        onPressed: () {
+                          // هنا هنربط بوابة الدفع لاحقاً
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('تم اختيار شحن ${pkg['coins']}')),
+                          );
+                        },
+                        child: Text(pkg['price']),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
