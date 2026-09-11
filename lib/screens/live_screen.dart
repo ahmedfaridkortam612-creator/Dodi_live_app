@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'gift_bottom_sheet.dart';
+import '../gift_bottom_sheet.dart';
 
 class LiveScreen extends StatefulWidget {
   const LiveScreen({super.key});
@@ -9,10 +9,12 @@ class LiveScreen extends StatefulWidget {
 }
 
 class _LiveScreenState extends State<LiveScreen> {
+  // دالة لفتح نافذة الهدايا التفاعلية
   void _openGiftsMenu() {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (context) => const GiftBottomSheet(),
     );
   }
@@ -27,7 +29,7 @@ class _LiveScreenState extends State<LiveScreen> {
       ),
       body: Stack(
         children: [
-          // شاشة عرض البث الأساسية
+          // خلفية الشاشة وتصميم البث
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -48,7 +50,7 @@ class _LiveScreenState extends State<LiveScreen> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'جودة عالية وتفاعل لحظي مع المتابعين',
+                    'تفاعل، أرسل الهدايا الكبرى، واستمتع بالبث',
                     style: TextStyle(color: Colors.white70, fontSize: 14),
                   ),
                 ],
