@@ -1,60 +1,129 @@
 import 'package:flutter/material.dart';
+import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-class LiveScreen extends StatelessWidget {
-  const LiveScreen({Key? key}) : super(key: key);
+class LiveScreen extends StatefulWidget {
+  const LiveScreen({super.key});
+
+  @override
+  State<LiveScreen> createState() => _LiveScreenState();
+}
+
+class _LiveScreenState extends State<LiveScreen> {
+  // حط هنا الـ App ID الخاص بك من موقع Agora (مؤقتاً استخدمنا قيم افتراضية للاختبار)
+  static const String appId = "YOUR_AGORA_APP_ID";
+  static const String token = ""; // لو مش مفعل الـ Token سيبه فاضي
+  static const String channelName = "dodi_live_channel";
+
+  int? _remoteUid;
+  bool _localUserJoined = false;
+  late RtcEngine _engine;
+
+  @override
+  void initState() {
+    super.initState();
+    initAgora();
+  }
+
+  Future<void> initAgora() async {
+    // طلب صلاحيات المايك والكاميرا من المستخدم أثناء فتح الشاشة
+    await [Permission.microphone, Permission.camera].request();
+
+    // إنشاء محرك الاتصال الخاص بـ Agora
+    _engine = createAgoraRtcEngine();
+    await _engine.initialize(const RtcEngineContext(
+      appId: appId,
+      channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
+    ));
+
+    _engine.registerEventHandler(
+      RtcEngineEventHandler(
+        onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
+          setState(() {
+            _localUserJoined = true;
+          });
+        },
+        onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
+          setState(() {
+            _remoteUid = remoteUid;
+          });
+        },
+        onUserOffline: (RtcConnection connection, int remoteUid, UserOfflineReasonType reason) {
+          setState(() {
+            _remoteUid = null;
+          });
+        },
+      ),
+    );
+
+    await _engine.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
+    await _engine.enableVideo();
+    await _engine.startPreview();
+
+    // الانضمام للبث المباشر
+    await _engine.joinChannel(
+      token: token,
+      channelName: channelName,
+      options: const ChannelMediaOptions(),
+      uid: 0,
+    );
+  }
+
+  @override
+  void dispose() {
+    _engine.leaveChannel();
+    _engine.release();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('🎥 البث المباشر وتحديات PK', style: TextStyle(fontSize: 14)),
-        backgroundColor: const Color(0xFF1A0B36),
+        title: const Text("Dodi Live - بث حقيقي"),
+        backgroundColor: Colors.deepPurple,
       ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(12),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          childAspectRatio: 0.8,
-        ),
-        itemCount: 4,
-        itemBuilder: (context, index) {
-          return Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFF2A1B4E),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.redAccent.withOpacity(0.5)),
+      body: Stack(
+        children: [
+          centerView(),
+          Align(
+            alignment: Alignment.topLeft,
+            child: SizedBox(
+              width: 100,
+              height: 150,
+              child: Center(
+                child: _localUserJoined
+                    ? AgoraVideoView(
+                        controller: VideoViewController(
+                          rtcEngine: _engine,
+                          canvas: const VideoCanvas(uid: 0),
+                        ),
+                      )
+                    : const CircularProgressIndicator(),
+              ),
             ),
-            child: Stack(
-              children: [
-                const Center(child: Text('👩‍🰰', style: TextStyle(fontSize: 40))),
-                Positioned(
-                  top: 8,
-                  left: 8,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(10)),
-                    child: const Text('LIVE', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.white)),
-                  ),
-                ),
-                const Positioned(
-                  bottom: 8,
-                  left: 8,
-                  right: 8,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('نور الشام ✨', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white)),
-                      Text('تحدي PK ساخن 🔥', style: TextStyle(fontSize: 10, color: Colors.amber)),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
+          ),
+        ],
       ),
     );
+  }
+
+  Widget centerView() {
+    if (_remoteUid != null) {
+      return AgoraVideoView(
+        controller: VideoViewController.remote(
+          rtcEngine: _engine,
+          canvas: VideoCanvas(uid: _remoteUid),
+          connection: const RtcConnection(channelName: channelName),
+        ),
+      );
+    } else {
+      return const Center(
+        child: Text(
+          'في انتظار انضمام شخص آخر للبث...',
+          style: TextStyle(color: Colors.white, fontSize: 16),
+        ),
+      );
+    }
   }
 }
