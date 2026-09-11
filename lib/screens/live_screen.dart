@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'gift_bottom_sheet.dart'; // استدعاء صندوق الهدايا
 
 class LiveScreen extends StatefulWidget {
   const LiveScreen({super.key});
@@ -10,10 +11,9 @@ class LiveScreen extends StatefulWidget {
 }
 
 class _LiveScreenState extends State<LiveScreen> {
-  // معرف تطبيق أجورا الخاص بك
   static const String appId = "648a267e49184ca4bd518b790e990a97";
   static const String channelName = "dodi_live_channel";
-  static const String token = ""; // ضع الـ Token هنا إذا كان السيرفر مفعل
+  static const String token = "";
 
   int? _remoteUid;
   bool _localUserJoined = false;
@@ -26,10 +26,8 @@ class _LiveScreenState extends State<LiveScreen> {
   }
 
   Future<void> initAgora() async {
-    // طلب صلاحيات الكاميرا والمايكروفون من المستخدم
     await [Permission.microphone, Permission.camera].request();
 
-    // إنشاء محرك أجورا
     _engine = createAgoraRtcEngine();
     await _engine.initialize(const RtcEngineContext(
       appId: appId,
@@ -60,7 +58,6 @@ class _LiveScreenState extends State<LiveScreen> {
     await _engine.enableVideo();
     await _engine.startPreview();
 
-    // الانضمام لقناة البث
     await _engine.joinChannel(
       token: token,
       channelId: channelName,
@@ -79,6 +76,15 @@ class _LiveScreenState extends State<LiveScreen> {
     super.dispose();
   }
 
+  // دالة لإظهار صندوق الهدايا
+  void _openGiftsMenu() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const GiftBottomSheet(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,7 +95,6 @@ class _LiveScreenState extends State<LiveScreen> {
       ),
       body: Stack(
         children: [
-          // عرض كاميرا الضيف أو المتصل الآخر
           Center(
             child: _remoteUid != null
                 ? AgoraVideoView(
@@ -104,7 +109,6 @@ class _LiveScreenState extends State<LiveScreen> {
                     style: TextStyle(color: Colors.white70, fontSize: 16),
                   ),
           ),
-          // عرض كاميرتك الشخصية في زاوية الشاشة (صورة مصغرة)
           Align(
             alignment: Alignment.topRight,
             child: Padding(
@@ -123,6 +127,19 @@ class _LiveScreenState extends State<LiveScreen> {
                         )
                       : const Center(child: CircularProgressIndicator(color: Colors.purpleAccent)),
                 ),
+              ),
+            ),
+          ),
+          // زرار الهدايا العائم أسفل الشاشة
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: FloatingActionButton.extended(
+                onPressed: _openGiftsMenu,
+                backgroundColor: Colors.purpleAccent,
+                icon: const Icon(Icons.card_giftcard, color: Colors.white),
+                label: const Text('الهدايا', style: TextStyle(color: Colors.white)),
               ),
             ),
           ),
