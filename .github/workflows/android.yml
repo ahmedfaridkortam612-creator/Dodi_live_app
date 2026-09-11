@@ -23,18 +23,31 @@ jobs:
         flutter-version: '3.16.0'
         channel: 'stable'
 
-    - name: Install Dependencies
-      run: flutter pub get
+    - name: Scaffold Clean Android Project
+      run: |
+        # الاحتفاظ بملف الشاشات والأكواد والاعتمادات الحالية
+        mkdir -p temp_lib
+        cp -r lib temp_lib/
+        if [ -f "pubspec.yaml" ]; then cp pubspec.yaml temp_pubspec.yaml; fi
+        
+        # إنشاء مشروع فلاتر جديد نظيف تماماً بهيكل أندرويد حديث v2
+        flutter create . --org com.dodi.liveapp --project-name dodi_live_app --platforms=android
+        
+        # استرجاع الأكواد الخاصة بك وتثبيتها
+        rm -rf lib
+        mv temp_lib/lib lib
+        rm -rf temp_lib
+        if [ -f "temp_pubspec.yaml" ]; then mv temp_pubspec.yaml pubspec.yaml; fi
 
     - name: Fix Min SDK Version
       run: |
         BUILD_GRADLE="android/app/build.gradle"
         if [ -f "$BUILD_GRADLE" ]; then
           sed -i 's/minSdkVersion.*/minSdkVersion 24/g' $BUILD_GRADLE
-        else
-          mkdir -p android/app
-          echo "android { defaultConfig { minSdkVersion 24 } }" > $BUILD_GRADLE
         fi
+
+    - name: Install Dependencies
+      run: flutter pub get
 
     - name: Build APK
       run: flutter build apk --release
