@@ -19,7 +19,6 @@ class _HomeScreenState extends State<HomeScreen> {
     const ProfileScreen(),
   ];
 
-  @includeRoute()
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,7 +91,6 @@ class HomeTabContent extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                // الانتقال لشاشة البث المباشر الحقيقي عند الضغط
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const LiveScreen()),
