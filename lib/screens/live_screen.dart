@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'gift_bottom_sheet.dart'; // استدعاء صندوق الهدايا
+import 'gift_bottom_sheet.dart';
 
 class LiveScreen extends StatefulWidget {
   const LiveScreen({super.key});
@@ -76,7 +76,6 @@ class _LiveScreenState extends State<LiveScreen> {
     super.dispose();
   }
 
-  // دالة لإظهار صندوق الهدايا
   void _openGiftsMenu() {
     showModalBottomSheet(
       context: context,
@@ -130,7 +129,6 @@ class _LiveScreenState extends State<LiveScreen> {
               ),
             ),
           ),
-          // زرار الهدايا العائم أسفل الشاشة
           Align(
             alignment: Alignment.bottomRight,
             child: Padding(
