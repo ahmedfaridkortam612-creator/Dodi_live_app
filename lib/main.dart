@@ -3,13 +3,14 @@ import 'screens/home_screen.dart';
 import 'screens/live_screen.dart';
 import 'screens/wallet_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/auth_screen.dart';
 
 void main() {
   runApp(const DodiLiveApp());
 }
 
 class DodiLiveApp extends StatelessWidget {
-  const DodiLiveApp({Key? key}) : super(key: key);
+  const DodiLiveApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,16 +19,16 @@ class DodiLiveApp extends StatelessWidget {
       title: 'Dodi Live App',
       theme: ThemeData(
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF0F051D),
+        scaffoldBackgroundColor: const Color(0xFF0F0728),
         primarySwatch: Colors.purple,
       ),
-      home: const MainNavigationScreen(),
+      home: const AuthScreen(),
     );
   }
 }
 
 class MainNavigationScreen extends StatefulWidget {
-  const MainNavigationScreen({Key? key}) : super(key: key);
+  const MainNavigationScreen({super.key});
 
   @override
   State<MainNavigationScreen> createState() => _MainNavigationScreenState();
@@ -49,20 +50,32 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
+        backgroundColor: const Color(0xFF150A33),
+        selectedItemColor: Colors.purpleAccent,
+        unselectedItemColor: Colors.white54,
+        type: BottomNavigationBarType.fixed,
         onTap: (index) {
           setState(() {
             _currentIndex = index;
           });
         },
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: const Color(0xFF1A0B36),
-        selectedItemColor: Colors.amber,
-        unselectedItemColor: Colors.grey,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: 'الرئيسية'),
-          BottomNavigationBarItem(icon: Icon(Icons.live_tv_rounded), label: 'البث'),
-          BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet_rounded), label: 'المحفظة'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: 'حسابي'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'الرئيسية',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.live_tv),
+            label: 'البث',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_balance_wallet),
+            label: 'المحفظة',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'حسابي',
+          ),
         ],
       ),
     );
