@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:agora_rtc_engine/agora_rtc_engine.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'gift_bottom_sheet.dart';
 
 class LiveScreen extends StatefulWidget {
@@ -11,71 +9,6 @@ class LiveScreen extends StatefulWidget {
 }
 
 class _LiveScreenState extends State<LiveScreen> {
-  static const String appId = "648a267e49184ca4bd518b790e990a97";
-  static const String channelName = "dodi_live_channel";
-  static const String token = "";
-
-  int? _remoteUid;
-  bool _localUserJoined = false;
-  late RtcEngine _engine;
-
-  @override
-  void initState() {
-    super.initState();
-    initAgora();
-  }
-
-  Future<void> initAgora() async {
-    await [Permission.microphone, Permission.camera].request();
-
-    _engine = createAgoraRtcEngine();
-    await _engine.initialize(const RtcEngineContext(
-      appId: appId,
-      channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
-    ));
-
-    _engine.registerEventHandler(
-      RtcEngineEventHandler(
-        onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-          setState(() {
-            _localUserJoined = true;
-          });
-        },
-        onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          setState(() {
-            _remoteUid = remoteUid;
-          });
-        },
-        onUserOffline: (RtcConnection connection, int remoteUid, UserOfflineReasonType reason) {
-          setState(() {
-            _remoteUid = null;
-          });
-        },
-      ),
-    );
-
-    await _engine.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
-    await _engine.enableVideo();
-    await _engine.startPreview();
-
-    await _engine.joinChannel(
-      token: token,
-      channelId: channelName,
-      options: const ChannelMediaOptions(
-        clientRoleType: ClientRoleType.clientRoleBroadcaster,
-        channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
-      ),
-      uid: 0,
-    );
-  }
-
-  @override
-  void dispose() {
-    _engine.leaveChannel();
-    _engine.release();
-    super.dispose();
-  }
-
   void _openGiftsMenu() {
     showModalBottomSheet(
       context: context,
@@ -94,41 +27,56 @@ class _LiveScreenState extends State<LiveScreen> {
       ),
       body: Stack(
         children: [
-          Center(
-            child: _remoteUid != null
-                ? AgoraVideoView(
-                    controller: VideoViewController.remote(
-                      rtcEngine: _engine,
-                      canvas: VideoCanvas(uid: _remoteUid),
-                      connection: const RtcConnection(channelId: channelName),
-                    ),
-                  )
-                : const Text(
-                    'في انتظار انضمام مذيع آخر للبث...',
-                    style: TextStyle(color: Colors.white70, fontSize: 16),
+          // شاشة عرض البث الأساسية
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF150A33), Colors.black],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+            child: const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.live_tv, size: 80, color: Colors.purpleAccent),
+                  SizedBox(height: 16),
+                  Text(
+                    'أنت الآن في غرفة البث المباشر',
+                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                   ),
+                  SizedBox(height: 8),
+                  Text(
+                    'جودة عالية وتفاعل لحظي مع المتابعين',
+                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                  ),
+                ],
+              ),
+            ),
           ),
+          
+          // فيديو المذيع المصغر في الأعلى
           Align(
             alignment: Alignment.topRight,
             child: Padding(
               padding: const EdgeInsets.all(12.0),
-              child: SizedBox(
+              child: Container(
                 width: 110,
                 height: 160,
-                child: ClipRRect(
+                decoration: BoxDecoration(
+                  color: Colors.deepPurple.shade900,
                   borderRadius: BorderRadius.circular(12),
-                  child: _localUserJoined
-                      ? AgoraVideoView(
-                          controller: VideoViewController(
-                            rtcEngine: _engine,
-                            canvas: const VideoCanvas(uid: 0),
-                          ),
-                        )
-                      : const Center(child: CircularProgressIndicator(color: Colors.purpleAccent)),
+                  border: Border.all(color: Colors.purpleAccent, width: 1.5),
+                ),
+                child: const Center(
+                  child: Icon(Icons.person, size: 50, color: Colors.white),
                 ),
               ),
             ),
           ),
+
+          // زرار الهدايا العائم أسفل الشاشة
           Align(
             alignment: Alignment.bottomRight,
             child: Padding(
