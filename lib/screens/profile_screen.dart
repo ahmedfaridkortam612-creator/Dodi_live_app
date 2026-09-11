@@ -15,7 +15,7 @@ class ProfileScreen extends StatelessWidget {
             icon: const Icon(Icons.settings),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('إعدادات الحساب قيد Entwicklung')),
+                const SnackBar(content: Text('إعدادات الحساب قيد التطوير')),
               );
             },
           ),
@@ -26,7 +26,7 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            // صورة البروفيسيل واسم المستخدم
+            // صورة البروفايل واسم المستخدم
             const CircleAvatar(
               radius: 50,
               backgroundColor: Colors.purpleAccent,
@@ -48,7 +48,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 25),
             
-            // إحصائيات المستخدم (متابعين، متابعة، إعجابات)
+            // إحصائيات المستخدم (متابَعون، متابعون، إعجابات)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -83,35 +83,26 @@ class ProfileScreen extends StatelessWidget {
             // زر تسجيل الخروج
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent.withOpacity(0.8),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red.shade900,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-              ).wrap(
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red.shade900,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onPressed: () {
-                    // العودة لشاشة تسجيل الدخول
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => const AuthScreen()),
-                      (route) => false,
-                    );
-                  },
-                  child: const Text(
-                    'تسجيل الخروج',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
+                onPressed: () {
+                  // العودة لشاشة تسجيل الدخول ومسح كل الصفحات السابقة
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const AuthScreen()),
+                    (route) => false,
+                  );
+                },
+                child: const Text(
+                  'تسجيل الخروج',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -148,7 +139,7 @@ class ProfileScreen extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     return Container(
-      margin: const FinishMargin(bottom: 12), // Or standard margin
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: const Color(0xFF150A33),
         borderRadius: BorderRadius.circular(14),
