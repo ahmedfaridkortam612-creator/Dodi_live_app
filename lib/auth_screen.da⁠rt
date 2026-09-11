@@ -1,155 +1,86 @@
 import 'package:flutter/material.dart';
+import 'home_screen.dart'; // تأكد إن هذا هو اسم ملف الشاشة الرئيسية عندك أو استبدله بالصفحة المناسبة
 
-class AuthScreen extends StatefulWidget {
-  final VoidCallback? onLoginSuccess;
-
-  const AuthScreen({Key? key, this.onLoginSuccess}) : super(key: key);
-
-  @override
-  State<AuthScreen> createState() => _AuthScreenState();
-}
-
-class _AuthScreenState extends State<AuthScreen> {
-  final _formKey = GlobalKey<FormState>();
-  String _authMode = 'login';
-  
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  void _submit() {
-    if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("تم تسجيل الدخول بنجاح!"),
-          backgroundColor: Colors.pinkAccent,
-        ),
-      );
-      if (widget.onLoginSuccess != null) {
-        widget.onLoginSuccess!();
-      }
-    }
-  }
+class AuthScreen extends StatelessWidget {
+  const AuthScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.live_tv_rounded,
-                    size: 80,
-                    color: Colors.pinkAccent,
-                  ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    "DODI LIVE",
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      letterSpacing: 2.0,
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () => setState(() => _authMode = 'login'),
-                          child: Text(
-                            "تسجيل الدخول",
-                            style: TextStyle(
-                              color: _authMode == 'login' ? Colors.pinkAccent : Colors.white60,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () => setState(() => _authMode = 'signup'),
-                          child: Text(
-                            "حساب جديد",
-                            style: TextStyle(
-                              color: _authMode == 'signup' ? Colors.pinkAccent : Colors.white60,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  if (_authMode == 'signup') ...[
-                    TextFormField(
-                      controller: _nameController,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: const InputDecoration(
-                        labelText: "اسم المستخدم",
-                        labelStyle: TextStyle(color: Colors.white70),
-                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
-                        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.pinkAccent)),
-                      ),
-                      validator: (val) => val!.isEmpty ? "يرجى إدخال الاسم" : null,
-                    ),
-                    const SizedBox(height: 12),
-                  ],
-                  TextFormField(
-                    controller: _emailController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(
-                      labelText: "البريد الإلكتروني",
-                      labelStyle: TextStyle(color: Colors.white70),
-                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
-                      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.pinkAccent)),
-                    ),
-                    validator: (val) => val!.isEmpty ? "هذا الحقل مطلوب" : null,
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(
-                      labelText: "كلمة المرور",
-                      labelStyle: TextStyle(color: Colors.white70),
-                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
-                      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.pinkAccent)),
-                    ),
-                    validator: (val) => val!.length < 6 ? "كلمة المرور قصيرة جداً" : null,
-                  ),
-                  const SizedBox(height: 30),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.pinkAccent,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
-                      onPressed: _submit,
-                      child: Text(
-                        _authMode == 'login' ? "دخول" : "إنشاء حساب",
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                ],
+      backgroundColor: const Color(0xFF0F0728), // خلفية مظلمة فخمة تناسب أجواء البث
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // شعار أو أيقونة التطبيق
+            const Icon(
+              Icons.live_tv_rounded,
+              size: 80,
+              color: Colors.purpleAccent,
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              "مرحباً بك في Dodi Live",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
               ),
             ),
-          ),
+            const SizedBox(height: 10),
+            const Text(
+              "انطلق في عالم البث المباشر وتفاعل مع الأصدقاء",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white60,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 50),
+            
+            // حقل رقم الهاتف أو البريد (كمثال واجهة)
+            TextField(
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white10,
+                hintText: 'أدخل بريدك الإلكتروني أو رقم الهاتف',
+                hintStyle: const TextStyle(color: Colors.white38),
+                prefixIcon: const Icon(Icons.person, color: Colors.purpleAccent),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            
+            // زر تسجيل الدخول
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () {
+                // الانتقال للشاشة الرئيسية بعد تسجيل الدخول
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomeScreen()), // استبدل HomeScreen بالصفحة الرئيسية عندك لو مسمى مختلف
+                );
+              },
+              child: const Text(
+                'تسجيل الدخول / متابعة',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
         ),
       ),
     );
