@@ -10,9 +10,8 @@ class LiveScreen extends StatefulWidget {
 }
 
 class _LiveScreenState extends State<LiveScreen> {
-  // حط هنا الـ App ID الخاص بك من موقع Agora (مؤقتاً استخدمنا قيم افتراضية للاختبار)
-  static const String appId = "YOUR_AGORA_APP_ID";
-  static const String token = ""; // لو مش مفعل الـ Token سيبه فاضي
+  static const String appId = "648a267e49184ca4bd518b790e990a97";
+  static const String token = "";
   static const String channelName = "dodi_live_channel";
 
   int? _remoteUid;
@@ -26,10 +25,8 @@ class _LiveScreenState extends State<LiveScreen> {
   }
 
   Future<void> initAgora() async {
-    // طلب صلاحيات المايك والكاميرا من المستخدم أثناء فتح الشاشة
     await [Permission.microphone, Permission.camera].request();
 
-    // إنشاء محرك الاتصال الخاص بـ Agora
     _engine = createAgoraRtcEngine();
     await _engine.initialize(const RtcEngineContext(
       appId: appId,
@@ -60,11 +57,13 @@ class _LiveScreenState extends State<LiveScreen> {
     await _engine.enableVideo();
     await _engine.startPreview();
 
-    // الانضمام للبث المباشر
     await _engine.joinChannel(
       token: token,
-      channelName: channelName,
-      options: const ChannelMediaOptions(),
+      channelId: channelName,
+      options: const ChannelMediaOptions(
+        clientRoleType: ClientRoleType.clientRoleBroadcaster,
+        channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
+      ),
       uid: 0,
     );
   }
@@ -114,7 +113,7 @@ class _LiveScreenState extends State<LiveScreen> {
         controller: VideoViewController.remote(
           rtcEngine: _engine,
           canvas: VideoCanvas(uid: _remoteUid),
-          connection: const RtcConnection(channelName: channelName),
+          connection: const RtcConnection(channelId: channelName),
         ),
       );
     } else {
