@@ -11,11 +11,9 @@ class LiveScreen extends StatefulWidget {
 
 class _LiveScreenState extends State<LiveScreen> {
   static const String appId = "648a267e49184ca4bd518b790e990a97";
-  static const String token = "";
   static const String channelName = "dodi_live_channel";
-
-  int? _remoteUid;
-  bool _localUserJoined = false;
+  
+  bool _isJoined = false;
   late RtcEngine _engine;
 
   @override
@@ -33,32 +31,12 @@ class _LiveScreenState extends State<LiveScreen> {
       channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
     ));
 
-    _engine.registerEventHandler(
-      RtcEngineEventHandler(
-        onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-          setState(() {
-            _localUserJoined = true;
-          });
-        },
-        onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          setState(() {
-            _remoteUid = remoteUid;
-          });
-        },
-        onUserOffline: (RtcConnection connection, int remoteUid, UserOfflineReasonType reason) {
-          setState(() {
-            _remoteUid = null;
-          });
-        },
-      ),
-    );
-
     await _engine.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
     await _engine.enableVideo();
     await _engine.startPreview();
 
     await _engine.joinChannel(
-      token: token,
+      token: "",
       channelId: channelName,
       options: const ChannelMediaOptions(
         clientRoleType: ClientRoleType.clientRoleBroadcaster,
@@ -66,6 +44,10 @@ class _LiveScreenState extends State<LiveScreen> {
       ),
       uid: 0,
     );
+
+    setState(() {
+      _isJoined = true;
+    });
   }
 
   @override
@@ -79,41 +61,16 @@ class _LiveScreenState extends State<LiveScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Dodi Live"),
+        title: const Text("Dodi Live Broadcast"),
         backgroundColor: Colors.deepPurple,
       ),
-      body: Stack(
-        children: [
-          Center(
-            child: _remoteUid != null
-                ? AgoraVideoView(
-                    controller: VideoViewController.remote(
-                      rtcEngine: _engine,
-                      canvas: VideoCanvas(uid: _remoteUid),
-                      connection: const RtcConnection(channelId: channelName),
-                    ),
-                  )
-                : const Text(
-                    'في انتظار انضمام شخص آخر للبث...',
-                    style: TextStyle(color: Colors.black54, fontSize: 16),
-                  ),
-          ),
-          Align(
-            alignment: Alignment.topLeft,
-            child: SizedBox(
-              width: 100,
-              height: 150,
-              child: _localUserJoined
-                  ? AgoraVideoView(
-                      controller: VideoViewController(
-                        rtcEngine: _engine,
-                        canvas: const VideoCanvas(uid: 0),
-                      ),
-                    )
-                  : const Center(child: CircularProgressIndicator()),
-            ),
-          ),
-        ],
+      body: Center(
+        child: _isJoined
+            ? const Text(
+                'تم الاتصال بنجاح وجاهز للبث المباشر!',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),
+              )
+            : const CircularProgressIndicator(),
       ),
     );
   }
