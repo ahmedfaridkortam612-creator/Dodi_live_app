@@ -58,12 +58,12 @@ class AuthScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.amber,
                       foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25))),
+                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25))),
                     ),
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => CompleteProfileScreen()),
+                        MaterialPageRoute(builder: (context) => const CompleteProfileScreen()),
                       );
                     },
                     child: const Text(
@@ -79,12 +79,12 @@ class AuthScreen extends StatelessWidget {
                   child: OutlinedButton(
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: Colors.amberAccent),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25))),
+                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25))),
                     ),
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => CompleteProfileScreen()),
+                        MaterialPageRoute(builder: (context) => const CompleteProfileScreen()),
                       );
                     },
                     child: const Text(
@@ -101,12 +101,12 @@ class AuthScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1877F2),
                       foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25))),
+                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25))),
                     ),
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => CompleteProfileScreen()),
+                        MaterialPageRoute(builder: (context) => const CompleteProfileScreen()),
                       );
                     },
                     child: const Text(
