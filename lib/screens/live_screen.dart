@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../gift_bottom_sheet.dart';
 import 'pk_battle_screen.dart';
+import 'live_seats_widget.dart';
 
 class LiveScreen extends StatefulWidget {
   const LiveScreen({super.key});
@@ -59,7 +60,7 @@ class _LiveScreenState extends State<LiveScreen> {
             ),
           ),
           
-          // فيديو المذيع المصغر في الأعلى
+          // فيديو المذيع المصغر في الأعلى (يمين)
           Align(
             alignment: Alignment.topRight,
             child: Padding(
@@ -75,6 +76,18 @@ class _LiveScreenState extends State<LiveScreen> {
                 child: const Center(
                   child: Icon(Icons.person, size: 50, color: Colors.white),
                 ),
+              ),
+            ),
+          ),
+
+          // مقاعد البث التفاعلية في الأعلى (يسار)
+          const Align(
+            alignment: Alignment.topLeft,
+            child: Padding(
+              padding: EdgeInsets.all(12.0),
+              child: SizedBox(
+                width: 180,
+                child: LiveSeatsWidget(),
               ),
             ),
           ),
