@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/splash_screen.dart';
+import 'screens/auth_screen.dart';
 
 void main() {
   runApp(const DodiLiveApp());
@@ -18,7 +18,7 @@ class DodiLiveApp extends StatelessWidget {
         primarySwatch: Colors.purple,
         scaffoldBackgroundColor: const Color(0xFF000000),
       ),
-      home: const SplashScreen(),
+      home: const AuthScreen(),
     );
   }
 }
