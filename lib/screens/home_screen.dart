@@ -67,7 +67,7 @@ class HomeFeedTab extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A0B2E),
         title: const Text(
-          'DODI LIVE - النجوم',
+          'DODI LIVE - النجوم 🌟',
           style: TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.bold),
         ),
         actions: [
@@ -130,7 +130,7 @@ class HomeFeedTab extends StatelessWidget {
                     left: 12,
                     right: 12,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween, // تم التصحيح هنا بنجاح
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,7 +160,7 @@ class HomeFeedTab extends StatelessWidget {
                               MaterialPageRoute(builder: (context) => const LiveScreen()),
                             );
                           },
-                          child: const Text('انضمام', style: TextStyle(fontWeight: FontWeight.bold)),
+                          child: const Text('انضمام 🔴', style: TextStyle(fontWeight: FontWeight.bold)),
                         ),
                       ],
                     ),
