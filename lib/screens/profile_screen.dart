@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'wallet_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -7,125 +6,184 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0D061A),
+      backgroundColor: const Color(0xFF000000),
       appBar: AppBar(
-        title: const Text('الملف الشخصي (VIP)'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: const Color(0xFF1A0B2E),
+        elevation: 0,
+        title: const Text(
+          'الملف الشخصي - Dodi VIP',
+          style: TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.bold),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: const Icon(Icons.settings_rounded, color: Colors.amberAccent),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('الإعدادات قيد التطوير')),
+                const SnackBar(content: Text('إعدادات الحساب والأمان قيد التحديث ⚙️')),
               );
             },
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFF1A0B2E),
+              Color(0xFF0A0314),
+              Color(0xFF000000),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: ListView(
+          padding: const EdgeInsets.all(16),
           children: [
-            const SizedBox(height: 20),
-            // صورة البروفايل واسم المستخدم الملكي
-            const CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.purpleAccent,
-              child: Icon(Icons.person, size: 60, color: Colors.white),
-            ),
-            const SizedBox(height: 15),
-            const Text(
-              'أحمد فريد (Ahmed Farid)',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
+            // بطاقة البروفايل الرئيسية (صورة + الاسم + ID + مستوى الـ VIP)
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.amber,
-                borderRadius: BorderRadius.circular(12),
+                color: Colors.white.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: Colors.purpleAccent.withOpacity(0.3)),
               ),
-              child: const Text(
-                'VIP 12 - أسطوري',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                ),
+              child: Row(
+                children: [
+                  const CircleAvatar(
+                    radius: 36,
+                    backgroundColor: Colors.amberAccent,
+                    child: Icon(Icons.person, size: 40, color: Colors.black),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: const [
+                            Text(
+                              'أحمد كورتام',
+                              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(width: 6),
+                            Icon(Icons.verified, color: Colors.amberAccent, size: 16),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'ID: 99482710',
+                          style: TextStyle(color: Colors.white60, fontSize: 12),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: Colors.amber.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.amberAccent),
+                          ),
+                          child: const Text(
+                            'VIP 7 - ملك الأساطير 👑',
+                            style: TextStyle(color: Colors.amberAccent, fontSize: 10, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 30),
-            // بطاقات الإحصائيات (المستويات والألماس)
+
+            const SizedBox(height: 20),
+
+            // إحصائيات الحساب (متابعين، إعجابات، ماس)
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildStatCard('مستوى الثراء', 'Lv. 12', Colors.amber),
-                _buildStatCard('مستوى الجاذبية', 'Lv. 9', Colors.purpleAccent),
-                // زرار سريع للانتقال للمحفظة عند الضغط على الكوينز
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const WalletScreen()),
-                    );
-                  },
-                  child: _buildStatCard('الكوينز', '4,500', Colors.tealAccent),
-                ),
+                _buildStatCard('المتابَعون', '1.2K'),
+                const SizedBox(width: 10),
+                _buildStatCard('المتابِعون', '48.5K'),
+                const SizedBox(width: 10),
+                _buildStatCard('الإعجابات', '250K'),
               ],
             ),
+
+            const SizedBox(height: 24),
+            const Text(
+              'خيارات الحساب والتحكم',
+              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+
+            // خيارات القائمة
+            _buildMenuItem(Icons.diamond_rounded, 'شحن الباقة والماس', 'إدارة العملات والمحفظة'),
+            _buildMenuItem(Icons.bar_chart_rounded, 'لوحة أرباح المضيف', 'متابعة الدخل اليومي والأسبوعي'),
+            _buildMenuItem(Icons.security_rounded, 'الأمان وربط الحساب', 'كلمة المرور وحماية الـ ID'),
+            _buildMenuItem(Icons.card_giftcard_rounded, 'سجل الهدايا المُرسَلة', 'عرض الهدايا التاريخية'),
+            _buildMenuItem(Icons.help_outline_rounded, 'الدعم الفني وخدمة العملاء', 'مساعدة فورية على مدار الساعة'),
+
             const SizedBox(height: 30),
-            // القائمة الملكية
-            _buildMenuItem(Icons.account_balance_wallet, 'محفظة الشحن والألماس', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const WalletScreen()),
-              );
-            }),
-            _buildMenuItem(Icons.star, 'شارات الشرف والألقاب', () {}),
-            _buildMenuItem(Icons.card_giftcard, 'سجل الهدايا', () {}),
-            _buildMenuItem(Icons.security, 'الأمان وكلمة المرور', () {}),
-            _buildMenuItem(Icons.headset_mic, 'الدعم الفني', () {}),
+            
+            // زر تسجيل الخروج
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Colors.redAccent),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                ),
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    constSnackBar(content: Text('تم تسجيل الخروج بنجاح 🔒')),
+                  );
+                },
+                child: const Text(
+                  'تسجيل الخروج',
+                  style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 15),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  static Widget _buildStatCard(String title, String value, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      width: 100,
-      decoration: BoxDecoration(
-        color: const Color(0xFF150A33),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.5)),
-      ),
-      child: Column(
-        children: [
-          Text(title, style: const TextStyle(color: Colors.white70, fontSize: 11)),
-          const SizedBox(height: 6),
-          Text(value, style: TextStyle(color: color, fontSize: 15, fontWeight: FontWeight.bold)),
-        ],
+  Widget _buildStatCard(String title, String value) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.purpleAccent.withOpacity(0.2)),
+        ),
+        child: Column(
+          children: [
+            Text(value, style: const TextStyle(color: Colors.amberAccent, fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 4),
+            Text(title, style: const TextStyle(color: Colors.white60, fontSize: 11)),
+          ],
+        ),
       ),
     );
   }
 
-  static Widget _buildMenuItem(IconData icon, String title, VoidCallback onTap) {
+  Widget _buildMenuItem(IconData icon, String title, String subtitle) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFF150A33),
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.white.withOpacity(0.04),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white10),
       ),
       child: ListTile(
-        leading: Icon(icon, color: Colors.purpleAccent),
-        title: Text(title, style: const TextStyle(color: Colors.white, fontSize: 14)),
-        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16),
-        onTap: onTap,
+        leading: Icon(icon, color: Colors.amberAccent),
+        title: Text(title, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
+        subtitle: Text(subtitle, style: const TextStyle(color: Colors.white38, fontSize: 11)),
+        trailing: const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white38, size: 14),
+        onTap: () {},
       ),
     );
   }
