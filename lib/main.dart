@@ -18,7 +18,7 @@ class DodiLiveApp extends StatelessWidget {
         primarySwatch: Colors.purple,
         scaffoldBackgroundColor: const Color(0xFF000000),
       ),
-      home: SplashScreen(), // شيلنا كلمة const من هنا عشان يحل الإيرور
+      home: SplashScreen(),
     );
   }
 }
