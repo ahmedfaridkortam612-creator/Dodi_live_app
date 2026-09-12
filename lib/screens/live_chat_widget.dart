@@ -1,47 +1,60 @@
 import 'package:flutter/material.dart';
 
-class LiveChatWidget extends StatelessWidget {
-  const LiveChatWidget({super.key});
+class LiveSeatsWidget extends StatelessWidget {
+  final int seatCount;
+  final Function(int seatIndex) onSeatTap;
+
+  const LiveSeatsWidget({
+    super.key,
+    this.seatCount = 6,
+    required this.onSeatTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // قائمة رسائل تجريبية للمتفاعلين في الغرفة
-    final List<Map<String, String>> chatMessages = [
-      {'user': 'محمود', 'message': 'منور البث يا أسد! 🔥'},
-      {'user': 'سارة', 'message': 'أحلى بث والله Dodi Live 💜'},
-      {'user': 'كريم', 'message': 'أرسلوا هدايا شباب انضموا للتحدي!'},
-      {'user': 'منى', 'message': 'الجو العام فخم جداً ✨'},
-    ];
-
     return Container(
-      padding: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: ListView.builder(
-        reverse: true, // عشان الرسائل الجديدة تظهر تحت زي التيك توك
-        itemCount: chatMessages.length,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: seatCount,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
+          childAspectRatio: 1.0,
+        ),
         itemBuilder: (context, index) {
-          final msg = chatMessages[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0),
-            child: RichText(
-              text: TextSpan(
+          return GestureDetector(
+            onTap: () => onSeatTap(index),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.4),
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(
+                  color: Colors.amberAccent.withOpacity(0.5),
+                  width: 1.5,
+                ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextSpan(
-                    text: '${msg['user']}: ',
-                    style: const TextStyle(
+                  CircleAvatar(
+                    radius: 22,
+                    backgroundColor: Colors.purple.withOpacity(0.4),
+                    child: const Icon(
+                      Icons.mic_none_rounded,
                       color: Colors.amberAccent,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13,
+                      size: 24,
                     ),
                   ),
-                  TextSpan(
-                    text: msg['message'],
+                  const SizedBox(height: 6),
+                  Text(
+                    'مقعد ${index + 1}',
                     style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
+                      color: Colors.white70,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
