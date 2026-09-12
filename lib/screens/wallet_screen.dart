@@ -1,105 +1,66 @@
 import 'package:flutter/material.dart';
 
-class WalletScreen extends StatefulWidget {
+class WalletScreen extends StatelessWidget {
   const WalletScreen({super.key});
-
-  @override
-  State<WalletScreen> createState() => _WalletScreenState();
-}
-
-class _WalletScreenState extends State<WalletScreen> {
-  // رصيد الكوينز المبدئي للمستخدم
-  int _userCoins = 1250;
-
-  void _rechargeCoins(int amount, double price) {
-    setState(() {
-      _userCoins += amount;
-    });
-
-    // إرسال تنبيه نجاح الشحن
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('تم شحن $amount كوينز بنجاح مقابل \$$price! 🎉'),
-        backgroundColor: Colors.green,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF0D061A),
       appBar: AppBar(
-        title: const Text('المحفظة والرصيد'),
+        title: const Text('محفظة Dodi Live'),
         backgroundColor: Colors.deepPurple,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // كارت عرض الرصيد الحالي
+            // بطاقة الرصيد الحالي
             Container(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Colors.deepPurple, Colors.purpleAccent],
+                  colors: [Colors.deepPurple, Colors.indigo],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.purple.withOpacity(0.4),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
+                borderRadius: BorderRadius.circular(16),
               ),
-              child: Column(
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'رصيد الكوينز الحالي',
-                    style: TextStyle(color: Colors.white70, fontSize: 16),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.monetization_on, color: Colors.amber, size: 32),
-                      const SizedBox(width: 8),
-                      Text(
-                        '$_userCoins',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 36,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      Text('رصيد الكوينز الحالي', style: TextStyle(color: Colors.white70, fontSize: 14)),
+                      SizedBox(height: 8),
+                      Text('4,500 كوينز', style: TextStyle(color: Colors.amber, fontSize: 22, fontWeight: FontWeight.bold)),
                     ],
                   ),
+                  Icon(Icons.account_balance_wallet, color: Colors.amber, size: 40),
                 ],
               ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 24),
             const Text(
-              'اختر باقة الشحن:',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              'اختر باقة الشحن الملكية',
+              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             
-            // باقات الشحن المتاحة
+            // شبكة باقات الشحن
             Expanded(
-              child: ListView(
+              child: GridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 1.4,
                 children: [
-                  _buildRechargeCard('باقة المبتدئين', 1000, 0.99),
-                  _buildRechargeCard('الباقة الذهبية', 5000, 4.99),
-                  _buildRechargeCard('باقة الأساطير', 15000, 12.99),
-                  _buildRechargeCard('باقة الملوك', 50000, 39.99),
+                  _buildRechargeCard('1,000 كوينز', '\$9.99', Colors.purpleAccent),
+                  _buildRechargeCard('5,000 كوينز', '\$44.99', Colors.amber),
+                  _buildRechargeCard('10,000 كوينز', '\$89.99', Colors.tealAccent),
+                  _buildRechargeCard('50,000 كوينز', '\$399.99', Colors.redAccent),
                 ],
               ),
             ),
@@ -109,36 +70,37 @@ class _WalletScreenState extends State<WalletScreen> {
     );
   }
 
-  Widget _buildRechargeCard(String title, int coins, double price) {
+  // عنصر مساعد لبطاقات باقات الشحن
+  static Widget _buildRechargeCard(String coins, String price, Color color) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: const Color(0xFF150A33),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.purpleAccent.withOpacity(0.3)),
+        border: Border.all(color: color.withOpacity(0.5)),
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        leading: const Icon(Icons.diamond, color: Colors.purpleAccent, size: 36),
-        title: Text(
-          title,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          '$coins كوينز',
-          style: const TextStyle(color: Colors.amber),
-        ),
-        trailing: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.deepPurple,
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.monetization_on, color: Colors.amber, size: 20),
+              const SizedBox(width: 6),
+              Text(coins, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
+            ],
           ),
-          onPressed: () => _rechargeCoins(coins, price),
-          child: Text('\$$price'),
-        ),
+          const SizedBox(height: 12),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: color,
+              foregroundColor: Colors.black,
+              minimumSize: const Size(double.infinity, 36),
+            ),
+            onPressed: () {},
+            child: Text(price, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
       ),
     );
   }
