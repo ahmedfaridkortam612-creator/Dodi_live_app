@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'live_screen.dart';
+import 'profile_screen.dart';
+import 'wallet_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -7,15 +9,31 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF0D061A),
       appBar: AppBar(
-        title: const Text('Dodi Live - البثوث الحية'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.deepPurple.shade900,
+        title: const Text(
+          'DODI LIVE - الرئيسية',
+          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.0),
+        ),
         actions: [
+          // زرار المحفظة في الشريط العلوي
           IconButton(
-            icon: const Icon(Icons.notifications_active),
+            icon: const Icon(Icons.account_balance_wallet, color: Colors.amber),
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('لا توجد إشعارات جديدة')),
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const WalletScreen()),
+              );
+            },
+          ),
+          // زرار الملف الشخصي في الشريط العلوي
+          IconButton(
+            icon: const Icon(Icons.account_circle, color: Colors.purpleAccent),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfileScreen()),
               );
             },
           ),
@@ -26,61 +44,62 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ترويعة ترحيبية أو بانر إعلاني
+            // بانر ترحيبي فخم
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Colors.deepPurple, Colors.purpleAccent],
+                  colors: [Color(0xFF2A1147), Color(0xFF150A33)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.purpleAccent.withOpacity(0.3)),
               ),
               child: const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'انضم لأروع البثوث الآن!',
-                        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'تفاعل، أرسل هدايا، واكسب أصدقاء جدد',
-                        style: TextStyle(color: Colors.white70, fontSize: 12),
-                      ),
-                    ],
+                  Icon(Icons.local_fire_department, color: Colors.amber, size: 40),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'مرحباً بك في عالم النجوم!',
+                          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          'استكشف البث الحية، انضم للمعارك، وشارك في التحديات الكبرى.',
+                          style: TextStyle(color: Colors.white60, fontSize: 12),
+                        ),
+                      ],
+                    ),
                   ),
-                  Icon(Icons.live_tv, color: Colors.white, size: 40),
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             const Text(
-              'البثوث المتاحة حالياً',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              'غرف البث النشطة الآن',
+              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            
-            // شبكة عرض غرف البث النشطة
+
+            // قائمة الغرف المتاحة
             Expanded(
               child: GridView.builder(
-                itemCount: 4,
+                itemCount: 4, // عدد الغرف التجريبية
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  mainAxisSpacing: 12,
                   crossAxisSpacing: 12,
-                  childAspectRatio: 0.75,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 0.85,
                 ),
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
-                      // الانتقال لغرفة البث المباشر عند النقر
+                      // الانتقال لغرفة البث عند الضغط على أي غرفة
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => const LiveScreen()),
@@ -90,7 +109,7 @@ class HomeScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: const Color(0xFF150A33),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.purpleAccent.withOpacity(0.3)),
+                        border: Border.all(color: Colors.purpleAccent.withOpacity(0.4)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,11 +117,15 @@ class HomeScreen extends StatelessWidget {
                           Expanded(
                             child: Container(
                               decoration: BoxDecoration(
-                                color: Colors.deepPurple.withOpacity(0.3),
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                                color: Colors.deepPurple.shade800,
+                                borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
                               ),
-                              child: const Center(
-                                child: Icon(Icons.play_circle_fill, color: Colors.purpleAccent, size: 48),
+                              child: Center(
+                                child: Icon(
+                                  index % 2 == 0 ? Icons.live_tv : Icons.mic,
+                                  size: 40,
+                                  color: Colors.amberAccent,
+                                ),
                               ),
                             ),
                           ),
@@ -112,15 +135,22 @@ class HomeScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'لايف رقم ${index + 1}',
-                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                  'غرفة النجم #${index + 1}',
+                                  style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 4),
-                                const Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.between,
                                   children: [
-                                    Text('مذيع مميز ⭐', style: TextStyle(color: Colors.white60, fontSize: 11)),
-                                    Text('🔴 مباشر', style: TextStyle(color: Colors.redAccent, fontSize: 11)),
+                                    const Text('مذيع VIP', style: TextStyle(color: Colors.white60, fontSize: 11)),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: Colors.red.withOpacity(0.8),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: const Text('LIVE', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                                    ),
                                   ],
                                 ),
                               ],
