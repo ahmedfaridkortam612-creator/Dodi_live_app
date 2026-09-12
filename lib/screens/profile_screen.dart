@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'auth_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -7,15 +6,16 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF0D061A),
       appBar: AppBar(
-        title: const Text('الملف الشخصي'),
+        title: const Text('الملف الشخصي (VIP)'),
         backgroundColor: Colors.deepPurple,
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('إعدادات الحساب قيد التطوير')),
+                const SnackBar(content: Text('الإعدادات قيد التطوير')),
               );
             },
           ),
@@ -26,7 +26,7 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            // صورة البروفايل واسم المستخدم
+            // صورة البروفايل واسم المستخدم الملكي
             const CircleAvatar(
               radius: 50,
               backgroundColor: Colors.purpleAccent,
@@ -34,121 +34,81 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 15),
             const Text(
-              'أحمد فرید (Ahmed Farid)',
+              'أحمد فريد (Ahmed Farid)',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 5),
-            const Text(
-              'ID: 8854210',
-              style: TextStyle(color: Colors.white60, fontSize: 14),
-            ),
-            const SizedBox(height: 25),
-            
-            // إحصائيات المستخدم
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildStatItem('المتابَعون', '142'),
-                _buildStatItem('المتابعون', '3.8K'),
-                _buildStatItem('الإعجابات', '25.4K'),
-              ],
-            ),
-            const SizedBox(height: 35),
-            
-            // خيارات الحساب
-            _buildProfileOption(
-              icon: Icons.star_rounded,
-              title: 'مستوى المستخدم (VIP)',
-              subtitle: 'المستوى الثالث - Bronze',
-              onTap: () {},
-            ),
-            _buildProfileOption(
-              icon: Icons.security,
-              title: 'الأمان وكلمة المرور',
-              subtitle: 'حسابك محمي',
-              onTap: () {},
-            ),
-            _buildProfileOption(
-              icon: Icons.help_outline,
-              title: 'الدعم والمساعدة',
-              subtitle: 'تواصل معنا لحل أي مشكلة',
-              onTap: () {},
-            ),
-            const SizedBox(height: 40),
-            
-            // زر تسجيل الخروج
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red.shade900,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => const AuthScreen()),
-                    (route) => false,
-                  );
-                },
-                child: const Text(
-                  'تسجيل الخروج',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.amber,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Text(
+                'VIP 12 - أسطوري',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
                 ),
               ),
             ),
+            const SizedBox(height: 30),
+            // بطاقات الإحصائيات (المستويات والألماس)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildStatCard('مستوى الثراء', 'Lv. 12', Colors.amber),
+                _buildStatCard('مستوى الجاذبية', 'Lv. 9', Colors.purpleAccent),
+                _buildStatCard('الكوينز', '4,500', Colors.tealAccent),
+              ],
+            ),
+            const SizedBox(height: 30),
+            // القائمة الملكية
+            _buildMenuItem(Icons.star, 'شارات الشرف والألقاب', () {}),
+            _buildMenuItem(Icons.card_giftcard, 'سجل الهدايا', () {}),
+            _buildMenuItem(Icons.security, 'الأمان وكلمة المرور', () {}),
+            _buildMenuItem(Icons.headset_mic, 'الدعم الفني', () {}),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStatItem(String title, String count) {
-    return Column(
-      children: [
-        Text(
-          count,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          title,
-          style: const TextStyle(color: Colors.white60, fontSize: 13),
-        ),
-      ],
+  static Widget _buildStatCard(String title, String value, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      width: 100,
+      decoration: BoxDecoration(
+        color: const Color(0xFF150A33),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.5)),
+      ),
+      child: Column(
+        children: [
+          Text(title, style: const TextStyle(color: Colors.white70, fontSize: 11)),
+          const SizedBox(height: 6),
+          Text(value, style: TextStyle(color: color, fontSize: 15, fontWeight: FontWeight.bold)),
+        ],
+      ),
     );
   }
 
-  Widget _buildProfileOption({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
+  static Widget _buildMenuItem(IconData icon, String title, VoidCallback onTap) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: const Color(0xFF150A33),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.purpleAccent.withOpacity(0.2)),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: ListTile(
         leading: Icon(icon, color: Colors.purpleAccent),
-        title: Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
-        subtitle: Text(subtitle, style: const TextStyle(color: Colors.white60, fontSize: 12)),
-        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white38, size: 16),
+        title: Text(title, style: const TextStyle(color: Colors.white, fontSize: 14)),
+        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16),
         onTap: onTap,
       ),
     );
