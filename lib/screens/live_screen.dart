@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../gift_bottom_sheet.dart';
 import 'pk_battle_screen.dart';
 import 'live_seats_widget.dart';
+import 'live_chat_widget.dart';
 
 class LiveScreen extends StatefulWidget {
   const LiveScreen({super.key});
@@ -88,6 +89,18 @@ class _LiveScreenState extends State<LiveScreen> {
               child: SizedBox(
                 width: 180,
                 child: LiveSeatsWidget(),
+              ),
+            ),
+          ),
+
+          // نافذة الشات اللحظي في الجانب الأيسر أسفل المقاعد
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: EdgeInsets.only(left: 12.0, bottom: 80.0, top: 180.0),
+              child: SizedBox(
+                width: 220,
+                child: LiveChatWidget(),
               ),
             ),
           ),
