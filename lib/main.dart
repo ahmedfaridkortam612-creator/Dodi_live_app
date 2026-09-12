@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'screens/auth_screen.dart';
 
 void main() {
   runApp(const DodiLiveApp());
@@ -96,8 +97,9 @@ class SplashScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('أهلاً بك في Dodi Live')),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const AuthScreen()),
                     );
                   },
                   child: const Text(
