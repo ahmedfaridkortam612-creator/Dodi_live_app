@@ -129,12 +129,14 @@ class AuthScreen extends StatelessWidget {
   }
 }
 
-// شاشة استكمال الملف الشخصي المدمجة لضمان عدم وجود أخطاء في مسارات الملفات
+// شاشة استكمال الملف الشخصي مع تفعيل الانتقال للصفحة الرئيسية
 class CompleteProfileScreen extends StatelessWidget {
   const CompleteProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController nameController = TextEditingController();
+
     return Scaffold(
       backgroundColor: const Color(0xFF0F051D),
       appBar: AppBar(
@@ -154,6 +156,7 @@ class CompleteProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             TextField(
+              controller: nameController,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 labelText: 'اسم المستخدم',
@@ -174,7 +177,11 @@ class CompleteProfileScreen extends StatelessWidget {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
                 ),
                 onPressed: () {
-                  // اكشن الحفظ والانتقال للتطبيق الرئيسي
+                  // الانتقال إلى الصفحة الرئيسية للتطبيق بعد الحفظ
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MainHomeScreen()),
+                  );
                 },
                 child: const Text(
                   'حفظ ومتابعة 🚀',
@@ -182,6 +189,56 @@ class CompleteProfileScreen extends StatelessWidget {
                 ),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// الصفحة الرئيسية للتطبيق (Dodi Live Home)
+class MainHomeScreen extends StatelessWidget {
+  const MainHomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF0F051D),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF2D124D),
+        title: const Text('Dodi Live - البث المباشر 🌟', style: TextStyle(color: Colors.amberAccent)),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.live_tv, size: 90, color: Colors.amberAccent),
+            const SizedBox(height: 20),
+            const Text(
+              'مرحباً بك في عالم التألق! 🎤',
+              style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'ابدأ بثك المباشر الآن وتفاعل مع الجمهور',
+              style: TextStyle(color: Colors.white70, fontSize: 14),
+            ),
+            const SizedBox(height: 30),
+            ElevatedButton.styleFrom == null 
+                ? Container() 
+                : ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.amber,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    ),
+                    onPressed: () {
+                      // زر بدء بث جديد
+                    },
+                    child: const Text('ابدأ بث مباشر جديد 🔴', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  ),
           ],
         ),
       ),
