@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../gift_bottom_sheet.dart';
+import 'pk_battle_screen.dart';
 
 class LiveScreen extends StatefulWidget {
   const LiveScreen({super.key});
@@ -29,7 +30,7 @@ class _LiveScreenState extends State<LiveScreen> {
       ),
       body: Stack(
         children: [
-          // خلفية الشاشة وتصميم البث
+          // خلفية الشاشة وتصميم البث الأساسي
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -78,7 +79,7 @@ class _LiveScreenState extends State<LiveScreen> {
             ),
           ),
 
-          // زرار الهدايا العائم أسفل الشاشة
+          // زرار الهدايا العائم أسفل الشاشة (يمين)
           Align(
             alignment: Alignment.bottomRight,
             child: Padding(
@@ -88,6 +89,25 @@ class _LiveScreenState extends State<LiveScreen> {
                 backgroundColor: Colors.purpleAccent,
                 icon: const Icon(Icons.card_giftcard, color: Colors.white),
                 label: const Text('الهدايا', style: TextStyle(color: Colors.white)),
+              ),
+            ),
+          ),
+
+          // زرار تحدي الـ PK العائم أسفل الشاشة (يسار)
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: FloatingActionButton.extended(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const PkBattleScreen()),
+                  );
+                },
+                backgroundColor: Colors.amber,
+                icon: const Icon(Icons.flash_on, color: Colors.black),
+                label: const Text('تحدي PK', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
               ),
             ),
           ),
