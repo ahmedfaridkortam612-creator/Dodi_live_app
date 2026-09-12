@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'live_seats_widget.dart'; // استيراد ملف الكراسي والمايكات
+import 'live_seats_widget.dart';
+import 'live_chat_widget.dart';
 
 class LiveScreen extends StatefulWidget {
   const LiveScreen({super.key});
@@ -86,7 +87,7 @@ class _LiveScreenState extends State<LiveScreen> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // 1. عرض كاميرا البث الحية في الخلفية
+          // 1. كاميرا البث الحية
           Center(
             child: _localUserJoined
                 ? AgoraVideoView(
@@ -108,7 +109,7 @@ class _LiveScreenState extends State<LiveScreen> {
                   ),
           ),
           
-          // 2. واجهة التحكم العلوية (اسم المضيف وزر الإغلاق)
+          // 2. الهيدر العلوي (اسم المضيف وزر الإغلاق)
           Positioned(
             top: 50,
             left: 20,
@@ -138,24 +139,33 @@ class _LiveScreenState extends State<LiveScreen> {
             ),
           ),
 
-          // 3. شبكة الكراسي والمايكات (تظهر أسفل الشاشة أو في المنتصف حسب الحاجة)
+          // 3. شبكة الكراسي والمايكات (في منتصف/أعلى الشاشة)
           Positioned(
-            bottom: 30,
+            top: 110,
             left: 10,
             right: 10,
-            child: LiveSeatsWidget(
-              seatCount: 6,
-              onSeatTap: (seatIndex) {
-                // تفاعل الضغط على المقعد (فتح المايك للضيف مستقبلاً)
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('تم النقر على المقعد رقم ${seatIndex + 1} 🎤'),
-                    duration: const Duration(seconds: 1),
-                    backgroundColor: Colors.purple,
-                  ),
-                );
-              },
+            child: SizedBox(
+              height: 140,
+              child: LiveSeatsWidget(
+                seatCount: 6,
+                onSeatTap: (seatIndex) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('مقعد رقم ${seatIndex + 1} 🎤'),
+                      duration: const Duration(milliseconds: 800),
+                    ),
+                  );
+                },
+              ),
             ),
+          ),
+
+          // 4. الشات الحي التفاعلي أسفل الشاشة
+          const Positioned(
+            bottom: 20,
+            left: 10,
+            right: 10,
+            child: LiveChatWidget(),
           ),
         ],
       ),
