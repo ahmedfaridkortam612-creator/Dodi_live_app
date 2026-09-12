@@ -19,7 +19,7 @@ class ProfileScreen extends StatelessWidget {
             icon: const Icon(Icons.settings_rounded, color: Colors.amberAccent),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('إعدادات الحساب والأمان قيد التحديث ⚙️')),
+                SnackBar(content: Text('إعدادات الحساب والأمان قيد التحديث ⚙️')),
               );
             },
           ),
@@ -40,7 +40,6 @@ class ProfileScreen extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // بطاقة البروفايل الرئيسية (صورة + الاسم + ID + مستوى الـ VIP)
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -97,7 +96,6 @@ class ProfileScreen extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // إحصائيات الحساب (متابعين، إعجابات، ماس)
             Row(
               children: [
                 _buildStatCard('المتابَعون', '1.2K'),
@@ -115,7 +113,6 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            // خيارات القائمة
             _buildMenuItem(Icons.diamond_rounded, 'شحن الباقة والماس', 'إدارة العملات والمحفظة'),
             _buildMenuItem(Icons.bar_chart_rounded, 'لوحة أرباح المضيف', 'متابعة الدخل اليومي والأسبوعي'),
             _buildMenuItem(Icons.security_rounded, 'الأمان وربط الحساب', 'كلمة المرور وحماية الـ ID'),
@@ -124,7 +121,6 @@ class ProfileScreen extends StatelessWidget {
 
             const SizedBox(height: 30),
             
-            // زر تسجيل الخروج
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -135,7 +131,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    constSnackBar(content: Text('تم تسجيل الخروج بنجاح 🔒')),
+                    SnackBar(content: Text('تم تسجيل الخروج بنجاح 🔒')),
                   );
                 },
                 child: const Text(
