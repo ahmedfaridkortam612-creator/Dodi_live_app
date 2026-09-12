@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'wallet_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -64,11 +65,26 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 _buildStatCard('مستوى الثراء', 'Lv. 12', Colors.amber),
                 _buildStatCard('مستوى الجاذبية', 'Lv. 9', Colors.purpleAccent),
-                _buildStatCard('الكوينز', '4,500', Colors.tealAccent),
+                // زرار سريع للانتقال للمحفظة عند الضغط على الكوينز
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const WalletScreen()),
+                    );
+                  },
+                  child: _buildStatCard('الكوينز', '4,500', Colors.tealAccent),
+                ),
               ],
             ),
             const SizedBox(height: 30),
             // القائمة الملكية
+            _buildMenuItem(Icons.account_balance_wallet, 'محفظة الشحن والألماس', () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const WalletScreen()),
+              );
+            }),
             _buildMenuItem(Icons.star, 'شارات الشرف والألقاب', () {}),
             _buildMenuItem(Icons.card_giftcard, 'سجل الهدايا', () {}),
             _buildMenuItem(Icons.security, 'الأمان وكلمة المرور', () {}),
