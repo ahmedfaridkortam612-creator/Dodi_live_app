@@ -3,6 +3,7 @@ import '../gift_bottom_sheet.dart';
 import 'pk_battle_screen.dart';
 import 'live_seats_widget.dart';
 import 'live_chat_widget.dart';
+import 'profile_screen.dart';
 
 class LiveScreen extends StatefulWidget {
   const LiveScreen({super.key});
@@ -29,6 +30,18 @@ class _LiveScreenState extends State<LiveScreen> {
       appBar: AppBar(
         title: const Text("غرفة البث المباشر - Dodi Live"),
         backgroundColor: Colors.deepPurple,
+        actions: [
+          // زرار الانتقال للملف الشخصي VIP
+          IconButton(
+            icon: const Icon(Icons.account_circle, color: Colors.amber, size: 28),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfileScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: Stack(
         children: [
