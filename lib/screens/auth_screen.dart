@@ -13,7 +13,7 @@ class _AuthScreenState extends State<AuthScreen> {
   final _passwordController = TextEditingController();
   final _phoneController = TextEditingController();
   
-  String? _selectedAuthType; // بيحدد إحنا في القائمة الرئيسية ولا جوه إدخال الإيميل/الهاتف
+  String? _selectedAuthType; // null لعرض الأزرار الرئيسية، "email" للإيميل، "phone" للهاتف
   bool _isLogin = true;
 
   Future<void> _submitAuthForm() async {
@@ -46,52 +46,36 @@ class _AuthScreenState extends State<AuthScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // 1. خلفية داكنة وفخمة مؤقتاً لحد ما نربط الصورة
+          // 1. خلفية الصورة الحقيقية التي تغطي الشاشة بالكامل
+          Positioned.fill(
+            child: Image.asset(
+              'assets/splash_bg.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+          // طبقة تغشية داكنة خفيفة (Dark Overlay) لضمان وضوح الأزرار والكتابة فوق الصورة
           Positioned.fill(
             child: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Color(0xFF1A0033), Color(0xFF000000)],
-                ),
-              ),
+              color: Colors.black.withOpacity(0.35),
             ),
           ),
           
-          // 2. المحتوى والأزرار
+          // 2. المحتوى والأزرار فوق الخلفية
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 30.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // اسم التطبيق في الأعلى
-                  const Column(
-                    children: [
-                      SizedBox(height: 20),
-                      Text(
-                        'Dodi live',
-                        style: TextStyle(
-                          fontSize: 40,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFFE8C39E),
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      Text(
-                        'مكانك للتألق والتميز',
-                        style: TextStyle(fontSize: 14, color: Colors.white70),
-                      ),
-                    ],
-                  ),
+                  // مسافة في الأعلى
+                  const SizedBox(height: 20),
 
-                  // الأزرار أو خانات الإدخال
+                  // الأزرار أو خانات الإدخال الشفافة فوق الصورة
                   Column(
                     children: [
                       if (_selectedAuthType == null) ...[
-                        // زر الإيميل
-                        _buildButton(
+                        // زر Email login
+                        _buildTransparentButton(
                           icon: Icons.email_outlined,
                           text: 'Email login',
                           onTap: () {
@@ -101,10 +85,10 @@ class _AuthScreenState extends State<AuthScreen> {
                           },
                         ),
                         const SizedBox(height: 15),
-                        // زر الهاتف
-                        _buildButton(
+                        // زر Phone / ID login
+                        _buildTransparentButton(
                           icon: Icons.phone_android_outlined,
-                          text: 'Phone login',
+                          text: 'Phone / ID login',
                           onTap: () {
                             setState(() {
                               _selectedAuthType = "phone";
@@ -115,7 +99,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.08),
+                            color: Colors.black.withOpacity(0.8),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(color: Colors.white24),
                           ),
@@ -183,7 +167,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   const Text(
                     'Agree our to\nPrivacy Policy and Terms of Service',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12, color: Colors.white54),
+                    style: TextStyle(fontSize: 12, color: Colors.white70),
                   ),
                 ],
               ),
@@ -194,19 +178,20 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  Widget _buildButton({required IconData icon, required String text, required VoidCallback onTap}) {
+  // تصميم الأزرار الشفافة الأنيقة فوق الخلفية
+  Widget _buildTransparentButton({required IconData icon, required String text, required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.9),
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 8,
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 10,
               offset: const Offset(0, 4),
             ),
           ],
