@@ -8,242 +8,210 @@ class WalletScreen extends StatefulWidget {
 }
 
 class _WalletScreenState extends State<WalletScreen> {
-  int _userDiamonds = 1250;
-  int _userGoldCoins = 45000;
-
-  void _rechargePackage(String title, String price, int coins) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF140824),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: Colors.amberAccent, width: 1),
-        ),
-        title: const Text(
-          'تأكيد شحن الباقة 💎',
-          style: TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.bold),
-        ),
-        content: Text(
-          'هل تريد إتمام عملية شراء ($title) مقابل $price؟',
-          style: const TextStyle(color: Colors.white70),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('إلغاء', style: TextStyle(color: Colors.white38)),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.amber,
-              foregroundColor: Colors.black,
-            ),
-            onPressed: () {
-              setState(() {
-                _userGoldCoins += coins;
-              });
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('تم شحن $coins عملة ذهبية بنجاح! 🚀'),
-                  backgroundColor: Colors.purple.shade900,
-                ),
-              );
-            },
-            child: const Text('دفع وتأكيد', style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
-  }
+  // رصيد الماس الوهمي أو المرتبط بالبث
+  final int _userDiamonds = 1250000;
+  final double _cashBalance = 1250.00; // بالدولار أو العملة المحلية
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF0B0716),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1A0B2E),
+        backgroundColor: const Color(0xFF130B22),
         elevation: 0,
         title: const Text(
-          'محفظة Dodi VIP 💰',
+          'محفظة الأرباح الفاخرة 💎',
           style: TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.bold),
         ),
-        iconTheme: const IconThemeData(color: Colors.amberAccent),
+        centerTitle: true,
       ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFF1A0B2E),
-              Color(0xFF0A0314),
-              Color(0xFF000000),
-            ],
+            colors: [Color(0xFF130B22), Color(0xFF0B0716), Colors.black],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            // بطاقة الأرصدة الكبرى (الماس والذهب)
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.purple.shade900, Colors.black87],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 1. كارد الرصيد الإجمالي الفخم (Neon Card)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF3B1E54), Color(0xFF1F0D35)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: Colors.amberAccent.withOpacity(0.5), width: 1.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.purpleAccent.withOpacity(0.2),
+                      blurRadius: 15,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
                 ),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.amberAccent.withOpacity(0.4), width: 1.5),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.amberAccent.withOpacity(0.1),
-                    blurRadius: 20,
-                    spreadRadius: 2,
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Column(
-                    children: [
-                      const Text('💎 أرباح الماس', style: TextStyle(color: Colors.white70, fontSize: 13)),
-                      const SizedBox(height: 8),
-                      Text(
-                        '$_userDiamonds',
-                        style: const TextStyle(color: Colors.amberAccent, fontSize: 22, fontWeight: FontWeight.w900),
-                      ),
-                      const SizedBox(height: 8),
-                      OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: Colors.amberAccent),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'إجمالي رصيد الماس المتاح',
+                      style: TextStyle(color: Colors.white70, fontSize: 14),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Text('💎', style: TextStyle(fontSize: 28)),
+                        const SizedBox(width: 8),
+                        Text(
+                          '$_userDiamonds',
+                          style: const TextStyle(
+                            color: Colors.amberAccent,
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('جاري تحويل أرباح الماس إلى سيولة نقدية... 💵')),
-                          );
-                        },
-                        child: const Text('سحب الأرباح', style: TextStyle(color: Colors.amberAccent, fontSize: 11)),
+                      ],
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Divider(color: Colors.white24),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'القيمة النقدية المقابلة:',
+                          style: TextStyle(color: Colors.white70, fontSize: 13),
+                        ),
+                        Text(
+                          '\$_$_cashBalance USD',
+                          style: const TextStyle(
+                            color: Colors.greenAccent,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 30),
+
+              // 2. أزرار العمليات (شحن، سحب، تحويل)
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.amber,
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                       ),
-                    ],
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('جارٍ الانتقال لبوابة شحن الماس... 💳')),
+                        );
+                      },
+                      icon: const Icon(Icons.add_card_rounded),
+                      label: const Text('شحن الماس', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                    ),
                   ),
-                  Container(height: 60, width: 1, color: Colors.white24),
-                  Column(
-                    children: [
-                      const Text('🪙 رصيد العملات', style: TextStyle(color: Colors.white70, fontSize: 13)),
-                      const SizedBox(height: 8),
-                      Text(
-                        '$_userGoldCoins',
-                        style: const TextStyle(color: Colors.amberAccent, fontSize: 22, fontWeight: FontWeight.w900),
+                  const SizedBox(width: 15),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Colors.amberAccent, width: 1.5),
+                        foregroundColor: Colors.amberAccent,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                       ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'جاهزة للهدايا',
-                        style: TextStyle(color: Colors.white38, fontSize: 11),
-                      ),
-                    ],
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('طلب سحب الأرباح قيد المعالجة 💸')),
+                        );
+                      },
+                      icon: const Icon(Icons.account_balance_wallet_outlined),
+                      label: const Text('سحب الأرباح', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                    ),
                   ),
                 ],
               ),
-            ),
+              const SizedBox(height: 35),
 
-            const SizedBox(height: 24),
-            const Text(
-              'شحن باقات العملات الفاخرة (VIP)',
-              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-
-            // شبكة باقات الشحن على طريقة المنصات الكبرى
-            GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              childAspectRatio: 1.4,
-              children: [
-                _buildRechargeCard('باقة المبتدئين 🌟', '🪙 5,000', '4.99 \$', 5000),
-                _buildRechargeCard('باقة النجوم ✨', '🪙 15,000', '12.99 \$', 15000),
-                _buildRechargeCard('باقة الـ VIP 👑', '🪙 50,000', '39.99 \$', 50000),
-                _buildRechargeCard('باقة الأساطير 🚀', '🪙 150,000', '99.99 \$', 150000),
-              ],
-            ),
-
-            const SizedBox(height: 30),
-            // سجل المعاملات المالية الأخيرة
-            const Text(
-              'سجل المعاملات الأخيرة',
-              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            _buildTransactionItem('شحن عبر Google Play / Apple', '+ 15,000 كوينز', 'منذ ساعة', Colors.greenAccent),
-            _buildTransactionItem('إرسال هدية (تاج ملكي) لغرفة 884', '- 999 كوينز', 'منذ 3 ساعات', Colors.redAccent),
-            _buildTransactionItem('سحب أرباح ماسية', 'تحويل ناجح 💵', 'أمس', Colors.amberAccent),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRechargeCard(String title, String coins, String price, int coinValue) {
-    return GestureDetector(
-      onTap: () => _rechargePackage(title, price, coinValue),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: Colors.purpleAccent.withOpacity(0.3)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(title, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 6),
-            Text(coins, style: const TextStyle(color: Colors.amberAccent, fontSize: 16, fontWeight: FontWeight.w900)),
-            const SizedBox(height: 6),
-            Container(
-              alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.amber,
-                borderRadius: BorderRadius.circular(10),
+              // 3. سجل المعاملات الحديثة
+              const Text(
+                'سجل المعاملات الأخيرة',
+                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              child: Text(price, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 11)),
-            ),
-          ],
+              const SizedBox(height: 12),
+              Expanded(
+                child: ListView(
+                  children: [
+                    _buildTransactionItem('هدية أسد ملكي من أحمد', '+ 500 الماس', 'منذ ساعة', Colors.greenAccent),
+                    _buildTransactionItem('هدية سيارة من ياسمين', '+ 200 الماس', 'منذ 3 ساعات', Colors.greenAccent),
+                    _buildTransactionItem('سحب أرباح إلى البنك', '- \$150.00', 'أمس', Colors.redAccent),
+                    _buildTransactionItem('شحن باقة ماس ذهبية', '+ 5000 الماس', 'منذ 3 أيام', Colors.greenAccent),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildTransactionItem(String title, String subtitle, String time, Color color) {
+  // عنصر القائمة الخاص بسجل المعاملات
+  Widget _buildTransactionItem(String title, String subtitle, String time, Color amountColor) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.4),
+        color: Colors.white.withOpacity(0.04),
         borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white10),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Row(
             children: [
-              Text(title, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 4),
-              Text(time, style: const TextStyle(color: Colors.white38, fontSize: 10)),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: amountColor.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.receipt_long_rounded, color: amountColor, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                  const SizedBox(height: 2),
+                  Text(time, style: const TextStyle(color: Colors.white54, fontSize: 11)),
+                ],
+              ),
             ],
           ),
           Text(
             subtitle,
-            style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.bold),
+            style: TextStyle(color: amountColor, fontWeight: FontWeight.bold, fontSize: 14),
           ),
         ],
       ),
