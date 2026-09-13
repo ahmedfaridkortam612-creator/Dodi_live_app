@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'gift_bottom_sheet.dart'; // استيراد ملف الهدايا اللي لسه عاملينه
 
 class LiveScreen extends StatefulWidget {
   const LiveScreen({super.key});
@@ -16,13 +17,12 @@ class _LiveScreenState extends State<LiveScreen> {
 
   bool _localUserJoined = false;
   bool _isMuted = false;
-  bool _isVideoOff = false;
+  int _hostDiamonds = 1200000; // عداد الماس الخاص بالمضيف
   late RtcEngine _engine;
 
   final List<Map<String, String>> _liveMessages = [
     {'user': 'خالد النجار', 'text': 'منور البث يا بطل 🔥'},
     {'user': 'ياسمين', 'text': 'أحلى صوت وأجمل إضاءة 🌟'},
-    {'user': 'عمر الشناوي', 'text': 'تم إرسال هدية الأسد 🦁'},
   ];
 
   @override
@@ -62,6 +62,37 @@ class _LiveScreenState extends State<LiveScreen> {
     );
   }
 
+  // دالة إظهار نافذة الهدايا ومعالجة إرسال الهدية
+  void _openGiftBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return GiftBottomSheet(
+          onGiftSelected: (giftName, giftPrice) {
+            setState(() {
+              _hostDiamonds += giftPrice; // زيادة الأرباح لحظياً
+              _liveMessages.add({
+                'user': 'نظام الهدايا 🎁',
+                'text': 'أرسل هدية فاخرة: $giftName (💎 $giftPrice)'
+              });
+            });
+
+            // تنبيه مرئي بإن الهدية وصلت بنجاح
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('تم إرسال $giftName بنجاح! 🔥'),
+                backgroundColor: Colors.purple,
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   void dispose() {
     _engine.leaveChannel();
@@ -75,7 +106,7 @@ class _LiveScreenState extends State<LiveScreen> {
       backgroundColor: const Color(0xFF0B0716),
       body: Stack(
         children: [
-          // 1. شاشة الكاميرا الخلفية (البث الحي)
+          // 1. كاميرا البث الحية في الخلفية
           Positioned.fill(
             child: _localUserJoined
                 ? AgoraVideoView(
@@ -92,7 +123,7 @@ class _LiveScreenState extends State<LiveScreen> {
                   ),
           ),
 
-          // 2. تدرج لوني خفيف فوق الكاميرا لضمان وضوح العناصر والنصوص
+          // 2. تدرج لوني خفيف لضمان وضوح النصوص
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
@@ -109,7 +140,7 @@ class _LiveScreenState extends State<LiveScreen> {
             ),
           ),
 
-          // 3. شريط المعلومات العلوي (بروفايل المضيف، الـ ID، المتابعين، زر الإغلاق)
+          // 3. شريط المعلومات العلوي (البروفايل، الأرباح المتحدثة، زر الخروج)
           Positioned(
             top: 45,
             left: 16,
@@ -132,12 +163,12 @@ class _LiveScreenState extends State<LiveScreen> {
                         child: Icon(Icons.person, color: Colors.black),
                       ),
                       const SizedBox(width: 8),
-                      const Column(
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text('Dodi Star', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
-                          Text('الماس: 1.2M', style: TextStyle(color: Colors.amberAccent, fontSize: 10)),
+                          const Text('Dodi Star', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                          Text('الماس: $_hostDiamonds', style: const TextStyle(color: Colors.amberAccent, fontSize: 10)),
                         ],
                       ),
                       const SizedBox(width: 12),
@@ -161,7 +192,7 @@ class _LiveScreenState extends State<LiveScreen> {
             ),
           ),
 
-          // 4. مقاعد الضيوف والمايكات المتعددة (شكل فخم أعلى اليمين/اليسار)
+          // 4. مقاعد الضيوف والمايكات المتعددة
           Positioned(
             top: 115,
             left: 16,
@@ -194,7 +225,7 @@ class _LiveScreenState extends State<LiveScreen> {
             ),
           ),
 
-          // 5. شاشة الشات التفاعلي والرسائل الحية في الجانب الأيسر السفلي
+          // 5. شاشة الشات والرسائل التفاعلية (بما فيها رسائل الهدايا اللحظية)
           Positioned(
             bottom: 80,
             left: 16,
@@ -232,7 +263,7 @@ class _LiveScreenState extends State<LiveScreen> {
             ),
           ),
 
-          // 6. شريط التحكم السفلي (كتابة تعليق، تبديل الكاميرا، كتم الصوت، الهدايا)
+          // 6. شريط التحكم السفلي (زر الهدية دلوقتي بيربط النافذة الحية)
           Positioned(
             bottom: 20,
             left: 16,
@@ -255,30 +286,24 @@ class _LiveScreenState extends State<LiveScreen> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                // زر المايك
                 IconButton(
                   onPressed: () => setState(() => _isMuted = !_isMuted),
                   icon: Icon(_isMuted ? Icons.mic_off : Icons.mic, color: Colors.white),
                   style: IconButton.styleFrom(backgroundColor: Colors.black.withOpacity(0.5)),
                 ),
-                // زر الكاميرا
                 IconButton(
-                  onPressed: () {
-                    _engine.switchCamera();
-                  },
+                  onPressed: () => _engine.switchCamera(),
                   icon: const Icon(Icons.cameraswitch_rounded, color: Colors.white),
                   style: IconButton.styleFrom(backgroundColor: Colors.black.withOpacity(0.5)),
                 ),
-                // زر الهدية (فخم جداً بلون ذهبي)
+                // زر الهدية الفخم المرتبط بالنافذة الحية
                 Container(
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: LinearGradient(colors: [Colors.amber, Colors.deepOrange]),
                   ),
                   child: IconButton(
-                    onPressed: () {
-                      // هنا هنفتح نافذة الهدايا الحقيقية
-                    },
+                    onPressed: _openGiftBottomSheet, // فتح لستة الهدايا الحية
                     icon: const Icon(Icons.card_giftcard, color: Colors.black),
                   ),
                 ),
