@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'gift_bottom_sheet.dart'; // استيراد ملف الهدايا اللي لسه عاملينه
+import 'gift_bottom_sheet.dart';
+import 'pk_battle_screen.dart'; // استيراد شاشة معركة الـ PK
 
 class LiveScreen extends StatefulWidget {
   const LiveScreen({super.key});
@@ -79,7 +80,6 @@ class _LiveScreenState extends State<LiveScreen> {
               });
             });
 
-            // تنبيه مرئي بإن الهدية وصلت بنجاح
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('تم إرسال $giftName بنجاح! 🔥'),
@@ -140,7 +140,7 @@ class _LiveScreenState extends State<LiveScreen> {
             ),
           ),
 
-          // 3. شريط المعلومات العلوي (البروفايل، الأرباح المتحدثة، زر الخروج)
+          // 3. شريط المعلومات العلوي (البروفايل، الأرباح، زر معركة PK، وزر الخروج)
           Positioned(
             top: 45,
             left: 16,
@@ -183,10 +183,28 @@ class _LiveScreenState extends State<LiveScreen> {
                     ],
                   ),
                 ),
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close_rounded, color: Colors.white, size: 26),
-                  style: IconButton.styleFrom(backgroundColor: Colors.black.withOpacity(0.4)),
+                Row(
+                  children: [
+                    // زر معركة الـ PK
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const PkBattleScreen()),
+                        );
+                      },
+                      icon: const Icon(Icons.flash_on_rounded, color: Colors.amberAccent, size: 24),
+                      style: IconButton.styleFrom(backgroundColor: Colors.black.withOpacity(0.4)),
+                      tooltip: 'معركة PK',
+                    ),
+                    const SizedBox(width: 8),
+                    // زر إغلاق البث
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close_rounded, color: Colors.white, size: 26),
+                      style: IconButton.styleFrom(backgroundColor: Colors.black.withOpacity(0.4)),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -225,7 +243,7 @@ class _LiveScreenState extends State<LiveScreen> {
             ),
           ),
 
-          // 5. شاشة الشات والرسائل التفاعلية (بما فيها رسائل الهدايا اللحظية)
+          // 5. شاشة الشات والرسائل التفاعلية
           Positioned(
             bottom: 80,
             left: 16,
@@ -263,7 +281,7 @@ class _LiveScreenState extends State<LiveScreen> {
             ),
           ),
 
-          // 6. شريط التحكم السفلي (زر الهدية دلوقتي بيربط النافذة الحية)
+          // 6. شريط التحكم السفلي (كتابة تعليق، المايك، الكاميرا، وزر الهدايا)
           Positioned(
             bottom: 20,
             left: 16,
@@ -296,14 +314,14 @@ class _LiveScreenState extends State<LiveScreen> {
                   icon: const Icon(Icons.cameraswitch_rounded, color: Colors.white),
                   style: IconButton.styleFrom(backgroundColor: Colors.black.withOpacity(0.5)),
                 ),
-                // زر الهدية الفخم المرتبط بالنافذة الحية
+                // زر الهدية الفخم
                 Container(
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: LinearGradient(colors: [Colors.amber, Colors.deepOrange]),
                   ),
                   child: IconButton(
-                    onPressed: _openGiftBottomSheet, // فتح لستة الهدايا الحية
+                    onPressed: _openGiftBottomSheet,
                     icon: const Icon(Icons.card_giftcard, color: Colors.black),
                   ),
                 ),
