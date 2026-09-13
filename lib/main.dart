@@ -1,31 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'screens/auth_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'auth_screen.dart';
+import 'home_screen.dart'; // تأكد إن اسم الملف عندك مظبوط
 
 void main() async {
-  // خطوة إجبارية عشان فلاتر يجهز نفسه قبل تشغيل السيرفر
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // تشغيل وتهيئة اتصال السيرفر بـ Firebase
   await Firebase.initializeApp();
-  
-  runApp(const DodiLiveApp());
+  runApp(const MyApp());
 }
 
-class DodiLiveApp extends StatelessWidget {
-  const DodiLiveApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       title: 'Dodi Live',
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        primarySwatch: Colors.purple,
-        scaffoldBackgroundColor: const Color(0xFF0B0716),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: Colors.black,
       ),
-      home: const AuthScreen(),
+      // بنخلي التطبيق يراقب حالة المستخدم تلقائياً
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          // لو جاري التحميل
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+          // لو المستخدم مسجل دخول بالفعل، يروح على الرئيسية
+          if (snapshot.hasData) {
+            return const HomeScreen();
+          }
+          // لو لأ، يروح على شاشة تسجيل الدخول
+          return const AuthScreen();
+        },
+      ),
     );
   }
 }
