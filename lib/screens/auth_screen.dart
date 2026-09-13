@@ -13,7 +13,7 @@ class _AuthScreenState extends State<AuthScreen> {
   final _passwordController = TextEditingController();
   final _phoneController = TextEditingController();
   
-  String? _selectedAuthType; // null لعرض الأزرار الرئيسية، "email" للإيميل، "phone" للهاتف
+  String? _selectedAuthType; 
   bool _isLogin = true;
 
   Future<void> _submitAuthForm() async {
@@ -53,7 +53,7 @@ class _AuthScreenState extends State<AuthScreen> {
               fit: BoxFit.cover,
             ),
           ),
-          // طبقة تغشية داكنة خفيفة (Dark Overlay) لضمان وضوح الأزرار والكتابة فوق الصورة
+          // طبقة تغشية داكنة خفيفة (Dark Overlay) لضمان وضوح الأزرار والكتابة
           Positioned.fill(
             child: Container(
               color: Colors.black.withOpacity(0.35),
@@ -67,10 +67,8 @@ class _AuthScreenState extends State<AuthScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // مسافة في الأعلى
                   const SizedBox(height: 20),
 
-                  // الأزرار أو خانات الإدخال الشفافة فوق الصورة
                   Column(
                     children: [
                       if (_selectedAuthType == null) ...[
@@ -178,7 +176,6 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  // تصميم الأزرار الشفافة الأنيقة فوق الخلفية
   Widget _buildTransparentButton({required IconData icon, required String text, required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
