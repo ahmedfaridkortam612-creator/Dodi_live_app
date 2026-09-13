@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
 
-  @interface
+  @override
   State<AuthScreen> createState() => _AuthScreenState();
 }
 
