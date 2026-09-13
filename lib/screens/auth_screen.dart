@@ -13,31 +13,28 @@ class _AuthScreenState extends State<AuthScreen> {
   final _passwordController = TextEditingController();
   final _phoneController = TextEditingController();
   
-  bool _isLogin = true; // عشان نغير بين تسجيل الدخول وإنشاء حساب جديد
-  bool _usePhoneAuth = false; // عشان نغير بين الإيميل ورقم الهاتف
+  String? _selectedAuthType; // بيحدد إحنا في القائمة الرئيسية ولا جوه إدخال الإيميل/الهاتف
+  bool _isLogin = true;
 
-  // دالة تسجيل الدخول أو التسجيل باستخدام الإيميل وكلمة المرور
   Future<void> _submitAuthForm() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
     try {
-      if (_isLogin) {
-        // تسجيل دخول مستخدم قديم
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-      } else {
-        // إنشاء حساب جديد
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
+      if (_selectedAuthType == "email") {
+        if (_isLogin) {
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: email,
+            password: password,
+          );
+        } else {
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: email,
+            password: password,
+          );
+        }
       }
-      // لو كل حاجة تمام، ممكن تنقل المستخدم لشاشة التطبيق الرئيسية هنا
     } catch (error) {
-      // إظهار رسالة خطأ لو فيه مشكلة في الإيميل أو الباسورد
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error.toString())),
       );
@@ -47,97 +44,204 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'Dodi Live',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+      body: Stack(
+        children: [
+          // 1. خلفية داكنة وفخمة مؤقتاً لحد ما نربط الصورة
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0xFF1A0033), Color(0xFF000000)],
                 ),
-                const SizedBox(height: 30),
-                
-                // حقل الإيميل أو الهاتف حسب الاختيار
-                if (!_usePhoneAuth) ...[
-                  TextField(
-                    controller: _emailController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(
-                      labelText: 'البريد الإلكتروني',
-                      labelStyle: TextStyle(color: Colors.grey),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  TextField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(
-                      labelText: 'كلمة المرور',
-                      labelStyle: TextStyle(color: Colors.grey),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                      ),
-                    ),
-                  ),
-                ] else ...[
-                  TextField(
-                    controller: _phoneController,
-                    keyboardType: TextInputType.phone,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(
-                      labelText: 'رقم الهاتف (مثال: +20...)',
-                      labelStyle: TextStyle(color: Colors.grey),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                      ),
-                    ),
-                  ),
-                ],
-                
-                const SizedBox(height: 25),
-                
-                // زر التنفيذ الأساسي
-                ElevatedButton(
-                  onPressed: _submitAuthForm,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple,
-                    minimumSize: const Size(double.infinity, 50),
-                  ),
-                  child: Text(
-                    _isLogin ? 'تسجيل الدخول' : 'إنشاء حساب جديد',
-                    style: const TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                ),
-                
-                const SizedBox(height: 15),
-                
-                // زر التبديل بين تسجيل الدخول وحساب جديد
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _isLogin = !_isLogin;
-                    });
-                  },
-                  child: Text(
-                    _isLogin ? 'ليس لديك حساب؟ انشئ حساب جديد' : 'لديك حساب بالفعل؟ سجل دخولك',
-                    style: const TextStyle(color: Colors.purpleAccent),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
+          
+          // 2. المحتوى والأزرار
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 30.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // اسم التطبيق في الأعلى
+                  const Column(
+                    children: [
+                      SizedBox(height: 20),
+                      Text(
+                        'Dodi live',
+                        style: TextStyle(
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFFE8C39E),
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        'مكانك للتألق والتميز',
+                        style: TextStyle(fontSize: 14, color: Colors.white70),
+                      ),
+                    ],
+                  ),
+
+                  // الأزرار أو خانات الإدخال
+                  Column(
+                    children: [
+                      if (_selectedAuthType == null) ...[
+                        // زر الإيميل
+                        _buildButton(
+                          icon: Icons.email_outlined,
+                          text: 'Email login',
+                          onTap: () {
+                            setState(() {
+                              _selectedAuthType = "email";
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 15),
+                        // زر الهاتف
+                        _buildButton(
+                          icon: Icons.phone_android_outlined,
+                          text: 'Phone login',
+                          onTap: () {
+                            setState(() {
+                              _selectedAuthType = "phone";
+                            });
+                          },
+                        ),
+                      ] else ...[
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.08),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: Colors.white24),
+                          ),
+                          child: Column(
+                            children: [
+                              Text(
+                                _selectedAuthType == "email" ? 'تسجيل الدخول بالبريد' : 'تسجيل الدخول برقم الهاتف',
+                                style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 20),
+                              if (_selectedAuthType == "email") ...[
+                                TextField(
+                                  controller: _emailController,
+                                  style: const TextStyle(color: Colors.white),
+                                  decoration: _inputDecoration('البريد الإلكتروني', Icons.email),
+                                ),
+                                const SizedBox(height: 15),
+                                TextField(
+                                  controller: _passwordController,
+                                  obscureText: true,
+                                  style: const TextStyle(color: Colors.white),
+                                  decoration: _inputDecoration('كلمة المرور', Icons.lock),
+                                ),
+                              ] else ...[
+                                TextField(
+                                  controller: _phoneController,
+                                  keyboardType: TextInputType.phone,
+                                  style: const TextStyle(color: Colors.white),
+                                  decoration: _inputDecoration('رقم الهاتف (مثال: +20...)', Icons.phone),
+                                ),
+                              ],
+                              const SizedBox(height: 20),
+                              ElevatedButton(
+                                onPressed: _submitAuthForm,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF8B5CF6),
+                                  minimumSize: const Size(double.infinity, 48),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                ),
+                                child: Text(
+                                  _isLogin ? 'تسجيل الدخول' : 'إنشاء حساب جديد',
+                                  style: const TextStyle(fontSize: 16, color: Colors.white),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _selectedAuthType = null;
+                                  });
+                                },
+                                child: const Text(
+                                  'الرجوع للخلف',
+                                  style: TextStyle(color: Colors.white70),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+
+                  // شروط الاستخدام في الأسفل
+                  const Text(
+                    'Agree our to\nPrivacy Policy and Terms of Service',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 12, color: Colors.white54),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildButton({required IconData icon, required String text, required VoidCallback onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.9),
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: Colors.black87),
+            const SizedBox(width: 12),
+            Text(
+              text,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  InputDecoration _inputDecoration(String label, IconData icon) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(color: Colors.white70),
+      prefixIcon: Icon(icon, color: Colors.white70),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.white30),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Color(0xFF8B5CF6), width: 2),
       ),
     );
   }
