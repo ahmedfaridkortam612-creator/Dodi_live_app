@@ -6,20 +6,21 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: const Color(0xFF0B0716),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1A0B2E),
+        backgroundColor: const Color(0xFF130B22),
         elevation: 0,
         title: const Text(
-          'الملف الشخصي - Dodi VIP',
+          'الملف الشخصي الفاخر 🌟',
           style: TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.bold),
         ),
+        centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings_rounded, color: Colors.amberAccent),
+            icon: const Icon(Icons.settings_rounded, color: Colors.white),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('إعدادات الحساب والأمان قيد التحديث ⚙️')),
+                const SnackBar(content: Text('فتح إعدادات الحساب المتقدمة... ⚙️')),
               );
             },
           ),
@@ -28,158 +29,133 @@ class ProfileScreen extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFF1A0B2E),
-              Color(0xFF0A0314),
-              Color(0xFF000000),
-            ],
+            colors: [Color(0xFF130B22), Color(0xFF0B0716), Colors.black],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.purpleAccent.withOpacity(0.3)),
-              ),
-              child: Row(
+            // 1. كارد البروفايل والمعلومات الأساسية
+            Center(
+              child: Column(
                 children: [
-                  const CircleAvatar(
-                    radius: 36,
-                    backgroundColor: Colors.amberAccent,
-                    child: Icon(Icons.person, size: 40, color: Colors.black),
+                  Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      Container(
+                        padding: const耑 const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.amberAccent, width: 2.5),
+                        ),
+                        child: const CircleAvatar(
+                          radius: 50,
+                          backgroundColor: Colors.purple,
+                          child: Icon(Icons.person, size: 50, color: Colors.white),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: const BoxDecoration(
+                          color: Colors.amber,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.verified, color: Colors.black, size: 16),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: const [
-                            Text(
-                              'أحمد كورتام',
-                              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(width: 6),
-                            Icon(Icons.verified, color: Colors.amberAccent, size: 16),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        const Text(
-                          'ID: 99482710',
-                          style: TextStyle(color: Colors.white60, fontSize: 12),
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                          decoration: BoxDecoration(
-                            color: Colors.amber.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.amberAccent),
-                          ),
-                          child: const Text(
-                            'VIP 7 - ملك الأساطير 👑',
-                            style: TextStyle(color: Colors.amberAccent, fontSize: 10, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Dodi Star (أحمد)',
+                    style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'ID: 88492019',
+                    style: TextStyle(color: Colors.white54, fontSize: 13),
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.purpleAccent.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.purpleAccent.withOpacity(0.4)),
+                    ),
+                    child: const Text(
+                      'المستوى: VIP نجم ذهبي 👑',
+                      style: TextStyle(color: Colors.amberAccent, fontSize: 12, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
               ),
             ),
+            const SizedBox(height: 30),
 
-            const SizedBox(height: 20),
-
+            // 2. إحصائيات الحساب (المتابعين، المعجبين، الهدايا)
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildStatCard('المتابَعون', '1.2K'),
-                const SizedBox(width: 10),
-                _buildStatCard('المتابِعون', '48.5K'),
-                const SizedBox(width: 10),
-                _buildStatCard('الإعجابات', '250K'),
+                _buildStatItem('1.4M', 'المتابعين'),
+                _buildStatItem('350K', 'المعجبون'),
+                _buildStatItem('8.9M', 'الألماس المستلم'),
               ],
             ),
+            const SizedBox(height: 35),
 
-            const SizedBox(height: 24),
+            // 3. قوائم الإعدادات والخيارات الفخمة
             const Text(
-              'خيارات الحساب والتحكم',
-              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+              'إدارة الحساب',
+              style: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-
-            _buildMenuItem(Icons.diamond_rounded, 'شحن الباقة والماس', 'إدارة العملات والمحفظة'),
-            _buildMenuItem(Icons.bar_chart_rounded, 'لوحة أرباح المضيف', 'متابعة الدخل اليومي والأسبوعي'),
-            _buildMenuItem(Icons.security_rounded, 'الأمان وربط الحساب', 'كلمة المرور وحماية الـ ID'),
-            _buildMenuItem(Icons.card_giftcard_rounded, 'سجل الهدايا المُرسَلة', 'عرض الهدايا التاريخية'),
-            _buildMenuItem(Icons.help_outline_rounded, 'الدعم الفني وخدمة العملاء', 'مساعدة فورية على مدار الساعة'),
-
-            const SizedBox(height: 30),
-            
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Colors.redAccent),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                ),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('تم تسجيل الخروج بنجاح 🔒')),
-                  );
-                },
-                child: const Text(
-                  'تسجيل الخروج',
-                  style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 15),
-                ),
-              ),
-            ),
+            _buildMenuItem(Icons.live_tv_rounded, 'سجل البثوث السابقة', () {}),
+            _buildMenuItem(Icons.card_giftcard_rounded, 'هدايايي المفضلة', () {}),
+            _buildMenuItem(Icons.security_rounded, 'الأمان والخصوصية', () {}),
+            _buildMenuItem(Icons.headset_mic_rounded, 'الدعم الفني والشكاوى', () {}),
+            _buildMenuItem(Icons.logout_rounded, 'تسجيل الخروج', () {}, isRed: true),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStatCard(String title, String value) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.purpleAccent.withOpacity(0.2)),
+  // ودجت إحصائيات الحساب
+  Widget _buildStatItem(String count, String label) {
+    return Column(
+      children: [
+        Text(
+          count,
+          style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        child: Column(
-          children: [
-            Text(value, style: const TextStyle(color: Colors.amberAccent, fontSize: 16, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 4),
-            Text(title, style: const TextStyle(color: Colors.white60, fontSize: 11)),
-          ],
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white54, fontSize: 12),
         ),
-      ),
+      ],
     );
   }
 
-  Widget _buildMenuItem(IconData icon, String title, String subtitle) {
+  // ودجت عناصر القائمة
+  Widget _buildMenuItem(IconData icon, String title, VoidCallback onTap, {bool isRed = false}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.04),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.white10),
       ),
       child: ListTile(
-        leading: Icon(icon, color: Colors.amberAccent),
-        title: Text(title, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
-        subtitle: Text(subtitle, style: const TextStyle(color: Colors.white38, fontSize: 11)),
-        trailing: const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white38, size: 14),
-        onTap: () {},
+        leading: Icon(icon, color: isRed ? Colors.redAccent : Colors.amberAccent),
+        title: Text(
+          title,
+          style: TextStyle(color: isRed ? Colors.redAccent : Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+        ),
+        trailing: const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white24, size: 16),
+        onTap: onTap,
       ),
     );
   }
