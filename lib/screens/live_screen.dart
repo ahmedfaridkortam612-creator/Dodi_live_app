@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'live_seats_widget.dart';
-import 'live_chat_widget.dart';
 
 class LiveScreen extends StatefulWidget {
   const LiveScreen({super.key});
@@ -16,17 +14,24 @@ class _LiveScreenState extends State<LiveScreen> {
   static const String channel = "dodi_live_channel";
   static const String token = "";
 
-  int? _remoteUid;
   bool _localUserJoined = false;
+  bool _isMuted = false;
+  bool _isVideoOff = false;
   late RtcEngine _engine;
+
+  final List<Map<String, String>> _liveMessages = [
+    {'user': 'خالد النجار', 'text': 'منور البث يا بطل 🔥'},
+    {'user': 'ياسمين', 'text': 'أحلى صوت وأجمل إضاءة 🌟'},
+    {'user': 'عمر الشناوي', 'text': 'تم إرسال هدية الأسد 🦁'},
+  ];
 
   @override
   void initState() {
     super.initState();
-    initAgora();
+    _initAgoraEngine();
   }
 
-  Future<void> initAgora() async {
+  Future<void> _initAgoraEngine() async {
     await [Permission.microphone, Permission.camera].request();
 
     _engine = createAgoraRtcEngine();
@@ -38,21 +43,8 @@ class _LiveScreenState extends State<LiveScreen> {
     _engine.registerEventHandler(
       RtcEngineEventHandler(
         onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-          debugPrint("Local user ${connection.localUid} joined");
           setState(() {
             _localUserJoined = true;
-          });
-        },
-        onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          debugPrint("Remote user $remoteUid joined");
-          setState(() {
-            _remoteUid = remoteUid;
-          });
-        },
-        onUserOffline: (RtcConnection connection, int remoteUid, UserOfflineReasonType reason) {
-          debugPrint("Remote user $remoteUid left channel");
-          setState(() {
-            _remoteUid = null;
           });
         },
       ),
@@ -72,23 +64,19 @@ class _LiveScreenState extends State<LiveScreen> {
 
   @override
   void dispose() {
-    _dispose();
+    _engine.leaveChannel();
+    _engine.release();
     super.dispose();
-  }
-
-  Future<void> _dispose() async {
-    await _engine.leaveChannel();
-    await _engine.release();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF0B0716),
       body: Stack(
         children: [
-          // 1. كاميرا البث الحية
-          Center(
+          // 1. شاشة الكاميرا الخلفية (البث الحي)
+          Positioned.fill(
             child: _localUserJoined
                 ? AgoraVideoView(
                     controller: VideoViewController(
@@ -96,63 +84,109 @@ class _LiveScreenState extends State<LiveScreen> {
                       canvas: const VideoCanvas(uid: 0),
                     ),
                   )
-                : const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(color: Colors.amber),
-                      SizedBox(height: 12),
-                      Text(
-                        'جاري فتح الكاميرا وبدء البث المباشر... 🎥',
-                        style: TextStyle(color: Colors.white70, fontSize: 14),
-                      ),
-                    ],
+                : Container(
+                    color: const Color(0xFF130B22),
+                    child: const Center(
+                      child: CircularProgressIndicator(color: Colors.amberAccent),
+                    ),
                   ),
           ),
-          
-          // 2. الهيدر العلوي (اسم المضيف وزر الإغلاق)
+
+          // 2. تدرج لوني خفيف فوق الكاميرا لضمان وضوح العناصر والنصوص
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.black.withOpacity(0.6),
+                    Colors.transparent,
+                    Colors.black.withOpacity(0.8),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+            ),
+          ),
+
+          // 3. شريط المعلومات العلوي (بروفايل المضيف، الـ ID، المتابعين، زر الإغلاق)
           Positioned(
-            top: 50,
-            left: 20,
-            right: 20,
+            top: 45,
+            left: 16,
+            right: 16,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: Colors.black45,
-                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.black.withOpacity(0.4),
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(color: Colors.amberAccent.withOpacity(0.5)),
                   ),
-                  child: const Row(
+                  child: Row(
                     children: [
-                      CircleAvatar(radius: 15, backgroundColor: Colors.amber),
-                      SizedBox(width: 8),
-                      Text('Dodi Host 🌟', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      const CircleAvatar(
+                        radius: 18,
+                        backgroundColor: Colors.amber,
+                        child: Icon(Icons.person, color: Colors.black),
+                      ),
+                      const SizedBox(width: 8),
+                      const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Dodi Star', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                          Text('الماس: 1.2M', style: TextStyle(color: Colors.amberAccent, fontSize: 10)),
+                        ],
+                      ),
+                      const SizedBox(width: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.amberAccent,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Text('متابعة', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 11)),
+                      ),
                     ],
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white, size: 30),
                   onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.close_rounded, color: Colors.white, size: 26),
+                  style: IconButton.styleFrom(backgroundColor: Colors.black.withOpacity(0.4)),
                 ),
               ],
             ),
           ),
 
-          // 3. شبكة الكراسي والمايكات (في منتصف/أعلى الشاشة)
+          // 4. مقاعد الضيوف والمايكات المتعددة (شكل فخم أعلى اليمين/اليسار)
           Positioned(
-            top: 110,
-            left: 10,
-            right: 10,
+            top: 115,
+            left: 16,
+            right: 16,
             child: SizedBox(
-              height: 140,
-              child: LiveSeatsWidget(
-                seatCount: 6,
-                onSeatTap: (seatIndex) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('مقعد رقم ${seatIndex + 1} 🎤'),
-                      duration: const Duration(milliseconds: 800),
+              height: 70,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 4,
+                itemBuilder: (context, index) {
+                  return Container(
+                    width: 60,
+                    margin: const EdgeInsets.only(right: 10),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.black.withOpacity(0.5),
+                      border: Border.all(color: Colors.purpleAccent, width: 1.5),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.mic_off, color: Colors.white54, size: 20),
+                        const SizedBox(height: 2),
+                        Text('مقعد ${index + 1}', style: const TextStyle(color: Colors.white70, fontSize: 9)),
+                      ],
                     ),
                   );
                 },
@@ -160,12 +194,96 @@ class _LiveScreenState extends State<LiveScreen> {
             ),
           ),
 
-          // 4. الشات الحي التفاعلي أسفل الشاشة
-          const Positioned(
+          // 5. شاشة الشات التفاعلي والرسائل الحية في الجانب الأيسر السفلي
+          Positioned(
+            bottom: 80,
+            left: 16,
+            right: 100,
+            child: SizedBox(
+              height: 180,
+              child: ListView.builder(
+                itemCount: _liveMessages.length,
+                itemBuilder: (context, index) {
+                  final msg = _liveMessages[index];
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.35),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '${msg['user']}: ',
+                            style: const TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.bold, fontSize: 13),
+                          ),
+                          TextSpan(
+                            text: msg['text'],
+                            style: const TextStyle(color: Colors.white, fontSize: 13),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+
+          // 6. شريط التحكم السفلي (كتابة تعليق، تبديل الكاميرا، كتم الصوت، الهدايا)
+          Positioned(
             bottom: 20,
-            left: 10,
-            right: 10,
-            child: LiveChatWidget(),
+            left: 16,
+            right: 16,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 44,
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(25),
+                      border: Border.all(color: Colors.white24),
+                    ),
+                    child: const Align(
+                      alignment: Alignment.centerRight,
+                      child: Text('قل شيئاً لطيفاً...', style: TextStyle(color: Colors.white54, fontSize: 13)),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                // زر المايك
+                IconButton(
+                  onPressed: () => setState(() => _isMuted = !_isMuted),
+                  icon: Icon(_isMuted ? Icons.mic_off : Icons.mic, color: Colors.white),
+                  style: IconButton.styleFrom(backgroundColor: Colors.black.withOpacity(0.5)),
+                ),
+                // زر الكاميرا
+                IconButton(
+                  onPressed: () {
+                    _engine.switchCamera();
+                  },
+                  icon: const Icon(Icons.cameraswitch_rounded, color: Colors.white),
+                  style: IconButton.styleFrom(backgroundColor: Colors.black.withOpacity(0.5)),
+                ),
+                // زر الهدية (فخم جداً بلون ذهبي)
+                Container(
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(colors: [Colors.amber, Colors.deepOrange]),
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      // هنا هنفتح نافذة الهدايا الحقيقية
+                    },
+                    icon: const Icon(Icons.card_giftcard, color: Colors.black),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
