@@ -20,15 +20,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Dodi Live',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: Colors.black,
-      ),
       home: const AuthScreen(),
     );
   }
 }
 
-// شاشة تسجيل الدخول المطابقة لتصميمك الفخم
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
 
@@ -37,7 +33,7 @@ class AuthScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // 1. خلفية الصورة الحقيقية التي تغطي الشاشة بالكامل
+          // عرض الصورة الخلفية لتملأ الشاشة بالكامل بدون فراغات
           Positioned.fill(
             child: Image.asset(
               'assets/splash_bg.png',
@@ -45,79 +41,46 @@ class AuthScreen extends StatelessWidget {
             ),
           ),
           
-          // 2. طبقة تغشية داكنة خفيفة (Dark Overlay) لبروز النص والأزرار
+          // طبقة شفافة خفيفة جداً لتحسين وضوح الأزرار فوق الصورة
           Positioned.fill(
             child: Container(
-              color: Colors.black.withOpacity(0.4),
+              color: Colors.black.withOpacity(0.2),
             ),
           ),
 
-          // 3. المحتوى والعناصر فوق الخلفية
+          // الأزرار والنصوص في الأسفل فوق الصورة
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 30.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  // مساحة في الأعلى لكي يظهر الجزء العلوي من الصورة
-                  const SizedBox(height: 20),
-
-                  // الشعار والنص الوصفي في المنتصف أو الأعلى حسب الرغبة
-                  Column(
-                    children: const [
-                      Text(
-                        'Dodi live',
-                        style: TextStyle(
-                          fontSize: 42,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFFF3E5AB), // لون ذهبي ناعم يليق بالتصميم
-                          fontFamily: 'serif',
-                        ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const HomeScreen()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      minimumSize: const Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
                       ),
-                      SizedBox(height: 8),
-                      Text(
-                        'مكانك للتألق والتميز',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
+                      elevation: 5,
+                    ),
+                    child: const Text(
+                      'Start / Login',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
                   ),
-
-                  // الأزرار في الأسفل
-                  Column(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          // الانتقال للشاشة الرئيسية للتجربة
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => const HomeScreen()),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
-                          minimumSize: const Size(double.infinity, 50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          elevation: 5,
-                        ),
-                        child: const Text(
-                          'Start / Login',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                      const Text(
-                        'Agree our to\nPrivacy Policy and Terms of Service',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 12, color: Colors.white70),
-                      ),
-                    ],
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Agree our to\nPrivacy Policy and Terms of Service',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 11, color: Colors.white70),
                   ),
                 ],
               ),
@@ -129,7 +92,6 @@ class AuthScreen extends StatelessWidget {
   }
 }
 
-// الشاشة الرئيسية
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
