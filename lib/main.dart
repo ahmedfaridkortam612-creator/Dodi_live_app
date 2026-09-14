@@ -36,7 +36,7 @@ class AuthScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // 1. عرض الصورة بملء الشاشة مباشرة من رابط جيثب المباشر
+          // عرض الصورة بملء الشاشة مباشرة من رابط جيثب المباشر
           Positioned.fill(
             child: Image.network(
               'https://raw.githubusercontent.com/ahmedfarijkortam612-creator/Dodi_live_app/main/assets/splash_bg.png',
@@ -47,14 +47,14 @@ class AuthScreen extends StatelessWidget {
             ),
           ),
           
-          // 2. طبقة شفافة خفيفة جداً لتحسين رؤية الأزرار
+          // طبقة شفافة خفيفة لتحسين رؤية الأزرار
           Positioned.fill(
             child: Container(
               color: Colors.black.withOpacity(0.15),
             ),
           ),
 
-          // 3. الأزرار والنصوص في الأسفل
+          // الأزرار والنصوص في الأسفل
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 30.0),
@@ -147,10 +147,6 @@ class _LoginScreenState extends State<LoginScreen> {
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
-  }
-
-  @dirname(BuildContext context) {
-    // ...
   }
 
   @override
