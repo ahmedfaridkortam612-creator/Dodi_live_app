@@ -22,191 +22,84 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: Colors.black,
+        colorScheme: const ColorScheme.dark(
+          primary: Colors.amber,
+          secondary: Colors.white,
+        ),
       ),
       home: const AuthScreen(),
     );
   }
 }
 
+// شاشة البداية بخلفية فخمة تليق بالتطبيق
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // عرض الصورة بملء الشاشة مباشرة من رابط جيثب المباشر
-          Positioned.fill(
-            child: Image.network(
-              'https://raw.githubusercontent.com/ahmedfarijkortam612-creator/Dodi_live_app/main/assets/splash_bg.png',
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(color: const Color(0xFF1A1A1A));
-              },
-            ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF1a1400), // درجة ذهبية داكنة فخمة من فوق
+              Color(0xFF000000), // أسود خالص من تحت
+            ],
           ),
-          
-          // طبقة شفافة خفيفة لتحسين رؤية الأزرار
-          Positioned.fill(
-            child: Container(
-              color: Colors.black.withOpacity(0.15),
-            ),
-          ),
-
-          // الأزرار والنصوص في الأسفل
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 30.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const LoginScreen()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black,
-                      minimumSize: const Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 5,
-                    ),
-                    child: const Text(
-                      'Start / Login',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Agree our to\nPrivacy Policy and Terms of Service',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 11, color: Colors.white70),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
-
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _isLoading = false;
-  bool _isSignUp = false;
-
-  void _authenticate() async {
-    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('من فضلك أدخل البريد الإلكتروني وكلمة المرور')),
-      );
-      return;
-    }
-
-    setState(() => _isLoading = true);
-
-    try {
-      if (_isSignUp) {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
-        );
-      } else {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
-        );
-      }
-
-      if (!mounted) return;
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-        (route) => false,
-      );
-    } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? 'حدث خطأ')),
-      );
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Center(
-          child: SingleChildScrollView(
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  _isSignUp ? 'إنشاء حساب جديد' : 'تسجيل الدخول',
-                  style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.amber),
+                const Spacer(),
+                // شعار التطبيق أو اسم التطبيق بشكل فخم
+                const Text(
+                  'Dodi Live',
+                  style: TextStyle(
+                    fontSize: 42,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFFF3E5AB),
+                    letterSpacing: 2,
+                  ),
                 ),
-                const SizedBox(height: 25),
-                TextField(
-                  controller: _emailController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    labelText: 'البريد الإلكتروني',
-                    labelStyle: const TextStyle(color: Colors.white70),
-                    filled: true,
-                    fillColor: Colors.grey[900],
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                const SizedBox(height: 10),
+                const Text(
+                  'مكانك للتألق والتميز',
+                  style: TextStyle(fontSize: 16, color: Colors.white70),
+                ),
+                const Spacer(),
+                // زرار الدخول برقم الهاتف
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const PhoneLoginScreen()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFF3E5AB),
+                    foregroundColor: Colors.black,
+                    minimumSize: const Size(double.infinity, 55),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    elevation: 5,
+                  ),
+                  child: const Text(
+                    'تسجيل الدخول برقم الهاتف',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(height: 16),
-                TextField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    labelText: 'كلمة المرور',
-                    labelStyle: const TextStyle(color: Colors.white70),
-                    filled: true,
-                    fillColor: Colors.grey[900],
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                _isLoading
-                    ? const CircularProgressIndicator(color: Colors.amber)
-                    : ElevatedButton(
-                        onPressed: _authenticate,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
-                          minimumSize: const Size(double.infinity, 50),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        child: Text(_isSignUp ? 'إنشاء حساب' : 'دخول', style: const TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                TextButton(
-                  onPressed: () => setState(() => _isSignUp = !_isSignUp),
-                  child: Text(
-                    _isSignUp ? 'لديك حساب بالفعل؟ تسجيل الدخول' : 'ليس لديك حساب؟ انشئ حساباً جديداً',
-                    style: const TextStyle(color: Colors.amber),
-                  ),
+                const Text(
+                  'بالمتابعة أنت توافق على شروط الاستخدام وسياسة الخصوصية',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 11, color: Colors.white54),
                 ),
               ],
             ),
@@ -217,17 +110,215 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+// شاشة تسجيل الدخول برقم الهاتف (Phone Authentication)
+class PhoneLoginScreen extends StatefulWidget {
+  const PhoneLoginScreen({super.key});
+
+  @override
+  State<PhoneLoginScreen> createState() => _PhoneLoginScreenState();
+}
+
+class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
+  final _phoneController = TextEditingController();
+  final _codeController = TextEditingController();
+  
+  bool _codeSent = false;
+  bool _isLoading = false;
+  String _verificationId = '';
+
+  // إرسال كود التحقق لرقم الهاتف
+  void _verifyPhoneNumber() async {
+    final phone = _phoneController.text.trim();
+    if (phone.isEmpty || phone.length < 10) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('من فضلك أدخل رقم هاتف صحيح مع كود الدولة (مثال: +20...)')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: phone,
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          // تسجيل الدخول التلقائي لو الجهاز استقبل الكود لوحده
+          await FirebaseAuth.instance.signInWithCredential(credential);
+          if (!mounted) return;
+          _goToHome();
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          setState(() => _isLoading = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('فشل التحقق: ${e.message}')),
+          );
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          setState(() {
+            _verificationId = verificationId;
+            _codeSent = true;
+            _isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('تم إرسال كود التحقق في رسالة نصية')),
+          );
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          _verificationId = verificationId;
+        },
+      );
+    } catch (e) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('حدث خطأ: $e')),
+      );
+    }
+  }
+
+  // التحقق من الكود اللي كتبه المستخدم
+  void _signInWithCode() async {
+    final smsCode = _codeController.text.trim();
+    if (smsCode.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('من فضلك أدخل كود التحقق المكون من 6 أرقام')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final credential = PhoneAuthProvider.credential(
+        verificationId: _verificationId,
+        smsCode: smsCode,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      if (!mounted) return;
+      _goToHome();
+    } catch (e) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('كود التحقق غير صحيح، حاول مرة أخرى')),
+      );
+    }
+  }
+
+  void _goToHome() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const HomeScreen()),
+      (route) => false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.amber),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'تسجيل الدخول برقم الهاتف',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFFF3E5AB)),
+                ),
+                const SizedBox(height: 30),
+                
+                // لو لسه مبعتش الكود، اعرض خانة رقم الموبايل
+                if (!_codeSent) ...[
+                  TextField(
+                    controller: _phoneController,
+                    keyboardType: TextInputType.phone,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'رقم الهاتف (مع الكود الدولي مثلاً +20)',
+                      labelStyle: const TextStyle(color: Colors.white70),
+                      filled: true,
+                      fillColor: Colors.grey[900],
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  _isLoading
+                      ? const CircularProgressIndicator(color: Colors.amber)
+                      : ElevatedButton(
+                          onPressed: _verifyPhoneNumber,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFF3E5AB),
+                            foregroundColor: Colors.black,
+                            minimumSize: const Size(double.infinity, 50),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                          child: const Text('إرسال كود التحقق', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        ),
+                ] else ...[
+                  // لو الكود اتراجع، اعرض خانة كتابة كود الـ OTP
+                  Text(
+                    'تم إرسال الكود إلى: ${_phoneController.text}',
+                    style: const TextStyle(color: Colors.white70, fontSize: 13),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _codeController,
+                    keyboardType: TextInputType.number,
+                    style: const TextStyle(color: Colors.white, letterSpacing: 8, fontSize: 22),
+                    textAlign: TextAlign.center,
+                    decoration: InputDecoration(
+                      labelText: 'أدخل كود التحقق (6 أرقام)',
+                      labelStyle: const TextStyle(color: Colors.white70),
+                      filled: true,
+                      fillColor: Colors.grey[900],
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  _isLoading
+                      ? const CircularProgressIndicator(color: Colors.amber)
+                      : ElevatedButton(
+                          onPressed: _signInWithCode,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFF3E5AB),
+                            foregroundColor: Colors.black,
+                            minimumSize: const Size(double.infinity, 50),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                          child: const Text('تأكيد وتسجيل الدخول', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// الشاشة الرئيسية للتطبيق
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
+    return Scaffold(
+      appBar: AppBar(
         title: const Text('Dodi Live Home'),
+        backgroundColor: Colors.black,
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: const Icon(Icons.logout, color: Colors.amber),
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
               if (!context.mounted) return;
@@ -240,10 +331,22 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: const Center(
-        child: Text(
-          'أهلاً بك في تطبيق دودي لايف!',
-          style: TextStyle(fontSize: 20, color: Colors.white),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.verified_user, size: 70, color: Colors.amber),
+            const SizedBox(height: 20),
+            const Text(
+              'أهلاً بك في تطبيق دودي لايف!',
+              style: TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'رقم الهاتف المسجل: ${user?.phoneNumber ?? user?.email ?? 'مستخدم معتمد'}',
+              style: const TextStyle(fontSize: 14, color: Colors.white70),
+            ),
+          ],
         ),
       ),
     );
