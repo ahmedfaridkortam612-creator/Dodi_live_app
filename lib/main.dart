@@ -22,17 +22,12 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: Colors.black,
-        colorScheme: const ColorScheme.dark(
-          primary: Colors.white,
-          secondary: Colors.amber,
-        ),
       ),
       home: const AuthScreen(),
     );
   }
 }
 
-// شاشة الترحيب بالصورة الفخمة
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
 
@@ -41,7 +36,7 @@ class AuthScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // 1. الخلفية الأصلية الفخمة تملى الشاشة
+          // 1. عرض الصورة الخلفية بملء الشاشة
           Positioned.fill(
             child: Image.asset(
               'assets/splash_bg.png',
@@ -49,14 +44,14 @@ class AuthScreen extends StatelessWidget {
             ),
           ),
           
-          // 2. طبقة تغشية داكنة خفيفة لتحسين رؤية الأزرار
+          // 2. طبقة شفافة خفيفة جداً لتحسين رؤية الأزرار
           Positioned.fill(
             child: Container(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withOpacity(0.15),
             ),
           ),
 
-          // 3. الأزرار في الأسفل
+          // 3. الأزرار والنصوص في الأسفل
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 30.0),
@@ -65,7 +60,6 @@ class AuthScreen extends StatelessWidget {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      // الانتقال لصفحة تسجيل الدخول الحقيقية بـ Firebase
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -101,7 +95,6 @@ class AuthScreen extends StatelessWidget {
   }
 }
 
-// شاشة تسجيل الدخول الحقيقية بـ Firebase Auth
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -113,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
-  bool _isSignUp = false; // للتبديل بين تسجيل الدخول وإنشاء حساب جديد
+  bool _isSignUp = false;
 
   void _authenticate() async {
     if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
@@ -123,26 +116,21 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
       if (_isSignUp) {
-        // إنشاء حساب جديد
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
       } else {
-        // تسجيل الدخول لحساب موجود
         await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
       }
 
-      // لو تمت العملية بنجاح، ندخله على الصفحة الرئيسية ونمسح صفوف الـ Auth
       if (!mounted) return;
       Navigator.pushAndRemoveUntil(
         context,
@@ -151,53 +139,37 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? 'حدث خطأ أثناء المصادقة')),
+        SnackBar(content: Text(e.message ?? 'حدث خطأ')),
       );
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
+      appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Center(
           child: SingleChildScrollView(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   _isSignUp ? 'إنشاء حساب جديد' : 'تسجيل الدخول',
-                  style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFFF3E5AB),
-                  ),
+                  style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.amber),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 25),
                 TextField(
                   controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     labelText: 'البريد الإلكتروني',
                     labelStyle: const TextStyle(color: Colors.white70),
                     filled: true,
                     fillColor: Colors.grey[900],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -210,9 +182,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     labelStyle: const TextStyle(color: Colors.white70),
                     filled: true,
                     fillColor: Colors.grey[900],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -224,22 +194,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           backgroundColor: Colors.white,
                           foregroundColor: Colors.black,
                           minimumSize: const Size(double.infinity, 50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
-                        child: Text(
-                          _isSignUp ? 'إنشاء حساب' : 'دخول',
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
+                        child: Text(_isSignUp ? 'إنشاء حساب' : 'دخول', style: const TextStyle(fontWeight: FontWeight.bold)),
                       ),
-                const SizedBox(height: 16),
                 TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _isSignUp = !_isSignUp;
-                    });
-                  },
+                  onPressed: () => setState(() => _isSignUp = !_isSignUp),
                   child: Text(
                     _isSignUp ? 'لديك حساب بالفعل؟ تسجيل الدخول' : 'ليس لديك حساب؟ انشئ حساباً جديداً',
                     style: const TextStyle(color: Colors.amber),
@@ -254,14 +214,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-// الشاشة الرئيسية بعد تسجيل الدخول بنجاح
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dodi Live Home'),
@@ -280,20 +237,10 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'أهلاً بك في تطبيق دودي لايف!',
-              style: TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'المستخدم الحالي: ${user?.email ?? 'غير معروف'}',
-              style: const TextStyle(fontSize: 14, color: Colors.white70),
-            ),
-          ],
+      body: const Center(
+        child: Text(
+          'أهلاً بك في تطبيق دودي لايف!',
+          style: TextStyle(fontSize: 20, color: Colors.white),
         ),
       ),
     );
