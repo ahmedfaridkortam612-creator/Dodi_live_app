@@ -1,5 +1,5 @@
 name: dodi_live_app
-description: "A professional-grade live-streaming app"
+description: "A professional-grade live-streaming application"
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -21,3 +21,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  
+  # أضف السطرين دول هنا عشان التطبيق يقرا الصورة صح:
+  assets:
+    - assets/
